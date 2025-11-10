@@ -1,19 +1,34 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { FaBars, FaTimes, FaCheckCircle } from 'react-icons/fa';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FaBars, FaTimes, FaCheckCircle, FaSignInAlt, FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
-  const navLinks = [
+  // Navigation links - conditionnels selon l'état de connexion
+  const navLinks = user ? [
     { name: 'Accueil', path: '/' },
-    { name: 'Talents', path: '/talents' },
+    { name: 'Talents', path: '/dashboard/talents' }, // Vers dashboard si connecté
+    { name: 'Services', path: '/services' },
+    { name: 'À propos', path: '/about' },
+  ] : [
+    { name: 'Accueil', path: '/' },
+    { name: 'Talents', path: '/talents' }, // Vers page publique si non connecté
     { name: 'Services', path: '/services' },
     { name: 'À propos', path: '/about' },
   ];
 
   const isActive = (path) => location.pathname === path;
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setIsOpen(false);
+  };
 
   return (
     <nav className="bg-white shadow-lg fixed w-full top-0 z-50">
@@ -48,12 +63,35 @@ const Navbar = () => {
               </Link>
             ))}
             
-            <Link
-              to="/dashboard"
-              className="btn-primary"
-            >
-              Espace Entreprise
-            </Link>
+            {/* Si l'utilisateur est connecté */}
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <Link
+                  to="/dashboard"
+                  className="btn-primary"
+                >
+                  Dashboard
+                </Link>
+              </div>
+            ) : (
+              // Si l'utilisateur n'est PAS connecté
+              <div className="flex items-center space-x-4">
+                <Link
+                  to="/login"
+                  className="flex items-center space-x-2 font-semibold text-neutral hover:text-primary transition-all"
+                >
+                  <FaSignInAlt />
+                  <span>Connexion</span>
+                </Link>
+                <Link
+                  to="/register"
+                  className="btn-primary"
+                >
+                  <FaUserPlus className="inline mr-2" />
+                  Inscription
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -83,13 +121,38 @@ const Navbar = () => {
               </Link>
             ))}
             
-            <Link
-              to="/dashboard"
-              onClick={() => setIsOpen(false)}
-              className="block text-center btn-primary"
-            >
-              Espace Entreprise
-            </Link>
+            {/* Mobile - Si connecté */}
+            {user ? (
+              <>
+                <Link
+                  to="/dashboard"
+                  onClick={() => setIsOpen(false)}
+                  className="block text-center btn-primary"
+                >
+                  Dashboard
+                </Link>
+              </>
+            ) : (
+              // Mobile - Si non connecté
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="block text-center py-2 px-4 rounded-lg font-semibold text-neutral hover:bg-gray-100"
+                >
+                  <FaSignInAlt className="inline mr-2" />
+                  Connexion
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setIsOpen(false)}
+                  className="block text-center btn-primary"
+                >
+                  <FaUserPlus className="inline mr-2" />
+                  Inscription
+                </Link>
+              </>
+            )}
           </div>
         )}
       </div>

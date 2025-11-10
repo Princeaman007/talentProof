@@ -30,34 +30,86 @@ export const getAllTalents = async (req, res) => {
 
 /**
  * @route   GET /api/talents/filter
- * @desc    Filtrer les talents par technologies
+ * @desc    Filtrer les talents par critères multiples
  * @access  Public
  */
 export const filterTalents = async (req, res) => {
   try {
-    const { technologies, minScore, maxScore } = req.query;
+    const { 
+      technologies,
+      typeProfil,
+      niveau,
+      typeContrat,
+      disponibilite,
+      minScore,
+      maxScore,
+      experienceMin,
+      experienceMax,
+      localisation,
+      langue,
+    } = req.query;
 
     let query = { statut: 'actif' };
 
-    // Filtrer par technologies
+    // ✅ Filtrer par technologies (ancien + amélioré)
     if (technologies) {
-      const techArray = technologies.split(',').map(tech => tech.trim());
+      const techArray = Array.isArray(technologies) 
+        ? technologies 
+        : technologies.split(',').map(tech => tech.trim());
       query.technologies = { $in: techArray };
     }
 
-    // Filtrer par score
+    // ✅ NOUVEAU - Filtrer par type de profil
+    if (typeProfil) {
+      query.typeProfil = typeProfil;
+    }
+
+    // ✅ NOUVEAU - Filtrer par niveau
+    if (niveau) {
+      query.niveau = niveau;
+    }
+
+    // ✅ NOUVEAU - Filtrer par type de contrat
+    if (typeContrat) {
+      query.typeContrat = typeContrat;
+    }
+
+    // ✅ NOUVEAU - Filtrer par disponibilité
+    if (disponibilite) {
+      query.disponibilite = disponibilite;
+    }
+
+    // ✅ Filtrer par score (ancien)
     if (minScore || maxScore) {
       query.scoreTest = {};
       if (minScore) query.scoreTest.$gte = parseInt(minScore);
       if (maxScore) query.scoreTest.$lte = parseInt(maxScore);
     }
 
-    const talents = await Talent.find(query).sort({ scoreTest: -1 });
+    // ✅ NOUVEAU - Filtrer par années d'expérience
+    if (experienceMin !== undefined || experienceMax !== undefined) {
+      query.anneesExperience = {};
+      if (experienceMin !== undefined) query.anneesExperience.$gte = parseInt(experienceMin);
+      if (experienceMax !== undefined) query.anneesExperience.$lte = parseInt(experienceMax);
+    }
+
+    // ✅ NOUVEAU - Filtrer par localisation (recherche partielle)
+    if (localisation) {
+      query.localisation = { $regex: localisation, $options: 'i' };
+    }
+
+    // ✅ NOUVEAU - Filtrer par langue
+    if (langue) {
+      query.langues = { $in: [langue] };
+    }
+
+    const talents = await Talent.find(query).sort({ scoreTest: -1, createdAt: -1 });
 
     res.status(200).json({
       success: true,
       count: talents.length,
       data: talents,
+      filters: req.query, // Retourner les filtres appliqués pour debug
     });
   } catch (error) {
     console.error('Erreur filterTalents:', error);
@@ -142,12 +194,18 @@ export const contactTalent = async (req, res) => {
       message,
     });
 
-    // Préparer les données pour l'email à Prince
+    // ✅ Préparer les données pour l'email à Prince (avec nouvelles infos)
     const talentInfo = {
       prenom: talent.prenom,
+      typeProfil: talent.typeProfil,
+      niveau: talent.niveau,
+      typeContrat: talent.typeContrat,
+      anneesExperience: talent.anneesExperience,
       technologies: talent.technologies,
       scoreTest: talent.scoreTest,
       plateforme: talent.plateforme,
+      disponibilite: talent.disponibilite,
+      localisation: talent.localisation,
     };
 
     const recruteurInfo = {
@@ -162,7 +220,7 @@ export const contactTalent = async (req, res) => {
     try {
       await sendEmail({
         to: process.env.ADMIN_EMAIL || 'info@princeaman.dev',
-        subject: `[TalentProof] Nouvelle demande de contact pour ${talent.prenom}`,
+        subject: `[TalentProof] Nouvelle demande de contact pour ${talent.prenom} (${talent.typeProfil} ${talent.niveau})`,
         html: contactNotificationTemplate(talentInfo, recruteurInfo),
       });
     } catch (emailError) {
@@ -190,6 +248,75 @@ export const contactTalent = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur lors de l\'envoi de la demande.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
+/**
+ * @route   GET /api/talents/stats
+ * @desc    Obtenir des statistiques sur les talents
+ * @access  Public
+ */
+export const getTalentsStats = async (req, res) => {
+  try {
+    // Compter par type de profil
+    const profilStats = await Talent.aggregate([
+      { $match: { statut: 'actif' } },
+      { $group: { _id: '$typeProfil', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+
+    // Compter par niveau
+    const niveauStats = await Talent.aggregate([
+      { $match: { statut: 'actif' } },
+      { $group: { _id: '$niveau', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+
+    // Compter par type de contrat
+    const contratStats = await Talent.aggregate([
+      { $match: { statut: 'actif' } },
+      { $group: { _id: '$typeContrat', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+
+    // Technologies les plus demandées (top 10)
+    const techStats = await Talent.aggregate([
+      { $match: { statut: 'actif' } },
+      { $unwind: '$technologies' },
+      { $group: { _id: '$technologies', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 10 }
+    ]);
+
+    // Score moyen
+    const avgScoreResult = await Talent.aggregate([
+      { $match: { statut: 'actif' } },
+      { $group: { _id: null, avgScore: { $avg: '$scoreTest' } } }
+    ]);
+
+    const avgScore = avgScoreResult.length > 0 ? Math.round(avgScoreResult[0].avgScore) : 0;
+
+    // Total talents
+    const totalTalents = await Talent.countDocuments({ statut: 'actif' });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        total: totalTalents,
+        avgScore,
+        byProfil: profilStats,
+        byNiveau: niveauStats,
+        byContrat: contratStats,
+        topTechnologies: techStats,
+      },
+    });
+  } catch (error) {
+    console.error('Erreur getTalentsStats:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des statistiques.',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
