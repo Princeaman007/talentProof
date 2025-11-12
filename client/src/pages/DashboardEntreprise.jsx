@@ -6,9 +6,11 @@ import Sidebar from '../components/dashboard/Sidebar';
 import DashboardHome from './dashboard/Dashboardhome';
 import Profile from './dashboard/Profile';
 import ChangePassword from './dashboard/ChangePassword';
-import TalentsDashboard from './dashboard/TalentsDashboard'; // NOUVEAU
+import TalentsDashboard from './dashboard/TalentsDashboard'; 
 import AdminTalents from './dashboard/AdminTalents';
 import AdminTeam from './dashboard/AdminTeam';
+import AdminDevis from './dashboard/AdminDevis';  
+import AdminPortfolio from './dashboard/AdminPortfolio';
 
 const DashboardEntreprise = () => {
   const { isAdmin } = useAuth();
@@ -33,6 +35,8 @@ const DashboardEntreprise = () => {
                 <>
                   <Route path="/admin/talents" element={<AdminTalents />} />
                   <Route path="/admin/team" element={<AdminTeam />} />
+                  <Route path="/admin/devis" element={<AdminDevis />} />
+                  <Route path="/admin/portfolio" element={<AdminPortfolio />} />
                 </>
               )}
             </Routes>

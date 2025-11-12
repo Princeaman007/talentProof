@@ -10,6 +10,8 @@ import {
   FaSignOutAlt,
   FaBars,
   FaTimes,
+  FaFolder,
+  FaFileInvoice,
 } from 'react-icons/fa';
 
 const Sidebar = () => {
@@ -57,6 +59,18 @@ const Sidebar = () => {
       name: 'Gérer Équipe',
       path: '/dashboard/admin/team',
       icon: FaUserTie,
+      admin: true,
+    },
+    {
+      name: 'Portfolio',
+      path: '/dashboard/admin/portfolio',
+      icon: FaFolder,
+      admin: true,
+    },
+    {
+      name: 'Demandes de Devis',
+      path: '/dashboard/admin/devis',
+      icon: FaFileInvoice,
       admin: true,
     },
   ];

@@ -10,6 +10,9 @@ import Talents from './pages/Talents';
 import ServicesPage from './pages/ServicesPage';
 import About from './pages/About';
 
+// Pages services
+import DevisForm from './pages/services/DevisForm';
+
 // Pages auth
 import Register from './pages/auth/Register';
 import Login from './pages/auth/Login';
@@ -43,6 +46,9 @@ function App() {
               <Route path="/talents" element={<Talents />} />
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/about" element={<About />} />
+
+              {/* Routes services */}
+              <Route path="/services/devis" element={<DevisForm />} />
 
               {/* Routes auth */}
               <Route path="/register" element={<Register />} />
