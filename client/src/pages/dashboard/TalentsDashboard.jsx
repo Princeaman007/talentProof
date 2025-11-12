@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaFilter, FaStar, FaCheckCircle, FaEnvelope, FaTimes, FaBriefcase, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaFilter, FaStar, FaCheckCircle, FaEnvelope, FaTimes, FaBriefcase, FaMapMarkerAlt, FaGlobe, FaUser, FaBuilding } from 'react-icons/fa';
+import api from '../../utils/api';
 
-// ✅ Constantes (en attendant que le fichier constants.js soit configuré)
+// ✅ Constantes (gardées identiques)
 const TECHNOLOGIES = [
   'React.js', 'Vue.js', 'Angular', 'Svelte', 'Next.js', 'Node.js', 'Express',
   'Python', 'Django', 'PHP', 'Laravel', 'Java', 'MongoDB', 'PostgreSQL',
@@ -52,7 +53,9 @@ const TalentsDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
-  
+  const [selectedTalent, setSelectedTalent] = useState(null);
+  const [showContactModal, setShowContactModal] = useState(false);
+
   const [filters, setFilters] = useState({
     technologies: '',
     typeProfil: '',
@@ -71,15 +74,14 @@ const TalentsDashboard = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Construire les params en excluant les valeurs vides
+
       const params = Object.entries(filters).reduce((acc, [key, value]) => {
         if (value) acc[key] = value;
         return acc;
       }, {});
-      
+
       const response = await axios.get('/api/talents/filter', { params });
-      
+
       if (response.data.success && Array.isArray(response.data.data)) {
         setTalents(response.data.data);
       } else {
@@ -113,9 +115,14 @@ const TalentsDashboard = () => {
 
   const hasActiveFilters = Object.values(filters).some(value => value !== '');
 
-  const handleContact = (talentId) => {
-    // TODO: Ouvrir un modal de contact
-    console.log('Contact talent:', talentId);
+  const handleContact = (talent) => {
+    setSelectedTalent(talent);
+    setShowContactModal(true);
+  };
+
+  const closeContactModal = () => {
+    setShowContactModal(false);
+    setSelectedTalent(null);
   };
 
   const getTechBadgeColor = (tech) => TECH_COLORS[tech] || TECH_COLORS.default;
@@ -131,8 +138,7 @@ const TalentsDashboard = () => {
           <h1 className="text-3xl font-bold text-primary">Catalogue de Talents</h1>
           <p className="text-neutral mt-2">Découvrez nos développeurs validés par TalentProof</p>
         </div>
-        
-        {/* Toggle Filtres Mobile */}
+
         <button
           onClick={() => setShowFilters(!showFilters)}
           className="lg:hidden btn-primary"
@@ -149,7 +155,7 @@ const TalentsDashboard = () => {
             <FaFilter className="text-primary text-xl" />
             <h2 className="font-bold text-lg">Filtres de recherche</h2>
           </div>
-          
+
           {hasActiveFilters && (
             <button
               onClick={resetFilters}
@@ -325,8 +331,8 @@ const TalentsDashboard = () => {
             Aucun talent disponible
           </p>
           <p className="text-sm text-neutral mb-4">
-            {hasActiveFilters 
-              ? 'Aucun résultat ne correspond à vos critères. Essayez de modifier vos filtres.' 
+            {hasActiveFilters
+              ? 'Aucun résultat ne correspond à vos critères. Essayez de modifier vos filtres.'
               : 'Les talents seront bientôt ajoutés par l\'administrateur.'}
           </p>
           {hasActiveFilters && (
@@ -338,8 +344,8 @@ const TalentsDashboard = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {talents.map((talent) => (
-            <div 
-              key={talent._id} 
+            <div
+              key={talent._id}
               className="card hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
             >
               {/* Header */}
@@ -359,11 +365,11 @@ const TalentsDashboard = () => {
                   <div>
                     <h3 className="text-xl font-bold text-primary">{talent.prenom}</h3>
                     <p className="text-sm text-neutral">
-                      {talent.anneesExperience === 0 
-                        ? 'Débutant' 
-                        : talent.anneesExperience === 1 
-                          ? '1 an d\'exp.' 
-                          : `${talent.anneesExperience} ans d\'exp.`
+                      {talent.anneeExperience === 0
+                        ? 'Débutant'
+                        : talent.anneeExperience === 1
+                          ? '1 an d\'exp.'
+                          : `${talent.anneeExperience} ans d\'exp.`
                       }
                     </p>
                   </div>
@@ -406,7 +412,7 @@ const TalentsDashboard = () => {
                 </div>
               )}
 
-              {/* Score & Localisation */}
+              {/* Score & Infos */}
               <div className="space-y-2 mb-4">
                 {talent.scoreTest && (
                   <div className="flex items-center gap-2 p-2 bg-gradient-to-r from-secondary/10 to-orange-100 rounded-lg">
@@ -417,7 +423,7 @@ const TalentsDashboard = () => {
                     )}
                   </div>
                 )}
-                
+
                 {talent.localisation && (
                   <div className="flex items-center gap-2 text-sm text-neutral">
                     <FaMapMarkerAlt className="text-primary" />
@@ -432,6 +438,14 @@ const TalentsDashboard = () => {
                     <span className="font-medium text-accent">{talent.disponibilite}</span>
                   </div>
                 )}
+
+                {talent.langues && talent.langues.length > 0 && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <FaGlobe className="text-primary" />
+                    <span className="text-neutral">Langues: </span>
+                    <span className="font-medium text-primary">{talent.langues.join(', ')}</span>
+                  </div>
+                )}
               </div>
 
               {/* Compétences */}
@@ -443,7 +457,7 @@ const TalentsDashboard = () => {
 
               {/* Bouton contact */}
               <button
-                onClick={() => handleContact(talent._id)}
+                onClick={() => handleContact(talent)}
                 className="btn-primary w-full group"
               >
                 <FaEnvelope className="inline mr-2 group-hover:scale-110 transition-transform" />
@@ -462,13 +476,182 @@ const TalentsDashboard = () => {
             <div>
               <p className="font-semibold text-primary mb-1">Comment ça marche ?</p>
               <p className="text-sm text-neutral">
-                Cliquez sur "Contacter ce talent" pour envoyer une demande. Notre équipe vous mettra 
-                en relation avec le développeur et vous enverra son CV complet ainsi que ses coordonnées sous 24-48h.
+                 Cliquez sur "Contacter ce talent" pour envoyer votre demande. Notre équipe TalentProof vous recontactera sous 24-48h pour vous transmettre le CV complet et les coordonnées du développeur.
               </p>
             </div>
           </div>
         </div>
       )}
+
+      {/* ✅ Modal de contact */}
+      {showContactModal && selectedTalent && (
+        <ContactTalentModal
+          talent={selectedTalent}
+          onClose={closeContactModal}
+        />
+      )}
+    </div>
+  );
+};
+
+// ✅ Modal de contact SIMPLIFIÉ - Uniquement le message
+const ContactTalentModal = ({ talent, onClose }) => {
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+
+  // ✅ Récupérer les infos de l'utilisateur connecté
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    setUserInfo(user);
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const payload = {
+        talentId: talent._id,
+        recruteurNom: userInfo?.nom || '',
+        recruteurEmail: userInfo?.email || '',
+        recruteurTel: userInfo?.telephone || '',
+        entreprise: userInfo?.entreprise || '',
+        message: message || 'Je suis intéressé par ce profil.',
+      };
+
+      console.log('📤 Payload envoyé:', payload);
+
+      await api.post('/talents/contact', payload);
+      setSuccess(true);
+
+      // Fermer après 2 secondes
+      setTimeout(() => {
+        onClose();
+      }, 2000);
+    } catch (err) {
+      console.error('❌ Erreur contact:', err);
+      setError(err.response?.data?.message || 'Erreur lors de l\'envoi de la demande');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center p-6 border-b border-gray-200">
+          <div>
+            <h2 className="text-2xl font-bold text-primary">Contacter {talent.prenom}</h2>
+            <p className="text-sm text-neutral mt-1">
+              {talent.typeProfil} {talent.niveau} • {talent.technologies?.slice(0, 3).join(', ')}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <FaTimes size={20} />
+          </button>
+        </div>
+
+        {/* Contenu */}
+        {success ? (
+          <div className="p-8 text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaCheckCircle className="text-4xl text-green-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-primary mb-2">Demande envoyée !</h3>
+            <p className="text-sm text-blue-800">
+              <strong>Prochaines étapes :</strong> Notre équipe vous recontactera sous 24-48h avec le CV complet et les coordonnées directes du talent pour organiser un entretien.
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            {error && (
+              <div className="p-4 bg-red-50 text-red-700 rounded-lg border border-red-200">
+                {error}
+              </div>
+            )}
+
+            {/* ✅ Affichage des infos de l'entreprise (non modifiables) */}
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <h3 className="font-semibold text-primary mb-3 flex items-center gap-2">
+                <FaUser />
+                Vos informations
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                <div>
+                  <span className="text-neutral">Nom:</span>
+                  <p className="font-medium text-primary">{userInfo?.nom || 'Non renseigné'}</p>
+                </div>
+                <div>
+                  <span className="text-neutral">Email:</span>
+                  <p className="font-medium text-primary">{userInfo?.email || 'Non renseigné'}</p>
+                </div>
+                <div>
+                  <span className="text-neutral">Téléphone:</span>
+                  <p className="font-medium text-primary">{userInfo?.telephone || 'Non renseigné'}</p>
+                </div>
+                <div>
+                  <span className="text-neutral flex items-center gap-1">
+                    <FaBuilding className="text-xs" />
+                    Entreprise:
+                  </span>
+                  <p className="font-medium text-primary">{userInfo?.entreprise || 'Non renseigné'}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* ✅ Champ message (optionnel) */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Message (optionnel)
+              </label>
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="input-field"
+                rows="5"
+                placeholder="Décrivez votre projet, vos besoins, ou toute information complémentaire..."
+              />
+              <p className="text-xs text-neutral mt-1">
+                Ce message sera transmis à notre équipe avec votre demande.
+              </p>
+            </div>
+
+            {/* Info */}
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800">
+                💡 <strong>Prochaines étapes :</strong> Notre équipe vous recontactera sous 24-48h avec le CV complet et les coordonnées directes du talent pour organiser un entretien.
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3 pt-4 border-t">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              >
+                Annuler
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 btn-primary py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <FaEnvelope className="inline mr-2" />
+                {loading ? 'Envoi en cours...' : 'Envoyer la demande'}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   );
 };

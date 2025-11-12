@@ -7,7 +7,7 @@ import TeamMember from '../models/TeamMember.js';
  */
 export const getAllTeamMembers = async (req, res) => {
   try {
-    const teamMembers = await TeamMember.find().sort({ ordre: 1 });
+    const teamMembers = await TeamMember.find().sort({ ordre: 1, createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -31,18 +31,7 @@ export const getAllTeamMembers = async (req, res) => {
  */
 export const createTeamMember = async (req, res) => {
   try {
-    const { nom, photo, position, specialite, description, linkedIn, twitter, ordre } = req.body;
-
-    const teamMember = await TeamMember.create({
-      nom,
-      photo,
-      position,
-      specialite,
-      description,
-      linkedIn,
-      twitter,
-      ordre: ordre || 0,
-    });
+    const teamMember = await TeamMember.create(req.body);
 
     res.status(201).json({
       success: true,
@@ -51,9 +40,9 @@ export const createTeamMember = async (req, res) => {
     });
   } catch (error) {
     console.error('Erreur createTeamMember:', error);
-    res.status(500).json({
+    res.status(400).json({
       success: false,
-      message: 'Erreur lors de l\'ajout du membre.',
+      message: error.message || 'Erreur lors de l\'ajout du membre.',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
@@ -66,9 +55,11 @@ export const createTeamMember = async (req, res) => {
  */
 export const updateTeamMember = async (req, res) => {
   try {
-    const { nom, photo, position, specialite, description, linkedIn, twitter, ordre } = req.body;
-
-    const teamMember = await TeamMember.findById(req.params.id);
+    const teamMember = await TeamMember.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
 
     if (!teamMember) {
       return res.status(404).json({
@@ -77,18 +68,6 @@ export const updateTeamMember = async (req, res) => {
       });
     }
 
-    // Mettre à jour les champs
-    if (nom) teamMember.nom = nom;
-    if (photo) teamMember.photo = photo;
-    if (position) teamMember.position = position;
-    if (specialite) teamMember.specialite = specialite;
-    if (description) teamMember.description = description;
-    if (linkedIn !== undefined) teamMember.linkedIn = linkedIn;
-    if (twitter !== undefined) teamMember.twitter = twitter;
-    if (ordre !== undefined) teamMember.ordre = ordre;
-
-    await teamMember.save();
-
     res.status(200).json({
       success: true,
       message: 'Membre mis à jour avec succès.',
@@ -96,9 +75,9 @@ export const updateTeamMember = async (req, res) => {
     });
   } catch (error) {
     console.error('Erreur updateTeamMember:', error);
-    res.status(500).json({
+    res.status(400).json({
       success: false,
-      message: 'Erreur lors de la mise à jour du membre.',
+      message: error.message || 'Erreur lors de la mise à jour du membre.',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
@@ -111,7 +90,7 @@ export const updateTeamMember = async (req, res) => {
  */
 export const deleteTeamMember = async (req, res) => {
   try {
-    const teamMember = await TeamMember.findById(req.params.id);
+    const teamMember = await TeamMember.findByIdAndDelete(req.params.id);
 
     if (!teamMember) {
       return res.status(404).json({
@@ -119,8 +98,6 @@ export const deleteTeamMember = async (req, res) => {
         message: 'Membre introuvable.',
       });
     }
-
-    await teamMember.deleteOne();
 
     res.status(200).json({
       success: true,

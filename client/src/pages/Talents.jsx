@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { FaUsers, FaSearch, FaFilter } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { FaUsers, FaSearch, FaFilter, FaLock } from 'react-icons/fa';
 import api from '../utils/api';
 import TalentCard from '../components/talents/TalentCard';
 import FilterBar from '../components/talents/FilterBar';
 import ContactTalentModal from '../components/talents/ContactTalentModal';
 
 const Talents = () => {
+  const navigate = useNavigate();
   const [talents, setTalents] = useState([]);
   const [filteredTalents, setFilteredTalents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,6 +15,13 @@ const Talents = () => {
   const [selectedTechs, setSelectedTechs] = useState([]);
   const [selectedTalent, setSelectedTalent] = useState(null);
   const [showFilters, setShowFilters] = useState(true);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
+  // ✅ Vérifier si l'utilisateur est connecté
+  const isAuthenticated = () => {
+    const token = localStorage.getItem('token');
+    return !!token;
+  };
 
   // Charger tous les talents
   useEffect(() => {
@@ -28,6 +37,7 @@ const Talents = () => {
     try {
       setLoading(true);
       const response = await api.get('/talents');
+      
       setTalents(response.data.data);
       setFilteredTalents(response.data.data);
       setError('');
@@ -54,8 +64,25 @@ const Talents = () => {
     setSelectedTechs(techs);
   };
 
+  // ✅ MODIFIÉ - Vérifier l'authentification avant de contacter
   const handleContact = (talent) => {
-    setSelectedTalent(talent);
+    if (isAuthenticated()) {
+      // Si connecté, ouvrir le modal de contact
+      setSelectedTalent(talent);
+    } else {
+      // Si non connecté, afficher le prompt de connexion
+      setShowLoginPrompt(true);
+    }
+  };
+
+  // ✅ Rediriger vers la page de connexion
+  const handleLogin = () => {
+    navigate('/login');
+  };
+
+  // ✅ Rediriger vers la page d'inscription
+  const handleRegister = () => {
+    navigate('/register');
   };
 
   if (loading) {
@@ -82,6 +109,23 @@ const Talents = () => {
             Découvrez nos talents tech validés en conditions réelles. Tous ont réussi des tests
             pratiques sans IA.
           </p>
+          
+          {/* ✅ AJOUT - Message pour les non-connectés */}
+          {!isAuthenticated() && (
+            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg max-w-2xl mx-auto">
+              <p className="text-sm text-blue-800">
+                💡 <strong>Entreprise ?</strong> Connectez-vous pour contacter nos talents et accéder à leurs profils complets.
+              </p>
+              <div className="flex gap-3 justify-center mt-3">
+                <button onClick={handleLogin} className="btn-primary text-sm px-6 py-2">
+                  Se connecter
+                </button>
+                <button onClick={handleRegister} className="btn-outline text-sm px-6 py-2">
+                  Créer un compte
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Stats */}
@@ -152,8 +196,37 @@ const Talents = () => {
         </div>
       </div>
 
-      {/* Modal Contact */}
-      {selectedTalent && (
+      {/* ✅ Modal de connexion requis */}
+      {showLoginPrompt && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full p-8 text-center">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaLock className="text-3xl text-primary" />
+            </div>
+            <h2 className="text-2xl font-bold text-primary mb-3">Connexion requise</h2>
+            <p className="text-neutral mb-6">
+              Pour contacter nos talents et accéder à leurs profils complets, vous devez être connecté avec un compte entreprise.
+            </p>
+            <div className="flex flex-col gap-3">
+              <button onClick={handleLogin} className="btn-primary w-full py-3">
+                Se connecter
+              </button>
+              <button onClick={handleRegister} className="btn-outline w-full py-3">
+                Créer un compte entreprise
+              </button>
+              <button
+                onClick={() => setShowLoginPrompt(false)}
+                className="text-neutral hover:text-primary transition-colors"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ✅ Modal Contact - Seulement si authentifié */}
+      {selectedTalent && isAuthenticated() && (
         <ContactTalentModal talent={selectedTalent} onClose={() => setSelectedTalent(null)} />
       )}
     </div>

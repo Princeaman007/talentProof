@@ -18,21 +18,22 @@ const AddTeamMemberModal = ({ onClose, onSuccess }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError('');
 
-    try {
-      await api.post('/admin/team', formData);
-      onSuccess('Membre ajouté avec succès !');
-    } catch (error) {
-      console.error('Erreur ajout:', error);
-      setError(error.response?.data?.message || 'Erreur lors de l\'ajout');
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    
+    await api.post('/team', formData);
+    onSuccess('Membre ajouté avec succès !');
+  } catch (error) {
+    console.error('Erreur ajout:', error);
+    setError(error.response?.data?.message || 'Erreur lors de l\'ajout');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

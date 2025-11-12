@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api'; // ✅ Import corrigé
 import { useAuth } from '../../context/AuthContext';
 import { FaUsers, FaCheckCircle, FaEnvelope, FaSpinner } from 'react-icons/fa';
 
@@ -13,7 +13,6 @@ const DashboardHome = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  // ✅ Récupérer les statistiques au chargement
   useEffect(() => {
     fetchStats();
   }, []);
@@ -22,32 +21,30 @@ const DashboardHome = () => {
     try {
       setLoading(true);
       
-      // Récupérer le nombre de talents
-      const talentsResponse = await axios.get('/api/talents');
+      console.log('🔍 isAdmin:', isAdmin);
+      
+      // ✅ Récupérer le nombre de talents (route publique)
+      const talentsResponse = await api.get('/talents');
       const talentsCount = talentsResponse.data.count || 0;
       
-      // Récupérer le nombre d'entreprises (si admin)
       let entreprisesCount = 0;
+      let tauxSucces = 0;
+      
+      // ✅ Si admin, récupérer les stats complètes en une seule requête
       if (isAdmin) {
         try {
-          const entreprisesResponse = await axios.get('/api/admin/entreprises/count');
-          entreprisesCount = entreprisesResponse.data.count || 0;
+          console.log('📊 Récupération des stats admin...');
+          const statsResponse = await api.get('/admin/stats'); // ✅ Utilise api, pas axios
+          console.log('✅ Stats reçues:', statsResponse.data);
+          
+          entreprisesCount = statsResponse.data.entreprisesCount || 0;
+          tauxSucces = statsResponse.data.tauxSucces || 0;
         } catch (error) {
-          console.log('Impossible de récupérer le nombre d\'entreprises');
-          entreprisesCount = 0;
+          console.error('❌ Erreur stats admin:', error.response?.data || error.message);
         }
       }
       
-      // Calculer le taux de succès (si tu as les données)
-      // Sinon, laisser à 0
-      let tauxSucces = 0;
-      try {
-        const statsResponse = await axios.get('/api/admin/stats');
-        tauxSucces = statsResponse.data.tauxSucces || 0;
-      } catch (error) {
-        console.log('Impossible de récupérer le taux de succès');
-        tauxSucces = 0;
-      }
+      console.log('📊 Stats finales:', { talentsCount, entreprisesCount, tauxSucces });
       
       setStats({
         talentsCount,
@@ -55,8 +52,7 @@ const DashboardHome = () => {
         tauxSucces,
       });
     } catch (error) {
-      console.error('Erreur lors de la récupération des stats:', error);
-      // ✅ En cas d'erreur, tout reste à 0
+      console.error('❌ Erreur générale:', error);
       setStats({
         talentsCount: 0,
         entreprisesCount: 0,
@@ -81,7 +77,7 @@ const DashboardHome = () => {
         </p>
       </div>
 
-      {/* Stats Cards - ✅ DYNAMIQUES - AUCUNE VALEUR PAR DÉFAUT */}
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Talents validés */}
         <div className="card bg-gradient-to-br from-primary to-primary-dark text-white">
@@ -121,12 +117,12 @@ const DashboardHome = () => {
         <div className="card bg-gradient-to-br from-accent to-green-600 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm opacity-90">Entreprises</p>
+              <p className="text-sm opacity-90">Entreprises inscrites</p>
               {loading ? (
                 <FaSpinner className="animate-spin text-2xl mt-1" />
               ) : (
                 <p className="text-3xl font-bold mt-1">
-                  {stats.entreprisesCount}
+                  {isAdmin ? stats.entreprisesCount : '—'}
                 </p>
               )}
             </div>
@@ -231,7 +227,7 @@ const DashboardHome = () => {
             <p className="text-neutral text-sm">
               {isAdmin
                 ? stats.talentsCount > 0
-                  ? `Vous gérez actuellement ${stats.talentsCount} talent${stats.talentsCount > 1 ? 's' : ''} validé${stats.talentsCount > 1 ? 's' : ''}. Utilisez le panneau d'administration pour ajouter de nouveaux profils ou modifier les existants.`
+                  ? `Vous gérez actuellement ${stats.talentsCount} talent${stats.talentsCount > 1 ? 's' : ''} validé${stats.talentsCount > 1 ? 's' : ''} et ${stats.entreprisesCount} entreprise${stats.entreprisesCount > 1 ? 's' : ''} inscrite${stats.entreprisesCount > 1 ? 's' : ''}.`
                   : 'Aucun talent dans la base de données. Commencez par ajouter votre premier talent via "Gérer les talents".'
                 : stats.talentsCount > 0
                   ? `Explorez notre catalogue de ${stats.talentsCount} développeur${stats.talentsCount > 1 ? 's' : ''} validé${stats.talentsCount > 1 ? 's' : ''}. Utilisez les filtres par technologie pour trouver rapidement les talents qui correspondent à vos besoins.`

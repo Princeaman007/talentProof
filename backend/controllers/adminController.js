@@ -1,5 +1,6 @@
 import Talent from '../models/Talent.js';
 import ContactRequest from '../models/ContactRequest.js';
+import Company from '../models/Company.js';
 
 /**
  * @route   POST /api/admin/talents
@@ -8,18 +9,52 @@ import ContactRequest from '../models/ContactRequest.js';
  */
 export const createTalent = async (req, res) => {
   try {
-    const { prenom, photo, technologies, competences, scoreTest, plateforme, anneeExperience, statut } = req.body;
+    console.log('📥 Données reçues dans adminController:', req.body);
 
-    const talent = await Talent.create({
+    const {
       prenom,
       photo,
+      typeProfil,
+      niveau,
+      typeContrat,
+      anneeExperience,
       technologies,
       competences,
       scoreTest,
       plateforme,
+      disponibilite,
+      localisation,
+      langues,
+      tarifJournalier,
+      portfolio,
+      github,
+      linkedin,
+      statut,
+    } = req.body;
+
+    // ✅ Créer le talent avec TOUS les champs
+    const talent = await Talent.create({
+      prenom,
+      photo,
+      typeProfil,
+      niveau,
+      typeContrat,
       anneeExperience,
+      technologies,
+      competences,
+      scoreTest,
+      plateforme,
+      disponibilite,
+      localisation,
+      langues,
+      tarifJournalier,
+      portfolio,
+      github,
+      linkedin,
       statut: statut || 'actif',
     });
+
+    console.log('✅ Talent créé avec succès:', talent);
 
     res.status(201).json({
       success: true,
@@ -27,7 +62,22 @@ export const createTalent = async (req, res) => {
       data: talent,
     });
   } catch (error) {
-    console.error('Erreur createTalent:', error);
+    console.error('❌ Erreur createTalent:', error);
+    
+    // ✅ Meilleure gestion des erreurs de validation
+    if (error.name === 'ValidationError') {
+      const errors = Object.values(error.errors).map(err => ({
+        msg: err.message,
+        field: err.path
+      }));
+      
+      return res.status(400).json({
+        success: false,
+        message: 'Erreur de validation',
+        errors,
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la création du talent.',
@@ -67,7 +117,8 @@ export const getAllTalentsAdmin = async (req, res) => {
  */
 export const updateTalent = async (req, res) => {
   try {
-    const { prenom, photo, technologies, competences, scoreTest, plateforme, anneeExperience, statut } = req.body;
+    console.log('📝 Mise à jour du talent:', req.params.id);
+    console.log('📥 Données reçues:', req.body);
 
     const talent = await Talent.findById(req.params.id);
 
@@ -78,17 +129,51 @@ export const updateTalent = async (req, res) => {
       });
     }
 
-    // Mettre à jour les champs
-    if (prenom) talent.prenom = prenom;
+    // ✅ Mettre à jour TOUS les champs possibles
+    const {
+      prenom,
+      photo,
+      typeProfil,
+      niveau,
+      typeContrat,
+      anneeExperience,
+      technologies,
+      competences,
+      scoreTest,
+      plateforme,
+      disponibilite,
+      localisation,
+      langues,
+      tarifJournalier,
+      portfolio,
+      github,
+      linkedin,
+      statut,
+    } = req.body;
+
+    // Mettre à jour uniquement les champs fournis
+    if (prenom !== undefined) talent.prenom = prenom;
     if (photo !== undefined) talent.photo = photo;
-    if (technologies) talent.technologies = technologies;
-    if (competences) talent.competences = competences;
+    if (typeProfil !== undefined) talent.typeProfil = typeProfil;
+    if (niveau !== undefined) talent.niveau = niveau;
+    if (typeContrat !== undefined) talent.typeContrat = typeContrat;
+    if (anneeExperience !== undefined) talent.anneeExperience = anneeExperience;
+    if (technologies !== undefined) talent.technologies = technologies;
+    if (competences !== undefined) talent.competences = competences;
     if (scoreTest !== undefined) talent.scoreTest = scoreTest;
-    if (plateforme) talent.plateforme = plateforme;
-    if (anneeExperience) talent.anneeExperience = anneeExperience;
-    if (statut) talent.statut = statut;
+    if (plateforme !== undefined) talent.plateforme = plateforme;
+    if (disponibilite !== undefined) talent.disponibilite = disponibilite;
+    if (localisation !== undefined) talent.localisation = localisation;
+    if (langues !== undefined) talent.langues = langues;
+    if (tarifJournalier !== undefined) talent.tarifJournalier = tarifJournalier;
+    if (portfolio !== undefined) talent.portfolio = portfolio;
+    if (github !== undefined) talent.github = github;
+    if (linkedin !== undefined) talent.linkedin = linkedin;
+    if (statut !== undefined) talent.statut = statut;
 
     await talent.save();
+
+    console.log('✅ Talent mis à jour:', talent);
 
     res.status(200).json({
       success: true,
@@ -96,7 +181,21 @@ export const updateTalent = async (req, res) => {
       data: talent,
     });
   } catch (error) {
-    console.error('Erreur updateTalent:', error);
+    console.error('❌ Erreur updateTalent:', error);
+    
+    if (error.name === 'ValidationError') {
+      const errors = Object.values(error.errors).map(err => ({
+        msg: err.message,
+        field: err.path
+      }));
+      
+      return res.status(400).json({
+        success: false,
+        message: 'Erreur de validation',
+        errors,
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la mise à jour du talent.',
@@ -194,6 +293,67 @@ export const updateContactRequestStatus = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la mise à jour du statut.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
+/**
+ * @route   GET /api/admin/entreprises/count
+ * @desc    Obtenir le nombre d'entreprises inscrites
+ * @access  Private/Admin
+ */
+export const getEntreprisesCount = async (req, res) => {
+  try {
+    // ✅ Compter toutes les entreprises inscrites
+    const count = await Company.countDocuments();
+
+    res.status(200).json({
+      success: true,
+      count,
+    });
+  } catch (error) {
+    console.error('❌ Erreur getEntreprisesCount:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération du nombre d\'entreprises',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
+/**
+ * @route   GET /api/admin/stats
+ * @desc    Obtenir les statistiques globales
+ * @access  Private/Admin
+ */
+export const getGlobalStats = async (req, res) => {
+  try {
+    // Nombre total de talents actifs
+    const talentsCount = await Talent.countDocuments({ statut: 'actif' });
+    
+    // Nombre total de demandes de contact
+    const contactRequestsCount = await ContactRequest.countDocuments();
+    
+    // ✅ Nombre d'entreprises inscrites
+    const entreprisesCount = await Company.countDocuments();
+    
+    // Calculer le taux de succès (% de talents en mission)
+    const talentsEnMission = await Talent.countDocuments({ statut: 'en_mission' });
+    const tauxSucces = talentsCount > 0 ? Math.round((talentsEnMission / talentsCount) * 100) : 0;
+
+    res.status(200).json({
+      success: true,
+      talentsCount,
+      entreprisesCount,
+      contactRequestsCount,
+      tauxSucces,
+    });
+  } catch (error) {
+    console.error('❌ Erreur getGlobalStats:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des statistiques',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }

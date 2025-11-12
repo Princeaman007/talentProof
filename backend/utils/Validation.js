@@ -1,4 +1,3 @@
-
 import { body, validationResult } from 'express-validator';
 
 /**
@@ -84,13 +83,25 @@ export const resetPasswordValidation = [
 ];
 
 /**
- * Validation pour création/modification talent
+ * ✅ CORRIGÉ - Validation pour création/modification talent
  */
 export const talentValidation = [
   body('prenom')
     .trim()
     .notEmpty().withMessage('Le prénom est requis')
     .isLength({ min: 2 }).withMessage('Le prénom doit contenir au moins 2 caractères'),
+  
+  body('typeProfil')
+    .optional()
+    .isIn(['Frontend', 'Backend', 'Full-stack', 'Mobile', 'DevOps', 'Data']).withMessage('Type de profil invalide'),
+  
+  body('niveau')
+    .optional()
+    .isIn(['Junior', 'Medior', 'Senior']).withMessage('Niveau invalide'),
+  
+  body('typeContrat')
+    .optional()
+    .isIn(['CDI', 'CDD', 'Freelance', 'Stage', 'Alternance']).withMessage('Type de contrat invalide'),
   
   body('technologies')
     .isArray({ min: 1 }).withMessage('Au moins une technologie est requise'),
@@ -109,8 +120,42 @@ export const talentValidation = [
     .isIn(['Codingame', 'HackerRank', 'LeetCode', 'CodeWars', 'Autre']).withMessage('Plateforme invalide'),
   
   body('anneeExperience')
-    .trim()
-    .notEmpty().withMessage('L\'année d\'expérience/formation est requise'),
+    .notEmpty().withMessage('Les années d\'expérience sont requises')
+    .isNumeric().withMessage('Les années d\'expérience doivent être un nombre')
+    .isInt({ min: 0, max: 50 }).withMessage('Les années d\'expérience doivent être entre 0 et 50'),
+  
+  body('disponibilite')
+    .optional()
+    .isIn(['Immédiate', '1-2 semaines', '1 mois', 'Non disponible']).withMessage('Disponibilité invalide'),
+  
+  body('localisation')
+    .optional()
+    .trim(),
+  
+  body('langues')
+    .optional()
+    .isArray().withMessage('Les langues doivent être un tableau'),
+  
+  body('tarifJournalier')
+    .optional()
+    .isNumeric().withMessage('Le tarif journalier doit être un nombre')
+    .isInt({ min: 0 }).withMessage('Le tarif journalier doit être positif'),
+  
+  body('portfolio')
+    .optional()
+    .isURL().withMessage('URL du portfolio invalide'),
+  
+  body('github')
+    .optional()
+    .isURL().withMessage('URL GitHub invalide'),
+  
+  body('linkedin')
+    .optional()
+    .isURL().withMessage('URL LinkedIn invalide'),
+  
+  body('statut')
+    .optional()
+    .isIn(['actif', 'inactif', 'en_mission']).withMessage('Statut invalide'),
   
   validate,
 ];
@@ -152,7 +197,7 @@ export const contactRequestValidation = [
 ];
 
 /**
- * Validation pour membre d'équipe
+ * ✅ Validation pour membre d'équipe - CORRIGÉE
  */
 export const teamMemberValidation = [
   body('nom')
@@ -160,26 +205,31 @@ export const teamMemberValidation = [
     .notEmpty().withMessage('Le nom est requis')
     .isLength({ min: 2 }).withMessage('Le nom doit contenir au moins 2 caractères'),
   
-  body('position')
+  body('prenom')
     .trim()
-    .notEmpty().withMessage('La position est requise'),
+    .notEmpty().withMessage('Le prénom est requis')
+    .isLength({ min: 2 }).withMessage('Le prénom doit contenir au moins 2 caractères'),
   
-  body('specialite')
+  body('poste')
     .trim()
-    .notEmpty().withMessage('La spécialité est requise'),
+    .notEmpty().withMessage('Le poste est requis'),
   
-  body('description')
+  body('bio')
     .trim()
-    .notEmpty().withMessage('La description est requise')
-    .isLength({ min: 20 }).withMessage('La description doit contenir au moins 20 caractères'),
+    .notEmpty().withMessage('La biographie est requise')
+    .isLength({ min: 20 }).withMessage('La biographie doit contenir au moins 20 caractères'),
   
-  body('linkedIn')
-    .optional()
+  // ✅ CORRECTION : Utiliser optional({ values: 'falsy' }) pour permettre les chaînes vides
+  body('email')
+    .optional({ values: 'falsy' })
+    .trim()
+    .isEmail().withMessage('Email invalide')
+    .normalizeEmail(),
+  
+  body('linkedin')
+    .optional({ values: 'falsy' })
+    .trim()
     .isURL().withMessage('URL LinkedIn invalide'),
-  
-  body('twitter')
-    .optional()
-    .isURL().withMessage('URL Twitter invalide'),
   
   validate,
 ];

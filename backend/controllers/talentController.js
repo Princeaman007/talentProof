@@ -86,11 +86,11 @@ export const filterTalents = async (req, res) => {
       if (maxScore) query.scoreTest.$lte = parseInt(maxScore);
     }
 
-    // ✅ NOUVEAU - Filtrer par années d'expérience
+    // ✅ CORRIGÉ - Filtrer par années d'expérience (SANS S)
     if (experienceMin !== undefined || experienceMax !== undefined) {
-      query.anneesExperience = {};
-      if (experienceMin !== undefined) query.anneesExperience.$gte = parseInt(experienceMin);
-      if (experienceMax !== undefined) query.anneesExperience.$lte = parseInt(experienceMax);
+      query.anneeExperience = {};
+      if (experienceMin !== undefined) query.anneeExperience.$gte = parseInt(experienceMin);
+      if (experienceMax !== undefined) query.anneeExperience.$lte = parseInt(experienceMax);
     }
 
     // ✅ NOUVEAU - Filtrer par localisation (recherche partielle)
@@ -194,13 +194,13 @@ export const contactTalent = async (req, res) => {
       message,
     });
 
-    // ✅ Préparer les données pour l'email à Prince (avec nouvelles infos)
+    // ✅ CORRIGÉ - Préparer les données pour l'email à Prince (SANS S)
     const talentInfo = {
       prenom: talent.prenom,
       typeProfil: talent.typeProfil,
       niveau: talent.niveau,
       typeContrat: talent.typeContrat,
-      anneesExperience: talent.anneesExperience,
+      anneeExperience: talent.anneeExperience, // ✅ SANS S
       technologies: talent.technologies,
       scoreTest: talent.scoreTest,
       plateforme: talent.plateforme,
@@ -317,6 +317,100 @@ export const getTalentsStats = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des statistiques.',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+/**
+ * @route   POST /api/admin/talents
+ * @desc    Créer un nouveau talent (Admin seulement)
+ * @access  Private/Admin
+ */
+export const createTalent = async (req, res) => {
+  try {
+    console.log('📥 Données reçues dans le backend:', req.body);
+
+    const {
+      prenom,
+      photo,
+      typeProfil,
+      niveau,
+      typeContrat,
+      anneeExperience,
+      technologies,
+      competences,
+      scoreTest,
+      plateforme,
+      disponibilite,
+      localisation,
+      langues,
+      tarifJournalier,
+      portfolio,
+      github,
+      linkedin,
+      statut,
+    } = req.body;
+
+    // Validation basique
+    if (!prenom || !technologies || technologies.length === 0 || !competences) {
+      return res.status(400).json({
+        success: false,
+        message: 'Champs obligatoires manquants',
+        errors: [
+          { msg: 'Le prénom, les technologies et les compétences sont obligatoires' }
+        ]
+      });
+    }
+
+    // Créer le talent
+    const talent = await Talent.create({
+      prenom,
+      photo,
+      typeProfil,
+      niveau,
+      typeContrat,
+      anneeExperience,
+      technologies,
+      competences,
+      scoreTest,
+      plateforme,
+      disponibilite,
+      localisation,
+      langues,
+      tarifJournalier,
+      portfolio,
+      github,
+      linkedin,
+      statut,
+    });
+
+    console.log('✅ Talent créé:', talent);
+
+    res.status(201).json({
+      success: true,
+      message: 'Talent créé avec succès',
+      data: talent,
+    });
+  } catch (error) {
+    console.error('❌ Erreur createTalent:', error);
+    
+    // Erreur de validation Mongoose
+    if (error.name === 'ValidationError') {
+      const errors = Object.values(error.errors).map(err => ({
+        msg: err.message,
+        field: err.path
+      }));
+      
+      return res.status(400).json({
+        success: false,
+        message: 'Erreur de validation',
+        errors,
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la création du talent',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }

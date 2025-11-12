@@ -24,7 +24,7 @@ const EditTalentModal = ({ talent, onClose, onSuccess }) => {
     typeProfil: 'Full-stack',
     niveau: 'Junior',
     typeContrat: 'CDI',
-    anneesExperience: 0,
+    anneeExperience: 0,  // ✅ SANS S
     technologies: [],
     competences: '',
     scoreTest: '',
@@ -50,7 +50,7 @@ const EditTalentModal = ({ talent, onClose, onSuccess }) => {
         typeProfil: talent.typeProfil || 'Full-stack',
         niveau: talent.niveau || 'Junior',
         typeContrat: talent.typeContrat || 'CDI',
-        anneesExperience: talent.anneesExperience || 0,
+        anneeExperience: talent.anneeExperience || 0,  // ✅ SANS S
         technologies: talent.technologies || [],
         competences: talent.competences || '',
         scoreTest: talent.scoreTest || '',
@@ -103,14 +103,16 @@ const EditTalentModal = ({ talent, onClose, onSuccess }) => {
       const payload = {
         ...formData,
         scoreTest: Number(formData.scoreTest),
-        anneesExperience: Number(formData.anneesExperience),
+        anneeExperience: Number(formData.anneeExperience),  // ✅ SANS S
         tarifJournalier: formData.tarifJournalier ? Number(formData.tarifJournalier) : null,
       };
+
+      console.log('📤 Payload envoyé:', payload);  // ✅ DEBUG
 
       await api.put(`/admin/talents/${talent._id}`, payload);
       onSuccess('Talent modifié avec succès !');
     } catch (error) {
-      console.error('Erreur modification:', error);
+      console.error('❌ Erreur modification:', error);
       setError(error.response?.data?.message || 'Erreur lors de la modification');
     } finally {
       setLoading(false);
@@ -238,8 +240,8 @@ const EditTalentModal = ({ talent, onClose, onSuccess }) => {
                 </label>
                 <input
                   type="number"
-                  name="anneesExperience"
-                  value={formData.anneesExperience}
+                  name="anneeExperience"  // ✅ SANS S
+                  value={formData.anneeExperience}  // ✅ SANS S
                   onChange={handleChange}
                   className="input-field"
                   min="0"
@@ -412,6 +414,9 @@ const EditTalentModal = ({ talent, onClose, onSuccess }) => {
                   <option key={langue} value={langue}>{langue}</option>
                 ))}
               </select>
+              <p className="text-xs text-gray-500 mt-1">
+                {formData.langues.length} langue(s) sélectionnée(s)
+              </p>
             </div>
           </div>
 
@@ -500,7 +505,7 @@ const EditTalentModal = ({ talent, onClose, onSuccess }) => {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 btn-primary py-3"
+              className="flex-1 btn-primary py-3 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FaSave className="inline mr-2" />
               {loading ? 'Enregistrement...' : 'Enregistrer les modifications'}

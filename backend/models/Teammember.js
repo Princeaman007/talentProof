@@ -6,30 +6,33 @@ const teamMemberSchema = new mongoose.Schema({
     required: [true, 'Le nom est requis'],
     trim: true,
   },
+  prenom: {
+    type: String,
+    required: [true, 'Le prénom est requis'],
+    trim: true,
+  },
   photo: {
-    type: String,
-    required: [true, 'La photo est requise'],
-  },
-  position: {
-    type: String,
-    required: [true, 'La position est requise'],
-    trim: true,
-  },
-  specialite: {
-    type: String,
-    required: [true, 'La spécialité est requise'],
-    trim: true,
-  },
-  description: {
-    type: String,
-    required: [true, 'La description est requise'],
-  },
-  linkedIn: {
     type: String,
     default: null,
   },
-  twitter: {
+  poste: {
     type: String,
+    required: [true, 'Le poste est requis'],
+    trim: true,
+  },
+  bio: {
+    type: String,
+    required: [true, 'La biographie est requise'],
+  },
+  email: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    default: null,
+  },
+  linkedin: {
+    type: String,
+    trim: true,
     default: null,
   },
   ordre: {

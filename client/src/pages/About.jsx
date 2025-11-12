@@ -260,7 +260,7 @@ const About = () => {
               Créer un compte entreprise
             </a>
             <a
-              href="/talents"
+              href="dashboard/talents"
               className="px-8 py-3 bg-white text-primary rounded-lg font-semibold hover:bg-gray-100 transition-colors"
             >
               Découvrir les talents

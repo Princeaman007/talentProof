@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import api from '../../utils/api';
-import { FaTimes, FaSave } from 'react-icons/fa';
+import { FaTimes, FaSave, FaExclamationTriangle } from 'react-icons/fa';
 
 // Constantes
 const TECHNOLOGIES = [
@@ -24,7 +24,7 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
     typeProfil: 'Full-stack',
     niveau: 'Junior',
     typeContrat: 'CDI',
-    anneesExperience: 0,
+    anneeExperience: 0,
     technologies: [],
     competences: '',
     scoreTest: '',
@@ -40,52 +40,126 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [competencesWarning, setCompetencesWarning] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    
+    let finalValue = value;
+    
+    // ✅ Conversion pour les champs numériques
+    if (name === 'anneeExperience') {
+      finalValue = value === '' ? 0 : Number(value);
+    } else if (name === 'scoreTest' || name === 'tarifJournalier') {
+      finalValue = value === '' ? '' : Number(value);
+    }
+    
+    console.log(`🔄 Changement de ${name}:`, value, '→', finalValue);
+    
+    setFormData(prevData => {
+      const newData = { ...prevData, [name]: finalValue };
+      console.log('📊 FormData mis à jour:', newData);
+      return newData;
+    });
+
+    // ✅ Validation en temps réel pour les compétences
+    if (name === 'competences') {
+      if (value.trim().length > 0 && value.trim().length < 10) {
+        setCompetencesWarning('⚠️ Les compétences doivent contenir au moins 10 caractères');
+      } else {
+        setCompetencesWarning('');
+      }
+    }
   };
 
   const handleTechnologiesChange = (e) => {
-    const options = e.target.options;
-    const selected = [];
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].selected) {
-        selected.push(options[i].value);
-      }
-    }
-    setFormData({ ...formData, technologies: selected });
+    const options = Array.from(e.target.selectedOptions);
+    const selected = options.map(option => option.value);
+    
+    console.log('💻 Technologies sélectionnées:', selected);
+    
+    setFormData(prevData => {
+      const newData = { ...prevData, technologies: selected };
+      console.log('📊 FormData mis à jour:', newData);
+      return newData;
+    });
   };
 
   const handleLanguesChange = (e) => {
-    const options = e.target.options;
-    const selected = [];
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].selected) {
-        selected.push(options[i].value);
-      }
-    }
-    setFormData({ ...formData, langues: selected });
+    const options = Array.from(e.target.selectedOptions);
+    const selected = options.map(option => option.value);
+    
+    console.log('🗣️ Langues sélectionnées:', selected);
+    
+    setFormData(prevData => {
+      const newData = { ...prevData, langues: selected };
+      console.log('📊 FormData mis à jour:', newData);
+      return newData;
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    console.log('📝 FormData avant validation:', formData);
+    
     setLoading(true);
     setError('');
 
+    // ✅ Validation avant soumission
+    if (formData.competences.trim().length < 10) {
+      setError('Les compétences doivent contenir au moins 10 caractères');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.technologies.length === 0) {
+      setError('Veuillez sélectionner au moins une technologie');
+      setLoading(false);
+      return;
+    }
+
     try {
       const payload = {
-        ...formData,
+        prenom: formData.prenom,
+        photo: formData.photo || undefined,
+        typeProfil: formData.typeProfil,
+        niveau: formData.niveau,
+        typeContrat: formData.typeContrat,
+        anneeExperience: Number(formData.anneeExperience),
+        technologies: formData.technologies,
+        competences: formData.competences.trim(),
         scoreTest: Number(formData.scoreTest),
-        anneesExperience: Number(formData.anneesExperience),
-        tarifJournalier: formData.tarifJournalier ? Number(formData.tarifJournalier) : null,
+        plateforme: formData.plateforme,
+        disponibilite: formData.disponibilite,
+        localisation: formData.localisation.trim(),
+        langues: formData.langues,
+        tarifJournalier: formData.tarifJournalier ? Number(formData.tarifJournalier) : undefined,
+        portfolio: formData.portfolio || undefined,
+        github: formData.github || undefined,
+        linkedin: formData.linkedin || undefined,
+        statut: formData.statut,
       };
 
-      await api.post('/admin/talents', payload);
+      console.log('📤 Payload final envoyé:', payload);
+
+      const response = await api.post('/admin/talents', payload);
+      console.log('✅ Réponse:', response.data);
+      
       onSuccess('Talent ajouté avec succès !');
+      onClose();
     } catch (error) {
-      console.error('Erreur ajout:', error);
-      setError(error.response?.data?.message || 'Erreur lors de l\'ajout');
+      console.error('❌ Erreur complète:', error);
+      console.error('❌ Erreur response:', error.response);
+      console.error('❌ Erreur data:', error.response?.data);
+      
+      // ✅ Afficher les erreurs de validation du backend
+      if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+        const errorMessages = error.response.data.errors.map(err => err.msg).join(', ');
+        setError(errorMessages);
+      } else {
+        setError(error.response?.data?.message || 'Erreur lors de l\'ajout du talent');
+      }
     } finally {
       setLoading(false);
     }
@@ -109,8 +183,9 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Error */}
           {error && (
-            <div className="p-4 bg-red-50 text-red-700 rounded-lg border border-red-200">
-              {error}
+            <div className="p-4 bg-red-50 text-red-700 rounded-lg border border-red-200 flex items-start gap-2">
+              <FaExclamationTriangle className="mt-0.5 flex-shrink-0" />
+              <span>{error}</span>
             </div>
           )}
 
@@ -133,6 +208,7 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
                   onChange={handleChange}
                   className="input-field"
                   required
+                  minLength={2}
                 />
               </div>
 
@@ -212,8 +288,8 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
                 </label>
                 <input
                   type="number"
-                  name="anneesExperience"
-                  value={formData.anneesExperience}
+                  name="anneeExperience"
+                  value={formData.anneeExperience}
                   onChange={handleChange}
                   className="input-field"
                   min="0"
@@ -254,17 +330,29 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
             {/* Compétences */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description des compétences *
+                Description des compétences * <span className="text-xs text-gray-500">(minimum 10 caractères)</span>
               </label>
               <textarea
                 name="competences"
                 value={formData.competences}
                 onChange={handleChange}
-                className="input-field"
+                className={`input-field ${competencesWarning ? 'border-yellow-500 focus:ring-yellow-500' : ''}`}
                 rows="4"
                 placeholder="Décrivez les compétences et l'expérience du talent..."
                 required
               />
+              {/* ✅ Warning en temps réel */}
+              {competencesWarning && (
+                <p className="text-xs text-yellow-600 mt-1 flex items-center gap-1">
+                  <FaExclamationTriangle size={12} />
+                  {competencesWarning} ({formData.competences.trim().length}/10 caractères)
+                </p>
+              )}
+              {!competencesWarning && formData.competences.trim().length >= 10 && (
+                <p className="text-xs text-green-600 mt-1">
+                  ✅ Longueur valide ({formData.competences.trim().length} caractères)
+                </p>
+              )}
             </div>
           </div>
 
@@ -386,6 +474,9 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
                   <option key={langue} value={langue}>{langue}</option>
                 ))}
               </select>
+              <p className="text-xs text-gray-500 mt-1">
+                {formData.langues.length} langue(s) sélectionnée(s)
+              </p>
             </div>
           </div>
 
@@ -473,8 +564,8 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
             </button>
             <button
               type="submit"
-              disabled={loading}
-              className="flex-1 btn-primary py-3"
+              disabled={loading || !!competencesWarning}
+              className="flex-1 btn-primary py-3 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FaSave className="inline mr-2" />
               {loading ? 'Enregistrement...' : 'Ajouter le talent'}

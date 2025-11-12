@@ -35,8 +35,8 @@ const talentSchema = new mongoose.Schema({
     default: 'CDI',
   },
   
-  // ✅ AMÉLIORÉ - Années d'expérience (nombre)
-  anneesExperience: {
+  // ✅ CORRIGÉ - Sans S pour être cohérent avec le reste du code
+  anneeExperience: {
     type: Number,
     required: [true, 'Les années d\'expérience sont requises'],
     min: [0, 'Les années d\'expérience doivent être supérieures ou égales à 0'],
@@ -131,14 +131,15 @@ talentSchema.index({ niveau: 1 });
 talentSchema.index({ typeContrat: 1 });
 talentSchema.index({ disponibilite: 1 });
 
-// Méthode virtuelle pour afficher l'expérience de manière lisible
+// ✅ CORRIGÉ - Méthode virtuelle qui affiche simplement les années d'expérience
+// Junior = niveau, pas "débutant"
 talentSchema.virtual('experienceText').get(function() {
-  if (this.anneesExperience === 0) {
-    return 'Débutant';
-  } else if (this.anneesExperience === 1) {
+  if (this.anneeExperience === 0) {
+    return 'Moins d\'1 an d\'expérience';
+  } else if (this.anneeExperience === 1) {
     return '1 an d\'expérience';
   } else {
-    return `${this.anneesExperience} ans d\'expérience`;
+    return `${this.anneeExperience} ans d\'expérience`;
   }
 });
 

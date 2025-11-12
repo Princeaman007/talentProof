@@ -6,6 +6,8 @@ import {
   deleteTalent,
   getAllContactRequests,
   updateContactRequestStatus,
+  getEntreprisesCount, 
+  getGlobalStats,
 } from '../controllers/adminController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { adminOnly } from '../middleware/adminMiddleware.js';
@@ -26,5 +28,8 @@ router.delete('/talents/:id', deleteTalent);
 // Gestion des demandes de contact
 router.get('/contact-requests', getAllContactRequests);
 router.put('/contact-requests/:id', updateContactRequestStatus);
+router.get('/entreprises/count', getEntreprisesCount);
+router.get('/stats', getGlobalStats);
 
+// ✅ AJOUTE CETTE LIGNE
 export default router;
