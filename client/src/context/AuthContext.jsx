@@ -26,18 +26,29 @@ export const AuthProvider = ({ children }) => {
       setToken(storedToken);
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
-      // Vérifier si admin (email correspond à l'admin email du backend)
-      checkIsAdmin(parsedUser.email);
+      // ✅ Vérifier si admin (role ou email)
+      checkIsAdmin(parsedUser);
     }
     setLoading(false);
   }, []);
 
-  // Vérifier si l'utilisateur est admin
-  const checkIsAdmin = (email) => {
-    // L'email admin est défini dans le backend .env
-    // Pour simplifier, on vérifie si c'est info@princeaman.dev
-    const adminEmails = ['info@princeaman.dev', 'tobin0031@gmail.com']; // Ajoute ton email si besoin
-    setIsAdmin(adminEmails.includes(email));
+  // ✅ NOUVEAU - Phase 4 - Vérifier si l'utilisateur est admin
+  const checkIsAdmin = (userData) => {
+    // MÉTHODE 1 (RECOMMANDÉE) - Vérifier le champ role
+    if (userData.role === 'admin') {
+      setIsAdmin(true);
+      return;
+    }
+
+    // MÉTHODE 2 (FALLBACK) - Vérifier l'email (ancienne méthode)
+    const adminEmails = ['info@princeaman.dev', 'tobin0031@gmail.com'];
+    if (adminEmails.includes(userData.email)) {
+      console.warn('⚠️ Admin détecté via email (ancienne méthode). Le backend devrait utiliser le champ "role".');
+      setIsAdmin(true);
+      return;
+    }
+
+    setIsAdmin(false);
   };
 
   // Connexion
@@ -53,7 +64,7 @@ export const AuthProvider = ({ children }) => {
       // Mettre à jour l'état
       setToken(token);
       setUser(data);
-      checkIsAdmin(data.email);
+      checkIsAdmin(data);
 
       return { success: true, data };
     } catch (error) {
@@ -91,6 +102,9 @@ export const AuthProvider = ({ children }) => {
       // Mettre à jour localStorage et state
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
+      
+      // ✅ Revérifier le statut admin après mise à jour
+      checkIsAdmin(updatedUser);
 
       return { success: true, data: updatedUser };
     } catch (error) {
@@ -114,7 +128,7 @@ export const AuthProvider = ({ children }) => {
     user,
     token,
     loading,
-    isAdmin,
+    isAdmin, // ✅ Détecte automatiquement via role ou email
     isAuthenticated: !!token,
     login,
     register,

@@ -48,12 +48,41 @@ const companySchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  // ========================================
+  // ✅ NOUVEAUX CHAMPS - PHASE 4
+  // ========================================
+  role: {
+    type: String,
+    enum: ['entreprise', 'admin'],
+    default: 'entreprise',
+  },
+  lastLogin: {
+    type: Date,
+    default: null,
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+  suspendedAt: {
+    type: Date,
+    default: null,
+  },
+  suspensionReason: {
+    type: String,
+    default: null,
+  },
 }, {
   timestamps: true,
 });
 
 // Index pour recherche rapide par email
 companySchema.index({ email: 1 });
+
+// ✅ NOUVEAUX INDEX - PHASE 4
+companySchema.index({ role: 1 });
+companySchema.index({ isActive: 1 });
+companySchema.index({ createdAt: -1 });
 
 const Company = mongoose.model('Company', companySchema);
 

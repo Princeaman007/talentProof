@@ -8,10 +8,15 @@ import { fileURLToPath } from 'url';
 // Import des routes
 import authRoutes from './routes/authRoutes.js';
 import talentRoutes from './routes/talentRoutes.js';
-import adminRoutes from './routes/adminRoutes.js';
 import teamRoutes from './routes/teamRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js'; 
-import devisRoutes from './routes/devisRoutes.js'; 
+import devisRoutes from './routes/devisRoutes.js';
+
+// ✅ Routes admin fusionnées (Phase 1-4)
+import adminRoutes from './routes/adminRoutes.js';
+
+// ✅ Routes entreprise (Phase 4)
+import entrepriseRoutes from './routes/entreprise.js';
 
 dotenv.config();
 
@@ -38,14 +43,15 @@ mongoose.connect(process.env.MONGODB_URI)
 app.get('/', (req, res) => {
   res.json({ 
     message: 'Bienvenue sur l\'API TalentProof',
-    version: '2.0.0',
+    version: '2.0.0 - Phase 4',
     endpoints: {
       auth: '/api/auth',
       talents: '/api/talents',
-      admin: '/api/admin',
       team: '/api/team',
-      portfolio: '/api/portfolio', // ⬅️ AJOUTE DANS LA DOC
-      devis: '/api/devis', // ⬅️ AJOUTE DANS LA DOC
+      portfolio: '/api/portfolio',
+      devis: '/api/devis',
+      admin: '/api/admin',           // ✅ Dashboard admin (stats, entreprises, CRUD)
+      entreprise: '/api/entreprise', // ✅ Dashboard entreprise (favoris, notifications)
     }
   });
 });
@@ -54,30 +60,40 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV,
+    environment: process.env.NODE_ENV || 'development',
     database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
   });
 });
 
-// Routes API
+// ========================================
+// ROUTES API
+// ========================================
+
+// Routes publiques et authentification
 app.use('/api/auth', authRoutes);
 app.use('/api/talents', talentRoutes);
-app.use('/api/admin', adminRoutes);
 app.use('/api/team', teamRoutes);
-app.use('/api/portfolio', portfolioRoutes); // ⬅️ AJOUTE CETTE LIGNE
-app.use('/api/devis', devisRoutes); // ⬅️ AJOUTE AUSSI CELLE-CI SI NÉCESSAIRE
+app.use('/api/portfolio', portfolioRoutes);
+app.use('/api/devis', devisRoutes);
+
+// ✅ Routes admin (fusionnées Phase 1-4)
+app.use('/api/admin', adminRoutes);
+
+// ✅ Routes entreprise dashboard (Phase 4)
+app.use('/api/entreprise', entrepriseRoutes);
 
 // Route 404
 app.use((req, res) => {
   res.status(404).json({ 
     success: false,
-    message: 'Route non trouvée' 
+    message: 'Route non trouvée',
+    requestedUrl: req.originalUrl,
   });
 });
 
 // Gestion des erreurs
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('❌ Erreur serveur:', err.stack);
   res.status(err.status || 500).json({ 
     success: false,
     message: err.message || 'Une erreur est survenue!',
@@ -88,7 +104,10 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Serveur démarré sur le port ${PORT}`);
+  console.log(`🚀 Serveur TalentProof démarré`);
   console.log(`📍 http://localhost:${PORT}`);
-  console.log(`📚 API Documentation disponible sur http://localhost:${PORT}`);
+  console.log(`🌍 Environnement: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📊 Phase 4 - Dashboard Admin & Entreprise activé`);
 });
+
+export default app;

@@ -1,19 +1,59 @@
+import { useState, useEffect } from 'react';
 import { FaCheckCircle, FaStar, FaBriefcase, FaMapMarkerAlt, FaClock, FaGlobe } from 'react-icons/fa';
 import { TECH_COLORS } from '../../utils/constants';
+import api from '../../utils/api';
+import { useAuth } from '../../context/AuthContext';
 
 const TalentCard = ({ talent, onContact }) => {
-  // ✅ DEBUG temporaire
-  console.log('🎴 Rendu carte:', talent.prenom, {
-    anneeExperience: talent.anneeExperience,
-    langues: talent.langues,
-    localisation: talent.localisation,
-  });
+  const { isAuthenticated } = useAuth();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [loadingFavorite, setLoadingFavorite] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      checkIfFavorite();
+    }
+  }, [talent._id, isAuthenticated]);
+
+  const checkIfFavorite = async () => {
+    try {
+      const response = await api.get(`/entreprise/favoris/check/${talent._id}`);
+      setIsFavorite(response.data.isFavori);
+    } catch (error) {
+      // Silencieux - pas grave si ça échoue
+    }
+  };
+
+  const handleToggleFavorite = async (e) => {
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      alert('Veuillez vous connecter pour ajouter des favoris');
+      return;
+    }
+
+    setLoadingFavorite(true);
+    
+    try {
+      if (isFavorite) {
+        await api.delete(`/entreprise/favoris/${talent._id}`);
+        setIsFavorite(false);
+      } else {
+        await api.post('/entreprise/favoris', { talentId: talent._id });
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      console.error('Erreur toggle favori:', error);
+      alert('Erreur lors de la mise à jour des favoris');
+    } finally {
+      setLoadingFavorite(false);
+    }
+  };
 
   const getTechColor = (tech) => {
     return TECH_COLORS[tech] || TECH_COLORS.default;
   };
 
-  // ✅ Helper pour afficher l'expérience
   const getExperienceLabel = () => {
     const annees = talent.anneeExperience ?? 0;
     if (annees === 0) return 'Moins d\'1 an d\'expérience';
@@ -21,7 +61,6 @@ const TalentCard = ({ talent, onContact }) => {
     return `${annees} ans d'expérience`;
   };
 
-  // ✅ Badge de niveau avec couleur
   const getNiveauBadge = () => {
     const colors = {
       Junior: 'bg-green-100 text-green-700',
@@ -31,7 +70,6 @@ const TalentCard = ({ talent, onContact }) => {
     return colors[talent.niveau] || 'bg-gray-100 text-gray-700';
   };
 
-  // ✅ Badge de disponibilité avec couleur
   const getDisponibiliteBadge = () => {
     const colors = {
       'Immédiate': 'bg-green-100 text-green-700',
@@ -43,7 +81,23 @@ const TalentCard = ({ talent, onContact }) => {
   };
 
   return (
-    <div className="card group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+    <div className="card group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl relative">
+      {/* ✅ NOUVEAU - Bouton Favoris en haut à droite */}
+      {isAuthenticated && (
+        <button
+          onClick={handleToggleFavorite}
+          disabled={loadingFavorite}
+          className={`absolute top-4 right-4 z-10 p-2 rounded-full transition-all duration-300 ${
+            isFavorite
+              ? 'bg-yellow-400 text-white shadow-lg scale-110'
+              : 'bg-white text-gray-400 hover:bg-yellow-50 hover:text-yellow-500'
+          } ${loadingFavorite ? 'opacity-50 cursor-not-allowed' : ''}`}
+          title={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+        >
+          <FaStar size={18} />
+        </button>
+      )}
+
       {/* Header: Badge validé + Score */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2 text-accent">
@@ -113,7 +167,7 @@ const TalentCard = ({ talent, onContact }) => {
           </div>
         )}
 
-        {/* ✅ LANGUES - Affichage conditionnel sécurisé */}
+        {/* Langues */}
         {talent.langues && talent.langues.length > 0 && (
           <div className="flex items-center space-x-2">
             <FaGlobe className="text-primary flex-shrink-0" />

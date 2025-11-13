@@ -36,6 +36,9 @@ export const register = async (req, res) => {
       nombreEmployes: nombreEmployes || '1-10',
       profilsRecherches: profilsRecherches || [],
       confirmationToken: hashedToken,
+      // ✅ Les nouveaux champs Phase 4 ont des valeurs par défaut dans le modèle
+      // role: 'entreprise' (défaut)
+      // isActive: true (défaut)
     });
 
     // Construire le lien de confirmation
@@ -126,6 +129,7 @@ export const confirmEmail = async (req, res) => {
  * @route   POST /api/auth/login
  * @desc    Connexion d'une entreprise
  * @access  Public
+ * ✅ Phase 4 - Retourne le role et isActive
  */
 export const login = async (req, res) => {
   try {
@@ -159,10 +163,24 @@ export const login = async (req, res) => {
       });
     }
 
+    // ✅ NOUVEAU - Phase 4 - Vérifier si le compte est actif
+    if (company.isActive === false) {
+      return res.status(403).json({
+        success: false,
+        message: 'Votre compte a été suspendu. Veuillez contacter l\'administrateur.',
+        suspendedAt: company.suspendedAt,
+        suspensionReason: company.suspensionReason,
+      });
+    }
+
+    // ✅ NOUVEAU - Phase 4 - Mettre à jour lastLogin
+    company.lastLogin = new Date();
+    await company.save();
+
     // Générer le token JWT
     const token = generateToken({ id: company._id }, process.env.JWT_EXPIRE || '24h');
 
-    // Retourner les données (sans le password)
+    // ✅ MODIFIÉ - Phase 4 - Inclure role et isActive
     const companyData = {
       id: company._id,
       nom: company.nom,
@@ -170,6 +188,9 @@ export const login = async (req, res) => {
       logo: company.logo,
       nombreEmployes: company.nombreEmployes,
       profilsRecherches: company.profilsRecherches,
+      role: company.role || 'entreprise', // ✅ NOUVEAU
+      isActive: company.isActive !== undefined ? company.isActive : true, // ✅ NOUVEAU
+      lastLogin: company.lastLogin, // ✅ NOUVEAU (optionnel)
     };
 
     res.status(200).json({
@@ -314,6 +335,7 @@ export const resetPassword = async (req, res) => {
  * @route   GET /api/auth/profile
  * @desc    Obtenir le profil de l'entreprise connectée
  * @access  Private
+ * ✅ Phase 4 - Inclut role et isActive
  */
 export const getProfile = async (req, res) => {
   try {
@@ -322,14 +344,17 @@ export const getProfile = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: {
+      company: { // ✅ Changé "data" en "company" pour cohérence
         id: company._id,
         nom: company.nom,
         email: company.email,
         logo: company.logo,
         nombreEmployes: company.nombreEmployes,
         profilsRecherches: company.profilsRecherches,
+        role: company.role || 'entreprise', // ✅ NOUVEAU
+        isActive: company.isActive !== undefined ? company.isActive : true, // ✅ NOUVEAU
         createdAt: company.createdAt,
+        lastLogin: company.lastLogin, // ✅ NOUVEAU
       },
     });
   } catch (error) {
@@ -346,6 +371,7 @@ export const getProfile = async (req, res) => {
  * @route   PUT /api/auth/profile
  * @desc    Modifier le profil de l'entreprise
  * @access  Private
+ * ✅ Phase 4 - Retourne role et isActive
  */
 export const updateProfile = async (req, res) => {
   try {
@@ -378,6 +404,8 @@ export const updateProfile = async (req, res) => {
         logo: company.logo,
         nombreEmployes: company.nombreEmployes,
         profilsRecherches: company.profilsRecherches,
+        role: company.role || 'entreprise', // ✅ NOUVEAU
+        isActive: company.isActive !== undefined ? company.isActive : true, // ✅ NOUVEAU
       },
     });
   } catch (error) {

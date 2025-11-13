@@ -1,23 +1,46 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FaBars, FaTimes, FaCheckCircle, FaSignInAlt, FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
+import { FaBars, FaTimes, FaCheckCircle, FaSignInAlt, FaUserPlus, FaBell } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../utils/api';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
+
+  // ✅ NOUVEAU - Récupérer le nombre de notifications non lues
+  useEffect(() => {
+    if (user && !isAdmin) {
+      fetchUnreadCount();
+      
+      // Actualiser toutes les 30 secondes
+      const interval = setInterval(fetchUnreadCount, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user, isAdmin]);
+
+  const fetchUnreadCount = async () => {
+    try {
+      const response = await api.get('/entreprise/notifications/unread-count');
+      setUnreadCount(response.data.unreadCount);
+    } catch (error) {
+      // Silencieux - pas grave si ça échoue
+      console.error('Erreur récupération notifications:', error);
+    }
+  };
 
   // Navigation links - conditionnels selon l'état de connexion
   const navLinks = user ? [
     { name: 'Accueil', path: '/' },
-    { name: 'Talents', path: '/dashboard/talents' }, // Vers dashboard si connecté
+    { name: 'Talents', path: '/dashboard/talents' },
     { name: 'Services', path: '/services' },
     { name: 'À propos', path: '/about' },
   ] : [
     { name: 'Accueil', path: '/' },
-    { name: 'Talents', path: '/talents' }, // Vers page publique si non connecté
+    { name: 'Talents', path: '/talents' },
     { name: 'Services', path: '/services' },
     { name: 'À propos', path: '/about' },
   ];
@@ -66,6 +89,22 @@ const Navbar = () => {
             {/* Si l'utilisateur est connecté */}
             {user ? (
               <div className="flex items-center space-x-4">
+                {/* ✅ NOUVEAU - Badge Notifications (seulement pour entreprises, pas admin) */}
+                {!isAdmin && (
+                  <Link
+                    to="/dashboard/notifications"
+                    className="relative p-2 text-neutral hover:text-primary transition-all"
+                    title="Notifications"
+                  >
+                    <FaBell size={20} />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
+                  </Link>
+                )}
+                
                 <Link
                   to="/dashboard"
                   className="btn-primary"
@@ -124,6 +163,25 @@ const Navbar = () => {
             {/* Mobile - Si connecté */}
             {user ? (
               <>
+                {/* ✅ NOUVEAU - Notifications mobile (seulement pour entreprises) */}
+                {!isAdmin && (
+                  <Link
+                    to="/dashboard/notifications"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-between py-2 px-4 rounded-lg font-semibold text-neutral hover:bg-gray-100"
+                  >
+                    <span className="flex items-center">
+                      <FaBell className="mr-2" />
+                      Notifications
+                    </span>
+                    {unreadCount > 0 && (
+                      <span className="w-6 h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
+                  </Link>
+                )}
+                
                 <Link
                   to="/dashboard"
                   onClick={() => setIsOpen(false)}

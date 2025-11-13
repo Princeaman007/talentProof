@@ -12,6 +12,12 @@ import {
   FaTimes,
   FaFolder,
   FaFileInvoice,
+  FaChartLine,
+  FaBuilding,
+  FaEnvelope,
+  FaStar,
+  FaBell,
+  FaHistory,
 } from 'react-icons/fa';
 
 const Sidebar = () => {
@@ -35,6 +41,12 @@ const Sidebar = () => {
       admin: false,
     },
     {
+      name: 'Consulter Talents',
+      path: '/dashboard/talents',
+      icon: FaUsers,
+      admin: false,
+    },
+    {
       name: 'Mon Profil',
       path: '/dashboard/profile',
       icon: FaUser,
@@ -48,7 +60,48 @@ const Sidebar = () => {
     },
   ];
 
+  // ✅ NOUVEAU - Menu entreprise (Phase 4)
+  const entrepriseMenuItems = [
+    {
+      name: 'Mes Favoris',
+      path: '/dashboard/mes-favoris',
+      icon: FaStar,
+      admin: false,
+    },
+    {
+      name: 'Mes Demandes',
+      path: '/dashboard/mes-demandes',
+      icon: FaHistory,
+      admin: false,
+    },
+    {
+      name: 'Notifications',
+      path: '/dashboard/notifications',
+      icon: FaBell,
+      admin: false,
+    },
+  ];
+
+  // ✅ MODIFIÉ - Menu admin avec nouvelles entrées Phase 4
   const adminMenuItems = [
+    {
+      name: 'Statistiques',
+      path: '/dashboard/admin/stats',
+      icon: FaChartLine,
+      admin: true,
+    },
+    {
+      name: 'Entreprises',
+      path: '/dashboard/admin/entreprises',
+      icon: FaBuilding,
+      admin: true,
+    },
+    {
+      name: 'Demandes Contact',
+      path: '/dashboard/admin/contact-requests',
+      icon: FaEnvelope,
+      admin: true,
+    },
     {
       name: 'Gérer Talents',
       path: '/dashboard/admin/talents',
@@ -145,6 +198,41 @@ const Sidebar = () => {
               </Link>
             ))}
           </div>
+
+          {/* ✅ NOUVEAU - Menu Entreprise (Phase 4) */}
+          {!isAdmin && (
+            <>
+              <div className="my-4">
+                <div className="border-t border-gray-200" />
+              </div>
+              <div className="mb-2">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-4">
+                  Mes outils
+                </p>
+              </div>
+              <div className="space-y-1">
+                {entrepriseMenuItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setIsOpen(false)}
+                    className={`
+                      flex items-center space-x-3 px-4 py-3 rounded-lg
+                      transition-all duration-200
+                      ${
+                        isActive(item.path)
+                          ? 'bg-accent text-white shadow-md'
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }
+                    `}
+                  >
+                    <item.icon size={18} />
+                    <span className="font-medium">{item.name}</span>
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
 
           {/* Menu Admin */}
           {isAdmin && (

@@ -3,6 +3,7 @@ import Company from '../models/Company.js';
 
 /**
  * Middleware pour protéger les routes (vérifier JWT)
+ * ✅ Phase 4 - Ajout support du champ role et alias req.user
  */
 export const protect = async (req, res, next) => {
   try {
@@ -27,6 +28,7 @@ export const protect = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Récupérer l'entreprise depuis la base de données
+    // ✅ Ne pas exclure le role (important pour Phase 4)
     const company = await Company.findById(decoded.id).select('-password');
 
     if (!company) {
@@ -44,8 +46,28 @@ export const protect = async (req, res, next) => {
       });
     }
 
-    // Ajouter l'entreprise à la requête
+    // ✅ NOUVEAU - Phase 4 - Vérifier si le compte est actif
+    if (company.isActive === false) {
+      return res.status(403).json({
+        success: false,
+        message: 'Votre compte a été suspendu. Contactez l\'administrateur.',
+        suspendedAt: company.suspendedAt,
+        suspensionReason: company.suspensionReason,
+      });
+    }
+
+    // ✅ Ajouter l'entreprise à la requête
     req.company = company;
+    
+    // ✅ NOUVEAU - Alias req.user pour compatibilité avec routes Phase 4
+    req.user = company;
+    
+    // ✅ NOUVEAU - Mettre à jour lastLogin (optionnel, ne pas bloquer si échec)
+    if (company.role) {
+      Company.findByIdAndUpdate(decoded.id, { lastLogin: new Date() })
+        .catch(err => console.error('Erreur mise à jour lastLogin:', err));
+    }
+
     next();
   } catch (error) {
     console.error('Erreur middleware auth:', error);
