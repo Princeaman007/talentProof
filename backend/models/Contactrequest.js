@@ -19,10 +19,10 @@ const contactRequestSchema = new mongoose.Schema({
     match: [/^\S+@\S+\.\S+$/, 'Email invalide'],
   },
   recruteurTel: {
-    type: String,
-    required: [true, 'Le téléphone est requis'],
-    trim: true,
-  },
+  type: String,
+  required: false, 
+  default: '', 
+},
   entreprise: {
     type: String,
     required: [true, 'Le nom de l\'entreprise est requis'],

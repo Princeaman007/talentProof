@@ -5,27 +5,34 @@ dotenv.config();
 
 // Configuration du transporter Nodemailer
 const createTransporter = () => {
-  const isSSL = process.env.EMAIL_PORT === '465';
+  const emailPort = parseInt(process.env.EMAIL_PORT);
+  const isSSL = emailPort === 465;
   
   console.log('📧 Configuration Email:', {
     host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
+    port: emailPort,
     secure: isSSL,
     user: process.env.EMAIL_USER,
+    passLength: process.env.EMAIL_PASS?.length || 0,
   });
-  
+
   return nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
-    port: parseInt(process.env.EMAIL_PORT),
-    secure: isSSL, // true pour 465, false pour 587
+    port: emailPort,
+    secure: isSSL, // true pour 465 (SSL), false pour 587 (TLS)
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
     tls: {
-      // Ne pas échouer sur les certificats invalides (optionnel)
-      rejectUnauthorized: true
-    }
+      rejectUnauthorized: false, // ✅ Important pour éviter les erreurs de certificat
+      minVersion: 'TLSv1.2', // ✅ Forcer TLS 1.2 minimum
+    },
+    connectionTimeout: 10000, // ✅ 10 secondes de timeout
+    greetingTimeout: 10000, // ✅ Timeout pour le greeting
+    socketTimeout: 10000, // ✅ Timeout pour le socket
+    debug: process.env.NODE_ENV === 'development', // ✅ Debug en dev
+    logger: process.env.NODE_ENV === 'development', // ✅ Logs en dev
   });
 };
 
@@ -50,8 +57,16 @@ export const sendEmail = async ({ to, subject, html, text }) => {
   try {
     const transporter = createTransporter();
 
+    // ✅ Vérifier la connexion avant d'envoyer (optionnel mais recommandé)
+    try {
+      await transporter.verify();
+      console.log('✅ Serveur email prêt');
+    } catch (verifyError) {
+      console.warn('⚠️ Vérification du serveur email échouée, tentative d\'envoi quand même...');
+    }
+
     const mailOptions = {
-      from: process.env.EMAIL_FROM || 'TalentProof <noreply@talentproof.com>',
+      from: process.env.EMAIL_FROM || 'TalentProof <info@princeaman.dev>',
       to,
       subject,
       html,
@@ -60,10 +75,16 @@ export const sendEmail = async ({ to, subject, html, text }) => {
 
     const info = await transporter.sendMail(mailOptions);
     
-    console.log('✅ Email envoyé:', info.messageId);
+    console.log('✅ Email envoyé avec succès:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('❌ Erreur envoi email:', error);
+    console.error('Détails:', {
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode,
+    });
     throw new Error('Erreur lors de l\'envoi de l\'email');
   }
 };
@@ -257,12 +278,14 @@ export const contactNotificationTemplate = (talentInfo, recruteurInfo) => {
           <a href="mailto:${recruteurInfo.email}">${recruteurInfo.email}</a>
         </td>
       </tr>
+      ${recruteurInfo.tel ? `
       <tr>
         <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Téléphone :</strong></td>
         <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">
           <a href="tel:${recruteurInfo.tel}">${recruteurInfo.tel}</a>
         </td>
       </tr>
+      ` : ''}
       <tr>
         <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Entreprise :</strong></td>
         <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${recruteurInfo.entreprise}</td>

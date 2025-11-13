@@ -180,9 +180,9 @@ export const contactRequestValidation = [
     .normalizeEmail(),
   
   body('recruteurTel')
-    .trim()
-    .notEmpty().withMessage('Le téléphone est requis')
-    .matches(/^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/).withMessage('Numéro de téléphone invalide'),
+  .optional({ values: 'falsy' })  
+  .trim()
+  .matches(/^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/).withMessage('Numéro de téléphone invalide'),
   
   body('entreprise')
     .trim()
@@ -191,7 +191,7 @@ export const contactRequestValidation = [
   body('message')
     .trim()
     .notEmpty().withMessage('Le message est requis')
-    .isLength({ min: 20 }).withMessage('Le message doit contenir au moins 20 caractères'),
+    .isLength({ min: 8 }).withMessage('Le message doit contenir au moins 20 caractères'),
   
   validate,
 ];

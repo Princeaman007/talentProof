@@ -476,7 +476,7 @@ const TalentsDashboard = () => {
             <div>
               <p className="font-semibold text-primary mb-1">Comment ça marche ?</p>
               <p className="text-sm text-neutral">
-                 Cliquez sur "Contacter ce talent" pour envoyer votre demande. Notre équipe TalentProof vous recontactera sous 24-48h pour vous transmettre le CV complet et les coordonnées du développeur.
+                Cliquez sur "Contacter ce talent" pour envoyer votre demande. Notre équipe TalentProof vous recontactera sous 24-48h pour vous transmettre le CV complet et les coordonnées du développeur.
               </p>
             </div>
           </div>
@@ -494,7 +494,7 @@ const TalentsDashboard = () => {
   );
 };
 
-// ✅ Modal de contact SIMPLIFIÉ - Uniquement le message
+// ✅ Modal de contact CORRIGÉ
 const ContactTalentModal = ({ talent, onClose }) => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -514,18 +514,25 @@ const ContactTalentModal = ({ talent, onClose }) => {
     setError('');
 
     try {
+      // ✅ CORRECTION - Payload avec les bons champs
       const payload = {
-        talentId: talent._id,
-        recruteurNom: userInfo?.nom || '',
-        recruteurEmail: userInfo?.email || '',
-        recruteurTel: userInfo?.telephone || '',
-        entreprise: userInfo?.entreprise || '',
-        message: message || 'Je suis intéressé par ce profil.',
-      };
+  talentId: talent._id,
+  recruteurNom: userInfo?.nom || 'Non renseigné',
+  recruteurEmail: userInfo?.email || '',
+  entreprise: userInfo?.nom || 'Non renseigné',
+  message: message || 'Je suis intéressé par ce profil et souhaite en discuter.', // ✅ 56 caractères
+};
+
+        if (userInfo?.telephone && userInfo.telephone.trim() !== '') {
+    payload.recruteurTel = userInfo.telephone;
+  }
 
       console.log('📤 Payload envoyé:', payload);
 
-      await api.post('/talents/contact', payload);
+      const response = await api.post('/talents/contact', payload);
+
+      console.log('✅ Réponse:', response.data);
+
       setSuccess(true);
 
       // Fermer après 2 secondes
@@ -533,7 +540,7 @@ const ContactTalentModal = ({ talent, onClose }) => {
         onClose();
       }, 2000);
     } catch (err) {
-      console.error('❌ Erreur contact:', err);
+      console.error('❌ Erreur contact:', err.response?.data || err.message);
       setError(err.response?.data?.message || 'Erreur lors de l\'envoi de la demande');
     } finally {
       setLoading(false);
@@ -578,7 +585,7 @@ const ContactTalentModal = ({ talent, onClose }) => {
               </div>
             )}
 
-            {/* ✅ Affichage des infos de l'entreprise (non modifiables) */}
+            {/* ✅ Affichage des infos de l'entreprise (CORRIGÉ) */}
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
               <h3 className="font-semibold text-primary mb-3 flex items-center gap-2">
                 <FaUser />
@@ -594,17 +601,20 @@ const ContactTalentModal = ({ talent, onClose }) => {
                   <p className="font-medium text-primary">{userInfo?.email || 'Non renseigné'}</p>
                 </div>
                 <div>
-                  <span className="text-neutral">Téléphone:</span>
-                  <p className="font-medium text-primary">{userInfo?.telephone || 'Non renseigné'}</p>
+                  <span className="text-neutral">Taille:</span>
+                  <p className="font-medium text-primary">{userInfo?.nombreEmployes || 'Non renseigné'} employés</p>
                 </div>
                 <div>
                   <span className="text-neutral flex items-center gap-1">
                     <FaBuilding className="text-xs" />
                     Entreprise:
                   </span>
-                  <p className="font-medium text-primary">{userInfo?.entreprise || 'Non renseigné'}</p>
+                  <p className="font-medium text-primary">{userInfo?.nom || 'Non renseigné'}</p>
                 </div>
               </div>
+              <p className="text-xs text-blue-600 mt-2">
+                💡 Pour ajouter un numéro de téléphone, mettez à jour votre profil
+              </p>
             </div>
 
             {/* ✅ Champ message (optionnel) */}
