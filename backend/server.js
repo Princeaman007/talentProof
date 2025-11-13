@@ -10,6 +10,8 @@ import authRoutes from './routes/authRoutes.js';
 import talentRoutes from './routes/talentRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import teamRoutes from './routes/teamRoutes.js';
+import portfolioRoutes from './routes/portfolioRoutes.js'; 
+import devisRoutes from './routes/devisRoutes.js'; 
 
 dotenv.config();
 
@@ -42,6 +44,8 @@ app.get('/', (req, res) => {
       talents: '/api/talents',
       admin: '/api/admin',
       team: '/api/team',
+      portfolio: '/api/portfolio', // ⬅️ AJOUTE DANS LA DOC
+      devis: '/api/devis', // ⬅️ AJOUTE DANS LA DOC
     }
   });
 });
@@ -60,6 +64,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/talents', talentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/team', teamRoutes);
+app.use('/api/portfolio', portfolioRoutes); // ⬅️ AJOUTE CETTE LIGNE
+app.use('/api/devis', devisRoutes); // ⬅️ AJOUTE AUSSI CELLE-CI SI NÉCESSAIRE
 
 // Route 404
 app.use((req, res) => {

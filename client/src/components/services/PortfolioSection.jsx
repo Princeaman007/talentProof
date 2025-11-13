@@ -25,18 +25,26 @@ const PortfolioSection = () => {
     }
   };
 
-  const fetchProjets = async () => {
-    try {
-      setLoading(true);
-      const params = categorieActive !== 'tous' ? { categorie: categorieActive } : {};
-      const response = await axios.get('/api/portfolio', { params });
-      setProjets(response.data.data);
-    } catch (error) {
-      console.error('Erreur chargement projets:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+ const fetchProjets = async () => {
+  try {
+    setLoading(true);
+    const params = categorieActive !== 'tous' ? { categorie: categorieActive } : {};
+    
+    console.log('🔍 Paramètres de recherche:', params);
+    const response = await axios.get('/api/portfolio', { params });
+    
+    console.log('📦 Réponse API:', response.data);
+    console.log('📊 Nombre de projets:', response.data.count);
+    console.log('🎯 Projets reçus:', response.data.data);
+    
+    setProjets(response.data.data);
+  } catch (error) {
+    console.error('❌ Erreur chargement projets:', error);
+    console.error('📄 Détails:', error.response?.data);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const getCategorieColor = (categorie) => {
     const colors = {
@@ -145,12 +153,12 @@ const PortfolioSection = () => {
 
                   {/* Boutons */}
                   <div className="flex gap-3">
-                    <Link
+                    {/* <Link
                       to={`/portfolio/${projet._id}`}
                       className="flex-1 bg-primary text-white text-center py-2 rounded-lg hover:bg-blue-900 transition-colors"
                     >
                       Voir le projet
-                    </Link>
+                    </Link> */}
                     {projet.url && (
                       <a
                         href={projet.url}
