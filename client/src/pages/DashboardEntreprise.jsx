@@ -16,7 +16,7 @@ import AdminPortfolio from './dashboard/AdminPortfolio';
 
 // ✅ NOUVELLES PAGES - PHASE 4 ADMIN
 import AdminStats from './dashboard/AdminStats';
-import AdminEntreprises from './dashboard/AdminEntreprises';
+import AdminEntreprises from './dashboard/Adminentreprises';
 import AdminContactRequests from './dashboard/AdminContactRequests';
 
 // ✅ NOUVELLES PAGES - PHASE 4 ENTREPRISE

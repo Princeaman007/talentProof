@@ -90,7 +90,7 @@ const Navbar = () => {
             {user ? (
               <div className="flex items-center space-x-4">
                 {/* ✅ NOUVEAU - Badge Notifications (seulement pour entreprises, pas admin) */}
-                {!isAdmin && (
+                {/* {!isAdmin && (
                   <Link
                     to="/dashboard/notifications"
                     className="relative p-2 text-neutral hover:text-primary transition-all"
@@ -103,7 +103,7 @@ const Navbar = () => {
                       </span>
                     )}
                   </Link>
-                )}
+                )} */}
                 
                 <Link
                   to="/dashboard"
@@ -164,7 +164,7 @@ const Navbar = () => {
             {user ? (
               <>
                 {/* ✅ NOUVEAU - Notifications mobile (seulement pour entreprises) */}
-                {!isAdmin && (
+                {/* {!isAdmin && (
                   <Link
                     to="/dashboard/notifications"
                     onClick={() => setIsOpen(false)}
@@ -180,7 +180,7 @@ const Navbar = () => {
                       </span>
                     )}
                   </Link>
-                )}
+                )} */}
                 
                 <Link
                   to="/dashboard"

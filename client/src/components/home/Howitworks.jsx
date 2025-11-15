@@ -1,4 +1,5 @@
 import { FaUserPlus, FaClipboardCheck, FaGraduationCap, FaHandshake, FaEuroSign } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const HowItWorks = () => {
   const steps = [
@@ -86,9 +87,9 @@ const HowItWorks = () => {
             <p className="mb-6 text-gray-200">
               Rejoignez les entreprises qui font confiance à TalentProof
             </p>
-            <button className="btn-secondary">
+             <Link to="/register" className="btn-secondary">
               Créer un compte entreprise
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -97,3 +98,4 @@ const HowItWorks = () => {
 };
 
 export default HowItWorks;
+

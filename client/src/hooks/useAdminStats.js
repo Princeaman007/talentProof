@@ -1,0 +1,116 @@
+import { useState, useEffect } from 'react';
+import api from '../utils/api';
+
+/**
+ * Hook personnalisé pour récupérer les statistiques admin
+ * ⚠️ À utiliser UNIQUEMENT dans les composants admin
+ */
+export const useAdminStats = () => {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.get('/admin/stats');
+      setStats(response.data.stats);
+    } catch (err) {
+      console.error('Erreur récupération stats:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    stats,
+    loading,
+    error,
+    refresh: fetchStats, // Pour rafraîchir manuellement
+  };
+};
+
+/**
+ * Hook pour récupérer les statistiques publiques (entreprises)
+ * Affiche les données publiques qui servent de preuve sociale
+ */
+export const usePublicStats = () => {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchPublicStats();
+  }, []);
+
+  const fetchPublicStats = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Récupérer les données publiques qui servent de preuve sociale
+      const [talentsResponse, entreprisesResponse] = await Promise.all([
+        api.get('/talents'),
+        api.get('/public/entreprises/count'), // ✅ Nouvelle route publique
+      ]);
+      
+      setStats({
+        talentsCount: talentsResponse.data.count || 0,
+        entreprisesCount: entreprisesResponse.data.count || 0, // ✅ Preuve sociale
+        // Les stats détaillées (taux de succès, actifs, etc.) restent privées
+      });
+    } catch (err) {
+      console.error('Erreur récupération stats publiques:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    stats,
+    loading,
+    error,
+    refresh: fetchPublicStats,
+  };
+};
+
+/**
+ * Hook pour récupérer la timeline avec période personnalisable
+ */
+export const useTimeline = (period = '6m') => {
+  const [timeline, setTimeline] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchTimeline();
+  }, [period]);
+
+  const fetchTimeline = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.get(`/admin/stats/timeline?period=${period}`);
+      setTimeline(response.data.timeline);
+    } catch (err) {
+      console.error('Erreur récupération timeline:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    timeline,
+    loading,
+    error,
+    refresh: fetchTimeline,
+  };
+};

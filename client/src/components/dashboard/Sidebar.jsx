@@ -62,24 +62,24 @@ const Sidebar = () => {
 
   // ✅ NOUVEAU - Menu entreprise (Phase 4)
   const entrepriseMenuItems = [
-    {
-      name: 'Mes Favoris',
-      path: '/dashboard/mes-favoris',
-      icon: FaStar,
-      admin: false,
-    },
+    // {
+    //   name: 'Mes Favoris',
+    //   path: '/dashboard/mes-favoris',
+    //   icon: FaStar,
+    //   admin: false,
+    // },
     {
       name: 'Mes Demandes',
       path: '/dashboard/mes-demandes',
       icon: FaHistory,
       admin: false,
     },
-    {
-      name: 'Notifications',
-      path: '/dashboard/notifications',
-      icon: FaBell,
-      admin: false,
-    },
+    // {
+    //   name: 'Notifications',
+    //   path: '/dashboard/notifications',
+    //   icon: FaBell,
+    //   admin: false,
+    // },
   ];
 
   // ✅ MODIFIÉ - Menu admin avec nouvelles entrées Phase 4

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { FaCheckCircle, FaLinkedin, FaTwitter, FaGithub, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaCheckCircle, FaLinkedin, FaTwitter, FaGithub, FaEnvelope, FaPhone, FaMapMarkerAlt, FaFacebook, FaInstagram } from 'react-icons/fa';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -90,14 +90,14 @@ const Footer = () => {
                 className="bg-white/10 p-3 rounded-full hover:bg-secondary transition-all transform hover:scale-110"
                 aria-label="Twitter"
               >
-                <FaTwitter className="text-xl" />
+                <FaInstagram className="text-xl" />
               </a>
               <a
                 href="#"
                 className="bg-white/10 p-3 rounded-full hover:bg-secondary transition-all transform hover:scale-110"
                 aria-label="GitHub"
               >
-                <FaGithub className="text-xl" />
+                <FaFacebook className="text-xl" />
               </a>
             </div>
           </div>

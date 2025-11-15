@@ -64,7 +64,7 @@ const Register = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary via-primary-dark to-primary flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         {/* Logo */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-4 py-10">
           <Link to="/" className="inline-flex items-center space-x-2">
             <div className="bg-white p-3 rounded-lg">
               <FaCheckCircle className="text-primary text-3xl" />
