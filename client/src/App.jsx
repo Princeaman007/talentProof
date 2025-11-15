@@ -9,6 +9,9 @@ import Home from './pages/Home';
 import Talents from './pages/Talents';
 import ServicesPage from './pages/ServicesPage';
 import About from './pages/About';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
+
 
 // Pages services
 import DevisForm from './pages/services/DevisForm';
@@ -24,12 +27,12 @@ import Dashboard from './pages/DashboardEntreprise';
 // Composant pour afficher le Footer conditionnellement
 const ConditionalFooter = () => {
   const location = useLocation();
-  
+
   // Ne pas afficher le footer sur les pages dashboard
   if (location.pathname.startsWith('/dashboard')) {
     return null;
   }
-  
+
   return <Footer />;
 };
 
@@ -46,6 +49,8 @@ function App() {
               <Route path="/talents" element={<Talents />} />
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/about" element={<About />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
 
               {/* Routes services */}
               <Route path="/services/devis" element={<DevisForm />} />
