@@ -11,6 +11,7 @@ import talentRoutes from './routes/talentRoutes.js';
 import teamRoutes from './routes/teamRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js'; 
 import devisRoutes from './routes/devisRoutes.js';
+import publicRoutes from './routes/publicRoutes.js';
 
 // ✅ Routes admin fusionnées (Phase 1-4)
 import adminRoutes from './routes/adminRoutes.js';
@@ -75,6 +76,7 @@ app.use('/api/talents', talentRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/devis', devisRoutes);
+app.use('/api/public', publicRoutes);
 
 // ✅ Routes admin (fusionnées Phase 1-4)
 app.use('/api/admin', adminRoutes);
