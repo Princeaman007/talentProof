@@ -2,6 +2,7 @@ import Company from '../models/Company.js';
 import { hashPassword, comparePassword, generateToken, generateRandomToken, hashToken } from '../utils/auth.js';
 import { sendEmail } from '../utils/email.js';
 import { confirmationEmailTemplate, resetPasswordTemplate } from '../utils/emailTemplates.js';
+import { setTokenCookie, clearTokenCookie } from '../utils/cookieConfig.js';
 
 /**
  * @route   POST /api/auth/register
@@ -180,6 +181,9 @@ export const login = async (req, res) => {
     // Générer le token JWT
     const token = generateToken({ id: company._id }, process.env.JWT_EXPIRE || '24h');
 
+    // ✅ SÉCURITÉ - NOUVEAU: Envoyer le token via cookie HttpOnly au lieu du body
+    setTokenCookie(res, token);
+
     // ✅ MODIFIÉ - Phase 4 - Inclure role et isActive
     const companyData = {
       id: company._id,
@@ -196,8 +200,10 @@ export const login = async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'Connexion réussie.',
-      token,
       data: companyData,
+      // ⚠️ Note: token toujours retourné en réponse pour compatibilité
+      // À supprimer une fois frontend migré vers cookies
+      token,
     });
   } catch (error) {
     console.error('Erreur login:', error);
@@ -266,11 +272,34 @@ export const forgotPassword = async (req, res) => {
       message: 'Si cet email existe, un lien de réinitialisation a été envoyé.',
     });
   } catch (error) {
-    console.error('Erreur forgotPassword:', error);
+    console.error('Erreur changePassword:', error);
     res.status(500).json({
       success: false,
-      message: 'Erreur lors de la demande de réinitialisation.',
+      message: 'Erreur lors du changement de mot de passe.',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
+  }
+};
+
+/**
+ * @route   POST /api/auth/logout
+ * @desc    Déconnexion - Clear le cookie de token
+ * @access  Private
+ */
+export const logout = async (req, res) => {
+  try {
+    // ✅ SÉCURITÉ - Nettoyer le cookie du token
+    clearTokenCookie(res);
+
+    res.status(200).json({
+      success: true,
+      message: 'Déconnexion réussie.',
+    });
+  } catch (error) {
+    console.error('Erreur logout:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la déconnexion.',
     });
   }
 };

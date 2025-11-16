@@ -3,6 +3,7 @@ import {
   register,
   confirmEmail,
   login,
+  logout,
   forgotPassword,
   resetPassword,
   getProfile,
@@ -30,5 +31,6 @@ router.post('/reset-password/:token', resetPasswordValidation, resetPassword);
 router.get('/profile', protect, getProfile);
 router.put('/profile', protect, updateProfile);
 router.put('/change-password', protect, changePassword);
+router.post('/logout', protect, logout);
 
 export default router;

@@ -19,14 +19,14 @@ export const AuthProvider = ({ children }) => {
 
   // Charger l'utilisateur depuis localStorage au démarrage
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
+    // ✅ SÉCURITÉ: Pas besoin de récupérer le token depuis localStorage
+    // Le token est maintenant dans le cookie HttpOnly
     const storedUser = localStorage.getItem('user');
 
-    if (storedToken && storedUser) {
-      setToken(storedToken);
+    if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
-      // ✅ Vérifier si admin (role ou email)
+      setToken('authenticated'); // Marker que l'utilisateur est connecté via cookie
       checkIsAdmin(parsedUser);
     }
     setLoading(false);
@@ -57,12 +57,13 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post('/auth/login', { email, password });
       const { token, data } = response.data;
 
-      // Sauvegarder dans localStorage
-      localStorage.setItem('token', token);
+      // ✅ SÉCURITÉ: Pas besoin de sauvegarder le token dans localStorage
+      // Le token est maintenant dans le cookie HttpOnly (géré automatiquement)
+      // Sauvegarder seulement les données utilisateur
       localStorage.setItem('user', JSON.stringify(data));
 
       // Mettre à jour l'état
-      setToken(token);
+      setToken('authenticated'); // Marker au lieu du vrai token
       setUser(data);
       checkIsAdmin(data);
 
@@ -85,7 +86,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Déconnexion
-  const logout = () => {
+  const logout = async () => {
+    try {
+      // ✅ SÉCURITÉ: Appeller l'endpoint logout pour nettoyer le cookie
+      await api.post('/auth/logout');
+    } catch (error) {
+      console.error('Erreur lors du logout API:', error);
+    }
+    
+    // Nettoyer localStorage
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setToken(null);

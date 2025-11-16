@@ -4,6 +4,10 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import cookieParser from 'cookie-parser';
+import swaggerUi from 'swagger-ui-express';
 
 // Import des routes
 import authRoutes from './routes/authRoutes.js';
@@ -19,7 +23,20 @@ import adminRoutes from './routes/adminRoutes.js';
 // ✅ Routes entreprise (Phase 4)
 import entrepriseRoutes from './routes/entreprise.js';
 
+// ✅ Documentation Swagger
+import { swaggerSpec } from './utils/swagger.js';
+import { logger } from './utils/logger.js';
+import { errorHandler } from './utils/errorHandler.js';
+
 dotenv.config();
+
+// ✅ SÉCURITÉ: Valider les variables d'environnement critiques au démarrage
+const requiredEnvVars = ['MONGODB_URI', 'JWT_SECRET', 'CLIENT_URL'];
+const missingEnvVars = requiredEnvVars.filter(env => !process.env[env]);
+if (missingEnvVars.length > 0) {
+  console.error('❌ ERREUR: Variables d\'environnement manquantes:', missingEnvVars.join(', '));
+  process.exit(1);
+}
 
 // Configuration __dirname pour ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -27,18 +44,57 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// ✅ SÉCURITÉ: Headers de sécurité (helmet)
+app.use(helmet());
+
+// ✅ SÉCURITÉ: CORS restrictif (au lieu de cors() ouvert)
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:3000').split(',');
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200,
+  maxAge: 86400, // 24 heures
+}));
+
+// ✅ SÉCURITÉ: Rate limiting global (moins strict)
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // 100 requêtes par 15 min
+  message: 'Trop de requêtes, veuillez réessayer plus tard.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(globalLimiter);
+
+// ✅ SÉCURITÉ: Rate limiting strict pour authentification
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 tentatives max
+  message: 'Trop de tentatives de connexion. Réessayez dans 15 minutes.',
+  skipSuccessfulRequests: true, // Ne pas compter les requêtes réussies
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// ✅ SÉCURITÉ: Parser les cookies
+app.use(cookieParser());
 
 // Servir les fichiers statiques (uploads)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// ✅ DOCUMENTATION: Swagger UI
+app.use('/api-docs', swaggerUi.serve);
+app.get('/api-docs', swaggerUi.setup(swaggerSpec, { customCss: '.swagger-ui { max-width: 1200px; }' }));
+
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB connecté'))
-  .catch((err) => console.error('❌ Erreur MongoDB:', err));
+  .then(() => logger.info('MongoDB connecté'))
+  .catch((err) => logger.error('MongoDB connection error', { error: err.message }));
 
 // Routes de base
 app.get('/', (req, res) => {
@@ -70,8 +126,8 @@ app.get('/api/health', (req, res) => {
 // ROUTES API
 // ========================================
 
-// Routes publiques et authentification
-app.use('/api/auth', authRoutes);
+// Routes publiques et authentification (avec rate-limiting strict)
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/talents', talentRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/portfolio', portfolioRoutes);
@@ -86,30 +142,33 @@ app.use('/api/entreprise', entrepriseRoutes);
 
 // Route 404
 app.use((req, res) => {
+  logger.warn('Route not found', { method: req.method, path: req.path });
   res.status(404).json({ 
     success: false,
-    message: 'Route non trouvée',
-    requestedUrl: req.originalUrl,
+    error: {
+      code: 'NOT_FOUND',
+      message: 'Route non trouvée',
+    },
+    path: req.originalUrl,
   });
 });
 
-// Gestion des erreurs
-app.use((err, req, res, next) => {
-  console.error('❌ Erreur serveur:', err.stack);
-  res.status(err.status || 500).json({ 
-    success: false,
-    message: err.message || 'Une erreur est survenue!',
-    error: process.env.NODE_ENV === 'development' ? err.stack : undefined
-  });
-});
+// ✅ Gestion d'erreurs centralisée
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
+  logger.info('TalentProof Server started', {
+    port: PORT,
+    environment: process.env.NODE_ENV || 'development',
+    mongoConnection: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
+  });
   console.log(`🚀 Serveur TalentProof démarré`);
   console.log(`📍 http://localhost:${PORT}`);
+  console.log(`📚 Documentation API: http://localhost:${PORT}/api-docs`);
   console.log(`🌍 Environnement: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`📊 Phase 4 - Dashboard Admin & Entreprise activé`);
+  console.log(`🔒 Sécurité: Helmet activé, CORS restrictif, Rate-limiting actif`);
 });
 
 export default app;

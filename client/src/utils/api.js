@@ -8,11 +8,15 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  // ✅ SÉCURITÉ: Inclure les cookies dans les requêtes (pour les HttpOnly cookies)
+  withCredentials: true,
 });
 
-// Intercepteur pour ajouter le token JWT automatiquement
+// Intercepteur pour ajouter le token JWT automatiquement (fallback)
 api.interceptors.request.use(
   (config) => {
+    // Le token HttpOnly est automatiquement inclus via withCredentials
+    // Cette partie est pour compatibilité si token en localStorage
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
