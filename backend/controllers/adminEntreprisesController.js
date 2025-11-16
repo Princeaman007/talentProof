@@ -1,5 +1,5 @@
 import Company from '../models/Company.js';
-import ContactRequest from '../models/ContactRequest.js';
+import ContactRequest from '../models/Contactrequest.js';
 import Devis from '../models/Devis.js';
 
 // @desc    Obtenir toutes les entreprises
