@@ -8,19 +8,37 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  // ✅ SÉCURITÉ: Inclure les cookies dans les requêtes (pour les HttpOnly cookies)
   withCredentials: true,
 });
 
-// Intercepteur pour ajouter le token JWT automatiquement (fallback)
+// Intercepteur pour ajouter le token JWT et CSRF automatiquement
 api.interceptors.request.use(
-  (config) => {
-    // Le token HttpOnly est automatiquement inclus via withCredentials
-    // Cette partie est pour compatibilité si token en localStorage
+  async (config) => {
+    // 1. Token JWT (fallback si localStorage)
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // 2. ✅ CSRF Token - Récupérer si manquant
+    if (!api.defaults.headers.common['X-CSRF-Token']) {
+      try {
+        const res = await axios.get(`${API_URL}/csrf-token`, {
+          withCredentials: true
+        });
+        const csrfToken = res?.data?.csrfToken;
+        if (csrfToken) {
+          api.defaults.headers.common['X-CSRF-Token'] = csrfToken;
+          config.headers['X-CSRF-Token'] = csrfToken;
+        }
+      } catch (err) {
+        console.warn('Unable to fetch CSRF token', err?.message || err);
+      }
+    } else {
+      // Ajouter le token existant à la requête
+      config.headers['X-CSRF-Token'] = api.defaults.headers.common['X-CSRF-Token'];
+    }
+
     return config;
   },
   (error) => {
@@ -31,20 +49,37 @@ api.interceptors.request.use(
 // Intercepteur pour gérer les erreurs (token expiré, etc.)
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     const originalRequest = error.config;
-    // If we get 401, try to refresh once and retry the request
-    if (error.response?.status === 401 && !originalRequest?._retry) {
+
+    // ✅ Si erreur CSRF (403), récupérer un nouveau token et réessayer
+    if (error.response?.status === 403 && error.response?.data?.code === 'EBADCSRFTOKEN' && !originalRequest._retryCSRF) {
+      originalRequest._retryCSRF = true;
+      
+      try {
+        const res = await axios.get(`${API_URL}/csrf-token`, {
+          withCredentials: true
+        });
+        const csrfToken = res?.data?.csrfToken;
+        if (csrfToken) {
+          api.defaults.headers.common['X-CSRF-Token'] = csrfToken;
+          originalRequest.headers['X-CSRF-Token'] = csrfToken;
+        }
+        return api(originalRequest);
+      } catch (csrfErr) {
+        console.error('CSRF token refresh failed', csrfErr);
+        return Promise.reject(error);
+      }
+    }
+
+    // Si 401, tenter de refresh le token JWT
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       return api.post('/auth/refresh')
-        .then((res) => {
-          // The server should set new cookies (access + refresh) via HttpOnly cookies.
-          // If your backend also returns a token in the body for compatibility, you can
-          // store it in localStorage here. We simply retry the original request.
+        .then(() => {
           return api(originalRequest);
         })
         .catch((refreshErr) => {
-          // Refresh failed — clear client state and redirect to login
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           window.location.href = '/login';
@@ -56,7 +91,7 @@ api.interceptors.response.use(
   }
 );
 
-// Fetch CSRF token on module load (double-submit cookie pattern)
+// Fetch CSRF token on module load
 async function initCsrf() {
   try {
     const res = await api.get('/csrf-token');
@@ -65,14 +100,11 @@ async function initCsrf() {
       api.defaults.headers.common['X-CSRF-Token'] = token;
     }
   } catch (err) {
-    // ignore — CSRF token will be requested on demand by the app if needed
-    // but log to console for developer visibility
-    // eslint-disable-next-line no-console
     console.warn('Unable to fetch CSRF token on startup', err?.message || err);
   }
 }
 
-// Try to initialize immediately (no await required by callers)
+// Initialize immediately
 initCsrf();
 
 export default api;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../utils/api';
 
 const DevisForm = () => {
   const navigate = useNavigate();
@@ -136,7 +136,7 @@ const DevisForm = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      const response = await axios.post('/api/devis', formData);
+     const response = await api.post('/devis', formData);
       
       setMessage({ 
         type: 'success', 

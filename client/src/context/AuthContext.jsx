@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+    const [error, setError] = useState(null);
 
   // Charger l'utilisateur depuis localStorage au démarrage
   useEffect(() => {
@@ -64,6 +65,7 @@ export const AuthProvider = ({ children }) => {
 
   // Connexion
   const login = async (email, password) => {
+    setError(null); 
     try {
       const response = await api.post('/auth/login', { email, password });
       const { token, data } = response.data;
@@ -92,6 +94,7 @@ export const AuthProvider = ({ children }) => {
       return { success: true, data };
     } catch (error) {
       const message = error.response?.data?.message || 'Erreur de connexion';
+      setError(message);
       return { success: false, message };
     }
   };
@@ -167,8 +170,10 @@ export const AuthProvider = ({ children }) => {
     user,
     token,
     loading,
-    isAdmin, // ✅ Détecte automatiquement via role ou email
+    isAdmin, 
     isAuthenticated: !!token,
+     error,
+     setError,
     login,
     register,
     logout,
