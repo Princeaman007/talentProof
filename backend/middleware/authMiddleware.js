@@ -9,8 +9,12 @@ export const protect = async (req, res, next) => {
   try {
     let token;
 
-    // Vérifier si le token existe dans le header Authorization
-    if (
+    // ✅ SÉCURITÉ AMÉLIORÉE - Chercher le token dans les cookies d'abord (HttpOnly)
+    if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
+    }
+    // Fallback: Token du header Authorization (pour compatibilité avec clients stateless)
+    else if (
       req.headers.authorization &&
       req.headers.authorization.startsWith('Bearer')
     ) {

@@ -1,4 +1,4 @@
-import ContactRequest from '../models/ContactRequest.js';
+import ContactRequest from '../models/Contactrequest.js';
 import Devis from '../models/Devis.js';
 import Favoris from '../models/Favoris.js';
 import Company from '../models/Company.js';

@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, feature/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-tests:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install backend deps
+        working-directory: backend
+        run: |
+          npm ci
+
+      - name: Run backend tests (ESM)
+        working-directory: backend
+        env:
+          NODE_OPTIONS: --experimental-vm-modules
+          NODE_ENV: test
+          EMAIL_TEST_MODE: noop
+        run: |
+          npm test
+
+  frontend-ci:
+    name: Frontend (lint/test placeholder)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install frontend deps
+        working-directory: client
+        run: |
+          npm ci
+
+      - name: Placeholder - run frontend build
+        working-directory: client
+        run: |
+          npm run build || echo "No build script"
