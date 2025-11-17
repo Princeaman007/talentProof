@@ -106,3 +106,16 @@ Optional: inspect or purge jobs using `bullmq`'s APIs or by adding a small manag
 - Add monitoring/alerts and backups for your MongoDB instance.
 
 If you want, I can add a short section that shows how to deploy this to a small production stack (Docker + managed MongoDB + secrets).
+
+## Dependabot & gestion des dépendances
+
+Dependabot est activé pour le dépôt (configurée pour scanner `backend` et `client` chaque semaine).
+- Les PRs créées par Dependabot seront étiquetées `dependencies`.
+- Utilise le template `/.github/PULL_REQUEST_TEMPLATE/dependency-audit.md` pour documenter les changements et les implications (tests, audit, étapes de rollback).
+- Processus recommandé pour les PRs de dépendances:
+  1. Lancer la CI et vérifier que tous les tests passent.
+  2. Vérifier le résultat de l'étape `npm audit` (CI échoue si vulnérabilités `high|critical`).
+  3. Pour les mises à jour mineures/patch, merger rapidement si CI est vert.
+  4. Pour les mises à jour majeures, tester localement (exécuter la suite de tests, vérifier breaking changes) avant de merger.
+
+Si tu veux, je peux activer l'automerge pour les mises à jour de patch/minor après approbation CI.
