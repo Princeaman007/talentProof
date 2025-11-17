@@ -50,6 +50,11 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+// Trust proxy when running behind a load balancer / reverse proxy
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // Response compression
 app.use(compression());
 
@@ -62,6 +67,9 @@ app.use(helmet());
 const isProd = process.env.NODE_ENV === 'production';
 const devHosts = ['http://localhost:5173', 'http://localhost:3000'];
 
+// Add commonly used external resources (Google Fonts)
+const externalFontHosts = ['https://fonts.googleapis.com', 'https://fonts.gstatic.com'];
+
 const scriptSrc = ["'self'"];
 const styleSrc = ["'self'"];
 const connectSrc = ["'self'"];
@@ -69,8 +77,12 @@ const connectSrc = ["'self'"];
 if (!isProd) {
   // Vite dev server and local frontend
   scriptSrc.push("'unsafe-eval'", "'unsafe-inline'", ...devHosts);
-  styleSrc.push("'unsafe-inline'", ...devHosts);
+  styleSrc.push("'unsafe-inline'", ...devHosts, ...externalFontHosts);
   connectSrc.push(...devHosts);
+} else {
+  // In production, explicitly allow Google Fonts domains for fonts/styles
+  styleSrc.push(...externalFontHosts);
+  fontSrc.push(...externalFontHosts);
 }
 
 app.use(

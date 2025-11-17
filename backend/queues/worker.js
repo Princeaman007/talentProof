@@ -5,8 +5,15 @@ import { sendMailImmediate } from '../utils/Email.js';
 // Start a worker that processes email sending jobs
 const connection = process.env.REDIS_URL ? new IORedis(process.env.REDIS_URL) : null;
 
-if (connection) {
-  const worker = new Worker(
+let worker = null;
+
+const startWorker = () => {
+  if (!connection) {
+    console.log('🔁 Email worker not started (no REDIS_URL configured)');
+    return;
+  }
+
+  worker = new Worker(
     'emails',
     async (job) => {
       const data = job.data || {};
@@ -26,6 +33,30 @@ if (connection) {
   });
 
   console.log('🔁 Email worker started (connected to Redis)');
-} else {
-  console.log('🔁 Email worker not started (no REDIS_URL configured)');
-}
+};
+
+startWorker();
+
+// Graceful shutdown
+const shutdown = async (signal) => {
+  console.log(`🔁 Email worker shutting down (${signal})`);
+  try {
+    if (worker) {
+      await worker.close();
+      console.log('🔁 Worker closed');
+    }
+    if (connection) {
+      await connection.quit();
+      console.log('🔁 Redis connection closed');
+    }
+    process.exit(0);
+  } catch (err) {
+    console.error('🔁 Error during worker shutdown', err);
+    process.exit(1);
+  }
+};
+
+process.on('SIGINT', () => shutdown('SIGINT'));
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+
+export { startWorker, shutdown };

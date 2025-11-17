@@ -27,6 +27,12 @@ jobs:
         run: |
           npm ci
 
+      - name: Audit backend dependencies (fail on high/critical)
+        working-directory: backend
+        run: |
+          # Fail CI if there are vulnerabilities with severity >= high
+          npm audit --production --audit-level=high
+
       - name: Run backend tests (ESM)
         working-directory: backend
         env:
