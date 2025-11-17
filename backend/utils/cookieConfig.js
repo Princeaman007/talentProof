@@ -31,3 +31,26 @@ export const setTokenCookie = (res, token) => {
 export const clearTokenCookie = (res) => {
   res.clearCookie('token', { path: '/' });
 };
+
+/**
+ * Options pour le refresh token (longue durée)
+ */
+export const getRefreshCookieOptions = () => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  return {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: 'Strict',
+    // Par défaut 7 jours
+    maxAge: parseInt(process.env.REFRESH_TOKEN_EXPIRE_MS, 10) || 7 * 24 * 60 * 60 * 1000,
+    path: '/',
+  };
+};
+
+export const setRefreshTokenCookie = (res, token) => {
+  res.cookie('refreshToken', token, getRefreshCookieOptions());
+};
+
+export const clearRefreshTokenCookie = (res) => {
+  res.clearCookie('refreshToken', { path: '/' });
+};

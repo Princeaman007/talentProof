@@ -18,7 +18,7 @@ const companySchema = new mongoose.Schema({
     type: String,
     required: [true, 'Le mot de passe est requis'],
     minlength: 6,
-    select: false, // Ne pas retourner le password par défaut
+    select: false,
   },
   logo: {
     type: String,
@@ -48,9 +48,16 @@ const companySchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
-  // ========================================
-  // ✅ NOUVEAUX CHAMPS - PHASE 4
-  // ========================================
+  // Refresh token hashed (pour rotation / invalidation)
+  refreshToken: {
+    type: String,
+    default: null,
+    select: false,
+  },
+  refreshTokenExpires: {
+    type: Date,
+    default: null,
+  },
   role: {
     type: String,
     enum: ['entreprise', 'admin'],
@@ -76,14 +83,17 @@ const companySchema = new mongoose.Schema({
   timestamps: true,
 });
 
-// Index pour recherche rapide par email
-companySchema.index({ email: 1 });
+// ✅ SUPPRIMÉ - companySchema.index({ email: 1 }); (doublon avec unique: true)
 
-// ✅ NOUVEAUX INDEX - PHASE 4
+// INDEX - PHASE 4
 companySchema.index({ role: 1 });
 companySchema.index({ isActive: 1 });
 companySchema.index({ createdAt: -1 });
+// Index pour les refresh tokens (recherche rapide lors de rotation)
+companySchema.index({ refreshToken: 1 }, { partialFilterExpression: { refreshToken: { $exists: true } } });
+companySchema.index({ refreshTokenExpires: 1 }, { partialFilterExpression: { refreshTokenExpires: { $exists: true } } });
 
-const Company = mongoose.model('Company', companySchema);
+// ✅ Protection contre OverwriteModelError
+const Company = mongoose.models.Company || mongoose.model('Company', companySchema);
 
 export default Company;

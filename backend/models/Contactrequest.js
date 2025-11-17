@@ -19,10 +19,10 @@ const contactRequestSchema = new mongoose.Schema({
     match: [/^\S+@\S+\.\S+$/, 'Email invalide'],
   },
   recruteurTel: {
-  type: String,
-  required: false, 
-  default: '', 
-},
+    type: String,
+    required: false, 
+    default: '', 
+  },
   entreprise: {
     type: String,
     required: [true, 'Le nom de l\'entreprise est requis'],
@@ -45,6 +45,7 @@ const contactRequestSchema = new mongoose.Schema({
 contactRequestSchema.index({ statut: 1, createdAt: -1 });
 contactRequestSchema.index({ talent: 1 });
 
-const ContactRequest = mongoose.model('ContactRequest', contactRequestSchema);
+// Correction : vérifie si le modèle existe déjà avant de le créer
+const ContactRequest = mongoose.models.ContactRequest || mongoose.model('ContactRequest', contactRequestSchema);
 
 export default ContactRequest;

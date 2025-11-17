@@ -2,7 +2,7 @@ import Company from '../models/Company.js';
 import { hashPassword, comparePassword, generateToken, generateRandomToken, hashToken } from '../utils/auth.js';
 import { sendEmail } from '../utils/email.js';
 import { confirmationEmailTemplate, resetPasswordTemplate } from '../utils/emailTemplates.js';
-import { setTokenCookie, clearTokenCookie } from '../utils/cookieConfig.js';
+import { setTokenCookie, clearTokenCookie, setRefreshTokenCookie, clearRefreshTokenCookie } from '../utils/cookieConfig.js';
 
 /**
  * @route   POST /api/auth/register
@@ -178,11 +178,21 @@ export const login = async (req, res) => {
     company.lastLogin = new Date();
     await company.save();
 
-    // Générer le token JWT
-    const token = generateToken({ id: company._id }, process.env.JWT_EXPIRE || '24h');
+    // Générer le access token (court lived) et refresh token (long lived)
+    const accessExpire = process.env.ACCESS_TOKEN_EXPIRE || '15m';
+    const token = generateToken({ id: company._id }, accessExpire);
 
-    // ✅ SÉCURITÉ - NOUVEAU: Envoyer le token via cookie HttpOnly au lieu du body
+    // Générer refresh token (random) et stocker le hash en base
+    const refreshToken = generateRandomToken();
+    const hashedRefresh = hashToken(refreshToken);
+    const refreshExpireMs = parseInt(process.env.REFRESH_TOKEN_EXPIRE_MS, 10) || (7 * 24 * 60 * 60 * 1000);
+    company.refreshToken = hashedRefresh;
+    company.refreshTokenExpires = Date.now() + refreshExpireMs;
+    await company.save();
+
+    // Envoyer les deux cookies sécurisés
     setTokenCookie(res, token);
+    setRefreshTokenCookie(res, refreshToken);
 
     // ✅ MODIFIÉ - Phase 4 - Inclure role et isActive
     const companyData = {
@@ -197,14 +207,17 @@ export const login = async (req, res) => {
       lastLogin: company.lastLogin, // ✅ NOUVEAU (optionnel)
     };
 
-    res.status(200).json({
+    // Optionnel: inclure le token dans le body pour compatibilité (deprecated)
+    const includeTokenInBody = process.env.DEPRECATE_TOKEN_IN_BODY === 'true' ? false : true;
+
+    const responsePayload = {
       success: true,
       message: 'Connexion réussie.',
       data: companyData,
-      // ⚠️ Note: token toujours retourné en réponse pour compatibilité
-      // À supprimer une fois frontend migré vers cookies
-      token,
-    });
+    };
+    if (includeTokenInBody) responsePayload.token = token;
+
+    res.status(200).json(responsePayload);
   } catch (error) {
     console.error('Erreur login:', error);
     res.status(500).json({
@@ -288,8 +301,23 @@ export const forgotPassword = async (req, res) => {
  */
 export const logout = async (req, res) => {
   try {
-    // ✅ SÉCURITÉ - Nettoyer le cookie du token
+    // ✅ SÉCURITÉ - Nettoyer les cookies token + refresh
     clearTokenCookie(res);
+    clearRefreshTokenCookie(res);
+
+    // Supprimer le refresh token côté serveur
+    try {
+      if (req.company) {
+        const company = await Company.findById(req.company._id).select('+refreshToken');
+        if (company) {
+          company.refreshToken = null;
+          company.refreshTokenExpires = null;
+          await company.save();
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
 
     res.status(200).json({
       success: true,
@@ -494,5 +522,64 @@ export const changePassword = async (req, res) => {
       message: 'Erreur lors du changement de mot de passe.',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
+  }
+};
+
+/**
+ * @route POST /api/auth/refresh
+ * @desc Rotate refresh token and issue new access token
+ * @access Public (but requires refresh cookie)
+ */
+export const refreshToken = async (req, res) => {
+  try {
+    const incoming = req.cookies && req.cookies.refreshToken;
+    if (!incoming) {
+      return res.status(401).json({ success: false, message: 'Refresh token manquant' });
+    }
+
+    const hashed = hashToken(incoming);
+
+    const company = await Company.findOne({ refreshToken: hashed }).select('+refreshToken +refreshTokenExpires');
+    if (!company) {
+      return res.status(401).json({ success: false, message: 'Refresh token invalide' });
+    }
+
+    if (!company.refreshTokenExpires || company.refreshTokenExpires < Date.now()) {
+      // Cleanup
+      company.refreshToken = null;
+      company.refreshTokenExpires = null;
+      await company.save();
+      clearRefreshTokenCookie(res);
+      return res.status(401).json({ success: false, message: 'Refresh token expiré' });
+    }
+
+    // Rotation: générer un nouveau refresh token
+    const newRefresh = generateRandomToken();
+    const newHashed = hashToken(newRefresh);
+    const refreshExpireMs = parseInt(process.env.REFRESH_TOKEN_EXPIRE_MS, 10) || (7 * 24 * 60 * 60 * 1000);
+    company.refreshToken = newHashed;
+    company.refreshTokenExpires = Date.now() + refreshExpireMs;
+    await company.save();
+
+    // Générer un nouvel access token
+    const accessExpire = process.env.ACCESS_TOKEN_EXPIRE || '15m';
+    const newAccessToken = generateToken({ id: company._id }, accessExpire);
+
+    // Set cookies
+    setTokenCookie(res, newAccessToken);
+    setRefreshTokenCookie(res, newRefresh);
+
+    const companyData = {
+      id: company._id,
+      nom: company.nom,
+      email: company.email,
+      role: company.role || 'entreprise',
+      isActive: company.isActive !== undefined ? company.isActive : true,
+    };
+
+    return res.status(200).json({ success: true, data: companyData });
+  } catch (error) {
+    console.error('Erreur refreshToken:', error);
+    return res.status(500).json({ success: false, message: 'Erreur lors du refresh token' });
   }
 };

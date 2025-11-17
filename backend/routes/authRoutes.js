@@ -4,6 +4,7 @@ import {
   confirmEmail,
   login,
   logout,
+  refreshToken,
   forgotPassword,
   resetPassword,
   getProfile,
@@ -26,6 +27,9 @@ router.get('/confirm/:token', confirmEmail);
 router.post('/login', loginValidation, login);
 router.post('/forgot-password', forgotPasswordValidation, forgotPassword);
 router.post('/reset-password/:token', resetPasswordValidation, resetPassword);
+
+// Refresh token endpoint
+router.post('/refresh', refreshToken);
 
 // Routes protégées (nécessitent authentification)
 router.get('/profile', protect, getProfile);
