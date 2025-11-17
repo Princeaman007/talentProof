@@ -1,4 +1,6 @@
 import express from 'express';
+import multer from 'multer';
+import path from 'path';
 import {
   register,
   confirmEmail,
@@ -21,6 +23,34 @@ import {
 
 const router = express.Router();
 
+// CONFIGURATION MULTER pour upload logo entreprise
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/logos/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'logo-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const fileFilter = (req, file, cb) => {
+  // Accepter uniquement les images
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Seules les images sont autorisées'), false);
+  }
+};
+
+const uploadLogo = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5 MB
+  },
+  fileFilter: fileFilter
+});
+
 // Routes publiques
 router.post('/register', registerValidation, register);
 router.get('/confirm/:token', confirmEmail);
@@ -33,7 +63,7 @@ router.post('/refresh', refreshToken);
 
 // Routes protégées (nécessitent authentification)
 router.get('/profile', protect, getProfile);
-router.put('/profile', protect, updateProfile);
+router.put('/profile', protect, uploadLogo.single('logo'), updateProfile);
 router.put('/change-password', protect, changePassword);
 router.post('/logout', protect, logout);
 

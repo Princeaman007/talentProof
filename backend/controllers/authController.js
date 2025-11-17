@@ -200,6 +200,9 @@ export const login = async (req, res) => {
       nom: company.nom,
       email: company.email,
       logo: company.logo,
+      telephone: company.telephone,
+      adresse: company.adresse,
+      secteurActivite: company.secteurActivite,
       nombreEmployes: company.nombreEmployes,
       profilsRecherches: company.profilsRecherches,
       role: company.role || 'entreprise', // ✅ NOUVEAU
@@ -406,6 +409,9 @@ export const getProfile = async (req, res) => {
         nom: company.nom,
         email: company.email,
         logo: company.logo,
+        telephone: company.telephone,
+        adresse: company.adresse,
+        secteurActivite: company.secteurActivite,
         nombreEmployes: company.nombreEmployes,
         profilsRecherches: company.profilsRecherches,
         role: company.role || 'entreprise', // ✅ NOUVEAU
@@ -432,7 +438,7 @@ export const getProfile = async (req, res) => {
  */
 export const updateProfile = async (req, res) => {
   try {
-    const { nom, logo, nombreEmployes, profilsRecherches } = req.body;
+    const { nom, telephone, adresse, secteurActivite, nombreEmployes, profilsRecherches } = req.body;
 
     const company = await Company.findById(req.company._id);
 
@@ -445,9 +451,26 @@ export const updateProfile = async (req, res) => {
 
     // Mettre à jour les champs
     if (nom) company.nom = nom;
-    if (logo !== undefined) company.logo = logo;
+    if (telephone !== undefined) company.telephone = telephone;
+    if (adresse !== undefined) company.adresse = adresse;
+    if (secteurActivite !== undefined) company.secteurActivite = secteurActivite;
     if (nombreEmployes) company.nombreEmployes = nombreEmployes;
-    if (profilsRecherches) company.profilsRecherches = profilsRecherches;
+    
+    // Parser profilsRecherches si c'est une chaîne JSON
+    if (profilsRecherches) {
+      try {
+        company.profilsRecherches = typeof profilsRecherches === 'string' 
+          ? JSON.parse(profilsRecherches) 
+          : profilsRecherches;
+      } catch (e) {
+        company.profilsRecherches = profilsRecherches;
+      }
+    }
+    
+    // Gérer l'upload du logo
+    if (req.file) {
+      company.logo = `/uploads/logos/${req.file.filename}`;
+    }
 
     await company.save();
 
@@ -459,10 +482,13 @@ export const updateProfile = async (req, res) => {
         nom: company.nom,
         email: company.email,
         logo: company.logo,
+        telephone: company.telephone,
+        adresse: company.adresse,
+        secteurActivite: company.secteurActivite,
         nombreEmployes: company.nombreEmployes,
         profilsRecherches: company.profilsRecherches,
-        role: company.role || 'entreprise', // ✅ NOUVEAU
-        isActive: company.isActive !== undefined ? company.isActive : true, // ✅ NOUVEAU
+        role: company.role || 'entreprise',
+        isActive: company.isActive !== undefined ? company.isActive : true,
       },
     });
   } catch (error) {

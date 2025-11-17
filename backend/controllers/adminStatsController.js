@@ -99,6 +99,8 @@ export const getAdminStats = async (req, res) => {
         entreprisesActives,
         talentsActifs,
         tauxSucces,
+        totalDemandes: contactRequestsCount,
+        demandesTraitees: contactRequestsTraitees,
         
         // Nouveautés (30 jours)
         recentStats: {

@@ -13,6 +13,9 @@ const DashboardHome = () => {
   // Sélectionner les bonnes stats selon le rôle
   const { stats, loading } = isAdmin ? adminStatsHook : publicStatsHook;
 
+  // Debug: Afficher les stats dans la console
+  console.log('🔍 Dashboard Stats:', { stats, loading, isAdmin });
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -39,7 +42,7 @@ const DashboardHome = () => {
               ) : (
                 <>
                   <p className="text-3xl font-bold mt-1">
-                    {stats?.talentsCount || 0}
+                    {stats?.talentsCount || stats?.talentsValides || 0}
                   </p>
                   {isAdmin && stats?.talentsActifs !== undefined && (
                     <p className="text-xs mt-2 opacity-75">
@@ -53,8 +56,36 @@ const DashboardHome = () => {
           </div>
         </div>
 
-        {/* Entreprises inscrites - Visible par tous (preuve sociale) */}
+        {/* Taux de succès - Visible par tous */}
         <div className="card bg-gradient-to-br from-accent to-green-600 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm opacity-90">Taux de succès</p>
+              {loading ? (
+                <FaSpinner className="animate-spin text-2xl mt-1" />
+              ) : (
+                <>
+                  <p className="text-3xl font-bold mt-1">
+                    {stats?.tauxSucces || 0}%
+                  </p>
+                  {isAdmin && stats?.totalDemandes !== undefined ? (
+                    <p className="text-xs mt-2 opacity-75">
+                      {stats.demandesTraitees || 0} / {stats.totalDemandes || 0} demandes
+                    </p>
+                  ) : (
+                    <p className="text-xs mt-2 opacity-75">
+                      Demandes traitées
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+            <FaCheckCircle className="text-5xl opacity-20" />
+          </div>
+        </div>
+
+        {/* Entreprises inscrites - Visible par tous (preuve sociale) */}
+        <div className="card bg-gradient-to-br from-secondary to-orange-600 text-white">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm opacity-90">Entreprises partenaires</p>
@@ -63,7 +94,7 @@ const DashboardHome = () => {
               ) : (
                 <>
                   <p className="text-3xl font-bold mt-1">
-                    {stats?.entreprisesCount || 0}
+                    {stats?.entreprisesCount || stats?.entreprisesPartenaires || 0}
                   </p>
                   {isAdmin && stats?.entreprisesActives !== undefined ? (
                     <p className="text-xs mt-2 opacity-75">
@@ -80,26 +111,6 @@ const DashboardHome = () => {
             <FaBuilding className="text-5xl opacity-20" />
           </div>
         </div> 
-
-        {/* Taux de succès - ADMIN UNIQUEMENT */}
-        {isAdmin && (
-          <div className="card bg-gradient-to-br from-secondary to-orange-600 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm opacity-90">Taux de succès</p>
-                {loading ? (
-                  <FaSpinner className="animate-spin text-2xl mt-1" />
-                ) : (
-                  <p className="text-3xl font-bold mt-1">
-                    {stats?.tauxSucces || 0}%
-                  </p>
-                )}
-                <p className="text-xs mt-2 opacity-75">Demandes traitées</p>
-              </div>
-              <FaCheckCircle className="text-5xl opacity-20" />
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Stats récentes (Admin uniquement) */}
@@ -293,10 +304,10 @@ const DashboardHome = () => {
             <p className="text-neutral text-sm">
               {isAdmin
                 ? stats?.talentsCount > 0
-                  ? `Vous gérez actuellement ${stats.talentsCount} talent${stats.talentsCount > 1 ? 's' : ''} validé${stats.talentsCount > 1 ? 's' : ''} et ${stats.entreprisesCount || 0} entreprise${stats.entreprisesCount > 1 ? 's' : ''} inscrite${stats.entreprisesCount > 1 ? 's' : ''}.`
+                  ? `Vous gérez actuellement ${stats.talentsCount} talent${stats.talentsCount > 1 ? 's' : ''} validé${stats.talentsCount > 1 ? 's' : ''} et ${stats.entreprisesCount || 0} entreprise${stats.entreprisesCount > 1 ? 's' : ''} inscrite${stats.entreprisesCount > 1 ? 's' : ''}. Taux de succès : ${stats.tauxSucces || 0}%.`
                   : 'Aucun talent dans la base de données. Commencez par ajouter votre premier talent via "Gérer les talents".'
                 : stats?.talentsCount > 0
-                  ? `Explorez notre catalogue de ${stats.talentsCount} développeur${stats.talentsCount > 1 ? 's' : ''} validé${stats.talentsCount > 1 ? 's' : ''}. Utilisez les filtres par technologie pour trouver rapidement les talents qui correspondent à vos besoins.`
+                  ? `Explorez notre catalogue de ${stats.talentsCount} développeur${stats.talentsCount > 1 ? 's' : ''} validé${stats.talentsCount > 1 ? 's' : ''} avec un taux de succès de ${stats.tauxSucces || 0}%. Utilisez les filtres par technologie pour trouver rapidement les talents qui correspondent à vos besoins.`
                   : 'Aucun talent disponible pour le moment. Revenez bientôt pour découvrir nos développeurs validés.'
               }
             </p>

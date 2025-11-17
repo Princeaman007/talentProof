@@ -25,6 +25,6 @@ const favorisSchema = new mongoose.Schema({
 favorisSchema.index({ entreprise: 1, talent: 1 }, { unique: true });
 favorisSchema.index({ entreprise: 1, createdAt: -1 });
 
-const Favoris = mongoose.model('Favoris', favorisSchema);
+const Favoris = mongoose.models.Favoris || mongoose.model('Favoris', favorisSchema);
 
 export default Favoris;

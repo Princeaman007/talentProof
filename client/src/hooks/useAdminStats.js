@@ -54,20 +54,31 @@ export const usePublicStats = () => {
       setLoading(true);
       setError(null);
       
-      // Récupérer les données publiques qui servent de preuve sociale
-      const [talentsResponse, entreprisesResponse] = await Promise.all([
-        api.get('/talents'),
-        api.get('/public/entreprises/count'), // ✅ Nouvelle route publique
-      ]);
+      // ✅ Récupérer toutes les stats publiques en une seule requête
+      const response = await api.get('/public/stats');
       
       setStats({
-        talentsCount: talentsResponse.data.count || 0,
-        entreprisesCount: entreprisesResponse.data.count || 0, // ✅ Preuve sociale
-        // Les stats détaillées (taux de succès, actifs, etc.) restent privées
+        talentsCount: response.data.stats.talentsValides || 0,
+        talentsValides: response.data.stats.talentsValides || 0,
+        entreprisesCount: response.data.stats.entreprisesPartenaires || 0,
+        entreprisesPartenaires: response.data.stats.entreprisesPartenaires || 0,
+        tauxSucces: response.data.stats.tauxSucces || 0,
+        totalDemandes: response.data.stats.totalDemandes || 0,
+        demandesTraitees: response.data.stats.demandesTraitees || 0,
       });
     } catch (err) {
       console.error('Erreur récupération stats publiques:', err);
       setError(err.message);
+      // Valeurs par défaut en cas d'erreur
+      setStats({
+        talentsCount: 0,
+        talentsValides: 0,
+        entreprisesCount: 0,
+        entreprisesPartenaires: 0,
+        tauxSucces: 0,
+        totalDemandes: 0,
+        demandesTraitees: 0,
+      });
     } finally {
       setLoading(false);
     }

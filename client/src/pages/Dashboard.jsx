@@ -18,6 +18,7 @@ import Profile from './dashboard/Profile';
 import ChangePassword from './dashboard/ChangePassword';
 import AdminTalents from './dashboard/AdminTalents';
 import AdminTeam from './dashboard/AdminTeam';
+import AdminTalentDays from './dashboard/AdminTalentDays';
 
 const Dashboard = () => {
   const { user, logout, isAdmin } = useAuth();
@@ -33,6 +34,7 @@ const Dashboard = () => {
   const adminMenuItems = [
     { name: 'Gestion Talents', path: '/dashboard/admin/talents', icon: <FaUsers />, adminOnly: true },
     { name: 'Gestion Équipe', path: '/dashboard/admin/team', icon: <FaUserShield />, adminOnly: true },
+    { name: 'Gestion Événements', path: '/dashboard/admin/talent-days', icon: <FaUsers />, adminOnly: true },
   ];
 
   const isActive = (path) => {
@@ -156,6 +158,7 @@ const Dashboard = () => {
               <>
                 <Route path="admin/talents" element={<AdminTalents />} />
                 <Route path="admin/team" element={<AdminTeam />} />
+                <Route path="admin/talent-days" element={<AdminTalentDays />} />
               </>
             )}
           </Routes>

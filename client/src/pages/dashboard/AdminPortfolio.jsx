@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 
 const AdminPortfolio = () => {
   const [projets, setProjets] = useState([]);
@@ -34,13 +34,12 @@ const AdminPortfolio = () => {
   const fetchProjets = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await axios.get('/api/admin/portfolio', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      console.log('🔍 Chargement des projets portfolio...');
+      const response = await api.get('/admin/portfolio');
+      console.log('✅ Projets chargés:', response.data);
       setProjets(response.data.data);
     } catch (error) {
-      console.error('Erreur chargement projets:', error);
+      console.error('❌ Erreur chargement projets:', error);
       setMessage({ type: 'error', text: 'Erreur lors du chargement des projets' });
     } finally {
       setLoading(false);
@@ -135,7 +134,6 @@ const AdminPortfolio = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const token = localStorage.getItem('token');
     const formDataToSend = new FormData();
     
     Object.keys(formData).forEach(key => {
@@ -150,17 +148,15 @@ const AdminPortfolio = () => {
 
     try {
       if (editMode) {
-        await axios.put(`/api/admin/portfolio/${selectedProjet._id}`, formDataToSend, {
+        await api.put(`/admin/portfolio/${selectedProjet._id}`, formDataToSend, {
           headers: { 
-            Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
           }
         });
         setMessage({ type: 'success', text: 'Projet modifié avec succès' });
       } else {
-        await axios.post('/api/admin/portfolio', formDataToSend, {
+        await api.post('/admin/portfolio', formDataToSend, {
           headers: { 
-            Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
           }
         });
@@ -183,10 +179,7 @@ const AdminPortfolio = () => {
     if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) return;
     
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`/api/admin/portfolio/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.delete(`/admin/portfolio/${id}`);
       setMessage({ type: 'success', text: 'Projet supprimé avec succès' });
       fetchProjets();
       setTimeout(() => setMessage({ type: '', text: '' }), 3000);

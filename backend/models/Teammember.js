@@ -46,6 +46,6 @@ const teamMemberSchema = new mongoose.Schema({
 // Index pour l'ordre d'affichage
 teamMemberSchema.index({ ordre: 1 });
 
-const TeamMember = mongoose.model('TeamMember', teamMemberSchema);
+const TeamMember = mongoose.models.TeamMember || mongoose.model('TeamMember', teamMemberSchema);
 
 export default TeamMember;

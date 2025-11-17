@@ -1,6 +1,14 @@
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+export const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
+
+// Helper pour construire les URLs d'images
+export const getImageUrl = (imagePath) => {
+  if (!imagePath) return `${SERVER_URL}/uploads/default-talent-day.svg`;
+  if (imagePath.startsWith('http')) return imagePath;
+  return `${SERVER_URL}${imagePath}`;
+};
 
 // Instance axios avec configuration de base
 const api = axios.create({
@@ -14,14 +22,22 @@ const api = axios.create({
 // Intercepteur pour ajouter le token JWT et CSRF automatiquement
 api.interceptors.request.use(
   async (config) => {
-    // 1. Token JWT (fallback si localStorage)
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // Skip auth for public routes
+    const publicRoutes = ['/talent-days', '/csrf-token', '/auth/login', '/auth/register'];
+    const isPublicRoute = publicRoutes.some(route => 
+      config.url?.includes(route) && config.method?.toLowerCase() === 'get'
+    );
+    
+    // 1. Token JWT (fallback si localStorage) - skip for public GET requests
+    if (!isPublicRoute) {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
 
-    // 2. ✅ CSRF Token - Récupérer si manquant
-    if (!api.defaults.headers.common['X-CSRF-Token']) {
+    // 2. ✅ CSRF Token - Récupérer si manquant (pour mutations uniquement)
+    if (config.method !== 'get' && !api.defaults.headers.common['X-CSRF-Token']) {
       try {
         const res = await axios.get(`${API_URL}/csrf-token`, {
           withCredentials: true
@@ -34,7 +50,7 @@ api.interceptors.request.use(
       } catch (err) {
         console.warn('Unable to fetch CSRF token', err?.message || err);
       }
-    } else {
+    } else if (config.method !== 'get') {
       // Ajouter le token existant à la requête
       config.headers['X-CSRF-Token'] = api.defaults.headers.common['X-CSRF-Token'];
     }

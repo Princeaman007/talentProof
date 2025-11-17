@@ -11,7 +11,11 @@ import ServicesPage from './pages/ServicesPage';
 import About from './pages/About';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
-
+import Contact from './pages/Contact';
+import TalentDays from './pages/Talentdays';
+import TalentDayDetail from './pages/Talentdaydetail';
+import TalentDayRegister from './pages/Talentdayregister';
+import CompanyRegistration from './pages/CompanyRegistration';
 
 // Pages services
 import DevisForm from './pages/services/DevisForm';
@@ -51,6 +55,11 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password/:token" element={<ResetPassword />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/talent-days" element={<TalentDays />} />
+              <Route path="/talent-days/:id" element={<TalentDayDetail />} />
+              <Route path="/talent-days/:id/register" element={<TalentDayRegister />} />
+              <Route path="/company-registration" element={<CompanyRegistration />} />
 
               {/* Routes services */}
               <Route path="/services/devis" element={<DevisForm />} />

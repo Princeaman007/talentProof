@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../../utils/api';
+import api, { getImageUrl } from '../../utils/api';
 import {
   FaSearch,
   FaFilter,
@@ -10,6 +10,11 @@ import {
   FaBuilding,
   FaEnvelope,
   FaCalendar,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaBriefcase,
+  FaUsers,
+  FaTimes,
 } from 'react-icons/fa';
 
 const AdminEntreprises = () => {
@@ -25,11 +30,8 @@ const AdminEntreprises = () => {
 
   const [selectedEntreprise, setSelectedEntreprise] = useState(null);
   const [showSuspendModal, setShowSuspendModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [suspensionReason, setSuspensionReason] = useState('');
-
-  useEffect(() => {
-    fetchEntreprises();
-  }, [statusFilter, pagination.currentPage, search]);
 
   const fetchEntreprises = async () => {
     try {
@@ -51,6 +53,11 @@ const AdminEntreprises = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchEntreprises();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statusFilter, pagination.currentPage, search]);
 
   const handleSuspend = async () => {
     if (!suspensionReason.trim()) {
@@ -185,7 +192,10 @@ const AdminEntreprises = () => {
                     Contact
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Activité
+                    Secteur
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Profils
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Statut
@@ -200,36 +210,108 @@ const AdminEntreprises = () => {
                   <tr key={entreprise._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+                        {entreprise.logo ? (
+                          <img
+                            src={getImageUrl(entreprise.logo)}
+                            alt={entreprise.nom}
+                            className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              if (e.target.nextSibling) {
+                                e.target.nextSibling.style.display = 'flex';
+                              }
+                            }}
+                          />
+                        ) : null}
+                        <div className={`w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold ${entreprise.logo ? 'hidden' : ''}`}>
                           {entreprise.nom.charAt(0).toUpperCase()}
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
                             {entreprise.nom}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            {entreprise.nombreEmployes} employés
+                          <div className="text-xs text-gray-500 flex items-center gap-1">
+                            <FaUsers className="w-3 h-3" />
+                            {entreprise.nombreEmployes}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{entreprise.email}</div>
-                      <div className="text-xs text-gray-500">
-                        Inscrit le {formatDate(entreprise.createdAt)}
+                    <td className="px-6 py-4">
+                      <div className="space-y-1">
+                        <div className="text-sm text-gray-900 flex items-center gap-2">
+                          <FaEnvelope className="w-3 h-3 text-gray-400" />
+                          {entreprise.email}
+                        </div>
+                        {entreprise.telephone && (
+                          <div className="text-xs text-gray-600 flex items-center gap-2">
+                            <FaPhone className="w-3 h-3 text-gray-400" />
+                            {entreprise.telephone}
+                          </div>
+                        )}
+                        {entreprise.adresse && (
+                          <div className="text-xs text-gray-500 flex items-center gap-2">
+                            <FaMapMarkerAlt className="w-3 h-3 text-gray-400" />
+                            {entreprise.adresse.length > 30 
+                              ? `${entreprise.adresse.substring(0, 30)}...` 
+                              : entreprise.adresse}
+                          </div>
+                        )}
+                        <div className="text-xs text-gray-400 flex items-center gap-1">
+                          <FaCalendar className="w-3 h-3" />
+                          Inscrit le {formatDate(entreprise.createdAt)}
+                        </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div>
-                        {entreprise.stats?.contactRequests || 0} demandes
+                    <td className="px-6 py-4">
+                      <div className="space-y-1">
+                        {entreprise.secteurActivite ? (
+                          <div className="flex items-center gap-2">
+                            <FaBriefcase className="w-3 h-3 text-gray-400" />
+                            <span className="text-sm text-gray-900">
+                              {entreprise.secteurActivite}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-gray-400 italic">Non renseigné</span>
+                        )}
                       </div>
-                      <div>{entreprise.stats?.devis || 0} devis</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="max-w-xs">
+                        {entreprise.profilsRecherches && entreprise.profilsRecherches.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {entreprise.profilsRecherches.slice(0, 2).map((profil, index) => (
+                              <span
+                                key={index}
+                                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
+                              >
+                                {profil.length > 15 ? `${profil.substring(0, 15)}...` : profil}
+                              </span>
+                            ))}
+                            {entreprise.profilsRecherches.length > 2 && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                                +{entreprise.profilsRecherches.length - 2}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-gray-400 italic">Aucun profil</span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {entreprise.suspendedAt ? (
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                          Suspendue
-                        </span>
+                        <div>
+                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                            Suspendue
+                          </span>
+                          {entreprise.suspensionReason && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              {entreprise.suspensionReason}
+                            </p>
+                          )}
+                        </div>
                       ) : entreprise.isActive ? (
                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                           Active
@@ -239,9 +321,24 @@ const AdminEntreprises = () => {
                           Inactive
                         </span>
                       )}
+                      {entreprise.lastLogin && (
+                        <p className="text-xs text-gray-400 mt-1">
+                          Dernière connexion: {formatDate(entreprise.lastLogin)}
+                        </p>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
+                        <button
+                          onClick={() => {
+                            setSelectedEntreprise(entreprise);
+                            setShowDetailsModal(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-900"
+                          title="Voir les détails"
+                        >
+                          <FaEye size={18} />
+                        </button>
                         {entreprise.suspendedAt ? (
                           <button
                             onClick={() => handleActivate(entreprise._id)}
@@ -336,6 +433,204 @@ const AdminEntreprises = () => {
               >
                 Confirmer la suspension
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Détails de l'entreprise */}
+      {showDetailsModal && selectedEntreprise && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                {selectedEntreprise.logo ? (
+                  <img
+                    src={getImageUrl(selectedEntreprise.logo)}
+                    alt={selectedEntreprise.nom}
+                    className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="64" height="64"%3E%3Crect width="64" height="64" fill="%234F46E5"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="24" fill="white"%3E' + selectedEntreprise.nom.charAt(0).toUpperCase() + '%3C/text%3E%3C/svg%3E';
+                    }}
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center font-bold text-2xl">
+                    {selectedEntreprise.nom.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    {selectedEntreprise.nom}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Membre depuis le {formatDate(selectedEntreprise.createdAt)}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setShowDetailsModal(false);
+                  setSelectedEntreprise(null);
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <FaTimes size={24} />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-6">
+              {/* Statut */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-900 mb-3">Statut du compte</h4>
+                <div className="flex items-center gap-4">
+                  {selectedEntreprise.suspendedAt ? (
+                    <>
+                      <span className="px-3 py-1 text-sm font-semibold rounded-full bg-red-100 text-red-800">
+                        Suspendue
+                      </span>
+                      <span className="text-sm text-gray-600">
+                        Depuis le {formatDate(selectedEntreprise.suspendedAt)}
+                      </span>
+                    </>
+                  ) : selectedEntreprise.isActive ? (
+                    <span className="px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-800">
+                      Active
+                    </span>
+                  ) : (
+                    <span className="px-3 py-1 text-sm font-semibold rounded-full bg-gray-100 text-gray-800">
+                      Inactive
+                    </span>
+                  )}
+                  {selectedEntreprise.lastLogin && (
+                    <span className="text-sm text-gray-500">
+                      Dernière connexion: {formatDate(selectedEntreprise.lastLogin)}
+                    </span>
+                  )}
+                </div>
+                {selectedEntreprise.suspensionReason && (
+                  <div className="mt-3 p-3 bg-red-50 rounded border border-red-200">
+                    <p className="text-sm text-red-800">
+                      <strong>Raison:</strong> {selectedEntreprise.suspensionReason}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Informations de contact */}
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3">Informations de contact</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-start gap-3">
+                    <FaEnvelope className="w-5 h-5 text-gray-400 mt-1" />
+                    <div>
+                      <p className="text-xs text-gray-500">Email</p>
+                      <p className="text-sm text-gray-900 font-medium">
+                        {selectedEntreprise.email}
+                      </p>
+                    </div>
+                  </div>
+                  {selectedEntreprise.telephone && (
+                    <div className="flex items-start gap-3">
+                      <FaPhone className="w-5 h-5 text-gray-400 mt-1" />
+                      <div>
+                        <p className="text-xs text-gray-500">Téléphone</p>
+                        <p className="text-sm text-gray-900 font-medium">
+                          {selectedEntreprise.telephone}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {selectedEntreprise.adresse && (
+                    <div className="flex items-start gap-3 md:col-span-2">
+                      <FaMapMarkerAlt className="w-5 h-5 text-gray-400 mt-1" />
+                      <div>
+                        <p className="text-xs text-gray-500">Adresse</p>
+                        <p className="text-sm text-gray-900 font-medium">
+                          {selectedEntreprise.adresse}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Informations entreprise */}
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3">Informations entreprise</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-start gap-3">
+                    <FaUsers className="w-5 h-5 text-gray-400 mt-1" />
+                    <div>
+                      <p className="text-xs text-gray-500">Nombre d'employés</p>
+                      <p className="text-sm text-gray-900 font-medium">
+                        {selectedEntreprise.nombreEmployes}
+                      </p>
+                    </div>
+                  </div>
+                  {selectedEntreprise.secteurActivite && (
+                    <div className="flex items-start gap-3">
+                      <FaBriefcase className="w-5 h-5 text-gray-400 mt-1" />
+                      <div>
+                        <p className="text-xs text-gray-500">Secteur d'activité</p>
+                        <p className="text-sm text-gray-900 font-medium">
+                          {selectedEntreprise.secteurActivite}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Profils recherchés */}
+              {selectedEntreprise.profilsRecherches && selectedEntreprise.profilsRecherches.length > 0 && (
+                <div>
+                  <h4 className="font-semibold text-gray-900 mb-3">
+                    Profils recherchés ({selectedEntreprise.profilsRecherches.length})
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedEntreprise.profilsRecherches.map((profil, index) => (
+                      <span
+                        key={index}
+                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+                      >
+                        {profil}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="border-t pt-4">
+                <div className="flex justify-end gap-3">
+                  {selectedEntreprise.suspendedAt ? (
+                    <button
+                      onClick={() => {
+                        handleActivate(selectedEntreprise._id);
+                        setShowDetailsModal(false);
+                      }}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center gap-2"
+                    >
+                      <FaCheckCircle />
+                      Réactiver l'entreprise
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setShowDetailsModal(false);
+                        setShowSuspendModal(true);
+                      }}
+                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center gap-2"
+                    >
+                      <FaBan />
+                      Suspendre l'entreprise
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>

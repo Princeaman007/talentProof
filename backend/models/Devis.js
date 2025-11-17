@@ -120,6 +120,6 @@ devisSchema.index({ email: 1 });
 devisSchema.index({ statut: 1, createdAt: -1 });
 devisSchema.index({ typeProjet: 1 });
 
-const Devis = mongoose.model('Devis', devisSchema);
+const Devis = mongoose.models.Devis || mongoose.model('Devis', devisSchema);
 
 export default Devis;

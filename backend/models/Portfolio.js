@@ -73,6 +73,6 @@ portfolioSchema.index({ titre: 'text', description: 'text' });
 portfolioSchema.index({ categorie: 1, statut: 1 });
 portfolioSchema.index({ ordre: 1, createdAt: -1 });
 
-const Portfolio = mongoose.model('Portfolio', portfolioSchema);
+const Portfolio = mongoose.models.Portfolio || mongoose.model('Portfolio', portfolioSchema);
 
 export default Portfolio;

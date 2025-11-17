@@ -429,6 +429,212 @@ export const devisConfirmationTemplate = (clientNom) => {
   return baseTemplate(content);
 };
 
+/**
+ * Email de confirmation d'inscription TalentDay
+ */
+export const talentDayConfirmationTemplate = (inscription, talentDay) => {
+  const content = `
+    <h1>🎉 Inscription confirmée !</h1>
+    <p>Bonjour <strong>${inscription.nom}</strong>,</p>
+    <p>Nous avons bien reçu votre inscription au TalentDay :</p>
+    
+    <div style="background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%); color: white; padding: 20px; border-radius: 12px; margin: 20px 0;">
+      <h2 style="color: white; margin-top: 0; font-size: 24px;">${talentDay.titre}</h2>
+      
+      <div style="margin: 15px 0; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.2);">
+        <p style="margin: 8px 0; color: #E0E7FF;"><strong>📅 Date :</strong> ${new Date(talentDay.date).toLocaleDateString('fr-BE', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })}</p>
+        
+        <p style="margin: 8px 0; color: #E0E7FF;"><strong>🕐 Horaires :</strong> ${talentDay.heureDebut} - ${talentDay.heureFin}</p>
+        
+        <p style="margin: 8px 0; color: #E0E7FF;"><strong>📍 Lieu :</strong> ${
+          talentDay.lieu.type === 'en-ligne' 
+            ? 'En ligne (le lien vous sera envoyé)' 
+            : `${talentDay.lieu.adresse}, ${talentDay.lieu.ville}`
+        }</p>
+        
+        ${talentDay.technologies && talentDay.technologies.length > 0 ? `
+        <p style="margin: 8px 0; color: #E0E7FF;"><strong>💻 Technologies :</strong> ${talentDay.technologies.join(', ')}</p>
+        ` : ''}
+      </div>
+    </div>
+    
+    <h3 style="color: #1E3A8A; margin-top: 30px;">📋 Prochaines étapes</h3>
+    <div style="background: #F0F9FF; padding: 20px; border-radius: 8px; border-left: 4px solid #3B82F6;">
+      <ol style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+        <li>Votre candidature sera examinée par notre équipe</li>
+        <li>Vous recevrez une réponse sous <strong>48 heures</strong></li>
+        <li>Si accepté, vous recevrez tous les détails pratiques</li>
+        <li>Préparez-vous pour une expérience enrichissante ! 🚀</li>
+      </ol>
+    </div>
+    
+    ${talentDay.prerequis && talentDay.prerequis.length > 0 ? `
+    <h3 style="color: #1E3A8A; margin-top: 30px;">✅ N'oubliez pas d'apporter</h3>
+    <ul style="line-height: 1.8;">
+      ${talentDay.prerequis.map(p => `<li>${p}</li>`).join('')}
+    </ul>
+    ` : ''}
+    
+    ${talentDay.avantages && talentDay.avantages.length > 0 ? `
+    <h3 style="color: #1E3A8A; margin-top: 30px;">🎁 Ce que vous allez gagner</h3>
+    <ul style="line-height: 1.8;">
+      ${talentDay.avantages.map(a => `<li>${a}</li>`).join('')}
+    </ul>
+    ` : ''}
+    
+    <div class="highlight" style="margin-top: 30px;">
+      <strong>📞 Une question ?</strong><br>
+      Contactez-nous à <a href="mailto:${talentDay.organisateur.email}" style="color: #1E3A8A;">${talentDay.organisateur.email}</a>
+      ou au <a href="tel:${talentDay.organisateur.telephone}" style="color: #1E3A8A;">${talentDay.organisateur.telephone}</a>
+    </div>
+    
+    <p style="margin-top: 40px; text-align: center; font-size: 18px; color: #1E3A8A;">
+      <strong>À très bientôt ! 🚀</strong>
+    </p>
+  `;
+  return baseTemplate(content);
+};
+
+/**
+ * Template email pour acceptation TalentDay
+ */
+export const talentDayAcceptationTemplate = (inscription, talentDay) => {
+  const content = `
+    <h1>✅ Félicitations ! Vous êtes accepté(e) !</h1>
+    <p>Bonjour <strong>${inscription.nom}</strong>,</p>
+    <p>Nous avons le plaisir de vous confirmer votre <strong style="color: #16A34A;">participation acceptée</strong> au TalentDay :</p>
+    
+    <div style="background: linear-gradient(135deg, #16A34A 0%, #22C55E 100%); color: white; padding: 20px; border-radius: 12px; margin: 20px 0;">
+      <h2 style="color: white; margin-top: 0; font-size: 24px;">${talentDay.titre}</h2>
+      
+      <div style="margin: 15px 0; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.2);">
+        <p style="margin: 8px 0; color: #DCFCE7;"><strong>📅 Date :</strong> ${new Date(talentDay.date).toLocaleDateString('fr-BE', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })}</p>
+        
+        <p style="margin: 8px 0; color: #DCFCE7;"><strong>🕐 Horaires :</strong> ${talentDay.heureDebut} - ${talentDay.heureFin}</p>
+        
+        <p style="margin: 8px 0; color: #DCFCE7;"><strong>📍 Lieu :</strong> ${
+          talentDay.lieu.type === 'en-ligne' 
+            ? `En ligne - ${talentDay.lieu.lienVirtuel || 'Le lien vous sera envoyé 24h avant'}` 
+            : `${talentDay.lieu.adresse}, ${talentDay.lieu.ville}`
+        }</p>
+        
+        ${talentDay.technologies && talentDay.technologies.length > 0 ? `
+        <p style="margin: 8px 0; color: #DCFCE7;"><strong>💻 Technologies :</strong> ${talentDay.technologies.join(', ')}</p>
+        ` : ''}
+      </div>
+    </div>
+    
+    <h3 style="color: #16A34A; margin-top: 30px;">🎯 Informations importantes</h3>
+    <div style="background: #F0FDF4; padding: 20px; border-radius: 8px; border-left: 4px solid #22C55E;">
+      <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+        <li>Soyez présent(e) <strong>15 minutes avant le début</strong></li>
+        <li>Préparez votre CV et portfolio si demandé</li>
+        <li>Habillez-vous de manière professionnelle</li>
+        <li>Venez avec des questions et une attitude positive ! 💪</li>
+      </ul>
+    </div>
+    
+    ${talentDay.prerequis && talentDay.prerequis.length > 0 ? `
+    <h3 style="color: #16A34A; margin-top: 30px;">✅ À apporter impérativement</h3>
+    <ul style="line-height: 1.8;">
+      ${talentDay.prerequis.map(p => `<li>${p}</li>`).join('')}
+    </ul>
+    ` : ''}
+    
+    ${talentDay.programme && talentDay.programme.length > 0 ? `
+    <h3 style="color: #16A34A; margin-top: 30px;">📋 Programme de la journée</h3>
+    <div style="background: #F9FAFB; padding: 15px; border-radius: 8px;">
+      ${talentDay.programme.map(p => `
+        <div style="margin-bottom: 15px;">
+          <strong style="color: #16A34A;">${p.heure}</strong> - ${p.activite}
+          ${p.description ? `<br><span style="color: #6B7280; font-size: 14px;">${p.description}</span>` : ''}
+        </div>
+      `).join('')}
+    </div>
+    ` : ''}
+    
+    <div class="highlight" style="margin-top: 30px; background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 15px;">
+      <strong>⚠️ Important :</strong> En cas d'empêchement, merci de nous prévenir au moins 24h à l'avance.
+    </div>
+    
+    <div class="highlight" style="margin-top: 20px;">
+      <strong>📞 Questions ?</strong><br>
+      Contactez-nous à <a href="mailto:${talentDay.organisateur.email}" style="color: #16A34A;">${talentDay.organisateur.email}</a>
+      ou au <a href="tel:${talentDay.organisateur.telephone}" style="color: #16A34A;">${talentDay.organisateur.telephone}</a>
+    </div>
+    
+    <p style="margin-top: 40px; text-align: center; font-size: 20px; color: #16A34A;">
+      <strong>🎉 Nous avons hâte de vous rencontrer ! 🚀</strong>
+    </p>
+  `;
+  return baseTemplate(content);
+};
+
+/**
+ * Template email pour refus TalentDay
+ */
+export const talentDayRefusTemplate = (inscription, talentDay) => {
+  const content = `
+    <h1>Réponse à votre candidature</h1>
+    <p>Bonjour <strong>${inscription.nom}</strong>,</p>
+    <p>Nous vous remercions sincèrement pour l'intérêt que vous avez porté au TalentDay <strong>"${talentDay.titre}"</strong> prévu le ${new Date(talentDay.date).toLocaleDateString('fr-BE', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })}.</p>
+    
+    <div style="background: #F9FAFB; padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #6B7280;">
+      <p style="margin: 0; line-height: 1.8;">
+        Après examen attentif de votre profil, nous avons le regret de vous informer que nous ne pouvons pas retenir votre candidature pour cet événement. Le nombre de places étant limité, nous avons dû faire des choix difficiles.
+      </p>
+    </div>
+    
+    <h3 style="color: #1E3A8A; margin-top: 30px;">🚀 Ne vous découragez pas !</h3>
+    <div style="background: #EFF6FF; padding: 20px; border-radius: 8px; border-left: 4px solid #3B82F6;">
+      <ul style="margin: 10px 0; padding-left: 20px; line-height: 1.8;">
+        <li><strong>D'autres TalentDays arrivent bientôt</strong> - Restez à l'écoute de nos prochains événements</li>
+        <li><strong>Améliorez votre profil</strong> - Continuez à développer vos compétences</li>
+        <li><strong>Réessayez</strong> - Nous serions ravis de recevoir une nouvelle candidature</li>
+        <li><strong>Consultez nos ressources</strong> - Visitez notre site pour des conseils carrière</li>
+      </ul>
+    </div>
+    
+    <div class="highlight" style="margin-top: 30px;">
+      <strong>💡 Conseil :</strong> Continuez à postuler à nos futurs événements. Chaque expérience compte et votre profil peut évoluer !
+    </div>
+    
+    <div style="margin-top: 30px; text-align: center;">
+      <p style="color: #6B7280; font-size: 14px; margin: 10px 0;">
+        Nous vous encourageons à suivre nos actualités et à postuler à nos prochains événements.
+      </p>
+      <a href="https://princeaman.dev" style="display: inline-block; background: #1E3A8A; color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; margin-top: 10px; font-weight: bold;">
+        Voir nos prochains événements
+      </a>
+    </div>
+    
+    <div class="highlight" style="margin-top: 30px;">
+      <strong>📞 Besoin d'informations ?</strong><br>
+      Notre équipe reste à votre disposition : <a href="mailto:${talentDay.organisateur.email}" style="color: #1E3A8A;">${talentDay.organisateur.email}</a>
+    </div>
+    
+    <p style="margin-top: 40px; text-align: center; color: #6B7280;">
+      Nous vous souhaitons beaucoup de succès dans vos projets professionnels.<br>
+      <strong style="color: #1E3A8A;">L'équipe TalentProof</strong>
+    </p>
+  `;
+  return baseTemplate(content);
+};
+
 export default {
   sendEmail,
   confirmationEmailTemplate,
@@ -436,5 +642,8 @@ export default {
   contactNotificationTemplate,
   contactConfirmationTemplate,
   devisNotificationTemplate,
-  devisConfirmationTemplate
+  devisConfirmationTemplate,
+  talentDayConfirmationTemplate,
+  talentDayAcceptationTemplate,
+  talentDayRefusTemplate,
 };

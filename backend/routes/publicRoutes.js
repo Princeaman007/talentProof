@@ -1,8 +1,8 @@
-// routes/public.routes.js
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import Entreprise from '../models/Company.js';
 import Talent from '../models/Talent.js';
+import ContactRequest from '../models/Contactrequest.js'; // ← Ajoute cet import
 
 const router = express.Router();
 
@@ -30,7 +30,7 @@ router.get('/entreprises/count', publicStatsLimiter, async (req, res) => {
 
 router.get('/talents/count', publicStatsLimiter, async (req, res) => {
   try {
-    const count = await Talent.countDocuments({ isValidated: true });
+    const count = await Talent.countDocuments({ statut: 'actif' });
     res.json({ count, message: 'Nombre de talents validés' });
   } catch (error) {
     console.error('Erreur comptage talents:', error);
@@ -38,14 +38,29 @@ router.get('/talents/count', publicStatsLimiter, async (req, res) => {
   }
 });
 
+// ✅ NOUVELLE ROUTE : Statistiques complètes avec taux de succès
 router.get('/stats', publicStatsLimiter, async (req, res) => {
   try {
-    const [entreprisesCount, talentsCount] = await Promise.all([
+    const [entreprisesCount, talentsCount, totalDemandes, demandesTraitees] = await Promise.all([
       Entreprise.countDocuments({ isActive: true, suspendedAt: null }),
-      Talent.countDocuments({ isValidated: true }),
+      Talent.countDocuments({ statut: 'actif' }),
+      ContactRequest.countDocuments(),
+      ContactRequest.countDocuments({ statut: 'traité' }),
     ]);
+
+    // Calcul du taux de succès
+    const tauxSucces = totalDemandes > 0 
+      ? Math.round((demandesTraitees / totalDemandes) * 100) 
+      : 0;
+
     res.json({
-      stats: { entreprisesCount, talentsCount },
+      stats: {
+        talentsValides: talentsCount,
+        entreprisesPartenaires: entreprisesCount,
+        tauxSucces: tauxSucces,
+        totalDemandes: totalDemandes,
+        demandesTraitees: demandesTraitees,
+      },
       message: 'Statistiques publiques de TalentProof'
     });
   } catch (error) {

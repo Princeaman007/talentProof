@@ -23,6 +23,8 @@ const Profile = () => {
     profilsRecherches: '',
     logo: '',
   });
+  const [logoFile, setLogoFile] = useState(null);
+  const [logoPreview, setLogoPreview] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -41,6 +43,7 @@ const Profile = () => {
           : user.profilsRecherches || '',
         logo: user.logo || '',
       });
+      setLogoPreview(user.logo || '');
     }
   }, [user]);
 
@@ -48,35 +51,96 @@ const Profile = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Vérifier le type de fichier
+      if (!file.type.startsWith('image/')) {
+        setMessage({
+          type: 'error',
+          text: 'Veuillez sélectionner une image valide',
+        });
+        return;
+      }
+
+      // Vérifier la taille (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setMessage({
+          type: 'error',
+          text: 'L\'image ne doit pas dépasser 5 Mo',
+        });
+        return;
+      }
+
+      setLogoFile(file);
+      
+      // Créer un aperçu
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveLogo = () => {
+    setLogoFile(null);
+    setLogoPreview('');
+    setFormData({ ...formData, logo: '' });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage({ type: '', text: '' });
 
-    // Convertir profilsRecherches en tableau
-    const dataToSend = {
-      ...formData,
-      profilsRecherches: formData.profilsRecherches
+    try {
+      // Utiliser FormData pour envoyer le fichier
+      const submitData = new FormData();
+      
+      submitData.append('nom', formData.nom);
+      submitData.append('email', formData.email);
+      submitData.append('telephone', formData.telephone || '');
+      submitData.append('adresse', formData.adresse || '');
+      submitData.append('secteurActivite', formData.secteurActivite || '');
+      submitData.append('nombreEmployes', formData.nombreEmployes);
+      
+      // Convertir profilsRecherches en tableau
+      const profilsArray = formData.profilsRecherches
         .split(',')
         .map(item => item.trim())
-        .filter(item => item !== ''),
-    };
+        .filter(item => item !== '');
+      submitData.append('profilsRecherches', JSON.stringify(profilsArray));
 
-    const result = await updateProfile(dataToSend);
+      // Ajouter le fichier logo s'il existe
+      if (logoFile) {
+        submitData.append('logo', logoFile);
+      }
 
-    if (result.success) {
-      setMessage({
-        type: 'success',
-        text: 'Profil mis à jour avec succès !',
-      });
-    } else {
+      // Envoyer avec axios (qui gère automatiquement multipart/form-data)
+      const response = await updateProfile(submitData);
+
+      if (response.success) {
+        setMessage({
+          type: 'success',
+          text: 'Profil mis à jour avec succès !',
+        });
+        // Réinitialiser le fichier après succès
+        setLogoFile(null);
+      } else {
+        setMessage({
+          type: 'error',
+          text: response.message || 'Erreur lors de la mise à jour',
+        });
+      }
+    } catch (error) {
       setMessage({
         type: 'error',
-        text: result.message || 'Erreur lors de la mise à jour',
+        text: 'Erreur lors de la mise à jour du profil',
       });
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -222,33 +286,52 @@ const Profile = () => {
             </p>
           </div>
 
-          {/* Logo URL */}
+          {/* Logo */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <FaImage className="inline mr-2" />
-              URL du logo
+              Logo de l'entreprise
             </label>
-            <input
-              type="url"
-              name="logo"
-              value={formData.logo}
-              onChange={handleChange}
-              className="input-field"
-              placeholder="https://exemple.com/logo.png"
-            />
-            {formData.logo && (
-              <div className="mt-3">
-                <p className="text-xs text-neutral mb-2">Aperçu :</p>
+            
+            {/* Aperçu du logo */}
+            {logoPreview && (
+              <div className="mb-3 relative inline-block">
                 <img 
-                  src={formData.logo} 
+                  src={logoPreview} 
                   alt="Logo entreprise" 
-                  className="w-24 h-24 object-contain border rounded-lg"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
+                  className="w-32 h-32 object-contain border-2 border-gray-200 rounded-lg"
                 />
+                <button
+                  type="button"
+                  onClick={handleRemoveLogo}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+                  title="Supprimer le logo"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
             )}
+
+            {/* Input de fichier */}
+            <div className="mt-2">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleLogoChange}
+                className="block w-full text-sm text-gray-500
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-lg file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-primary file:text-white
+                  hover:file:bg-blue-800
+                  file:cursor-pointer cursor-pointer"
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                JPG, PNG ou GIF (max. 5 Mo)
+              </p>
+            </div>
           </div>
 
           {/* Submit Button */}

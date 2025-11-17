@@ -13,11 +13,13 @@ import AdminTalents from './dashboard/AdminTalents';
 import AdminTeam from './dashboard/AdminTeam';
 import AdminDevis from './dashboard/AdminDevis';  
 import AdminPortfolio from './dashboard/AdminPortfolio';
+import AdminTalentDays from './dashboard/AdminTalentDays';
 
 // ✅ NOUVELLES PAGES - PHASE 4 ADMIN
 import AdminStats from './dashboard/AdminStats';
 import AdminEntreprises from './dashboard/Adminentreprises';
 import AdminContactRequests from './dashboard/AdminContactRequests';
+import AdminCompanies from './dashboard/AdminCompanies';
 
 // ✅ NOUVELLES PAGES - PHASE 4 ENTREPRISE
 import MesFavoris from './dashboard/MesFavoris';
@@ -57,12 +59,14 @@ const DashboardEntreprise = () => {
                   <Route path="/admin/stats" element={<AdminStats />} />
                   <Route path="/admin/entreprises" element={<AdminEntreprises />} />
                   <Route path="/admin/contact-requests" element={<AdminContactRequests />} />
+                  <Route path="/admin/companies" element={<AdminCompanies />} />
                   
                   {/* Routes admin existantes */}
                   <Route path="/admin/talents" element={<AdminTalents />} />
                   <Route path="/admin/team" element={<AdminTeam />} />
                   <Route path="/admin/devis" element={<AdminDevis />} />
                   <Route path="/admin/portfolio" element={<AdminPortfolio />} />
+                  <Route path="/admin/talent-days" element={<AdminTalentDays />} />
                 </>
               )}
             </Routes>

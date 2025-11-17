@@ -147,6 +147,7 @@ talentSchema.virtual('experienceText').get(function() {
 talentSchema.set('toJSON', { virtuals: true });
 talentSchema.set('toObject', { virtuals: true });
 
-const Talent = mongoose.model('Talent', talentSchema);
+// Vérifier si le modèle existe déjà avant de le créer
+const Talent = mongoose.models.Talent || mongoose.model('Talent', talentSchema);
 
 export default Talent;

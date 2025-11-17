@@ -1,7 +1,40 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaCheckCircle, FaRocket, FaUsers } from 'react-icons/fa';
+import api from '../../utils/api';
 
 const Hero = () => {
+  const [stats, setStats] = useState({
+    talentsValides: 50,
+    tauxSucces: 95,
+    entreprisesPartenaires: 20,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await api.get('/public/stats');
+        setStats(response.data.stats);
+      } catch (error) {
+        console.error('Erreur chargement stats:', error);
+        // Garde les valeurs par défaut en cas d'erreur
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  // Fonction pour formater les chiffres avec "+"
+  const formatNumber = (num) => {
+    if (num >= 10) {
+      return `${Math.floor(num / 10) * 10}+`;
+    }
+    return num;
+  };
+
   return (
     <section className="relative bg-gradient-to-br from-primary via-primary-dark to-primary text-white section-padding pt-32 overflow-hidden">
       {/* Cercles décoratifs en arrière-plan */}
@@ -43,18 +76,36 @@ const Hero = () => {
               </Link>
             </div>
             
-            {/* Statistiques */}
+            {/* Statistiques dynamiques */}
             <div className="grid grid-cols-3 gap-6 pt-8">
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-secondary">50+</div>
+                {loading ? (
+                  <div className="text-3xl md:text-4xl font-bold text-secondary animate-pulse">--</div>
+                ) : (
+                  <div className="text-3xl md:text-4xl font-bold text-secondary">
+                    {formatNumber(stats.talentsValides)}
+                  </div>
+                )}
                 <div className="text-sm text-gray-300">Talents validés</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-accent">95%</div>
+                {loading ? (
+                  <div className="text-3xl md:text-4xl font-bold text-accent animate-pulse">--</div>
+                ) : (
+                  <div className="text-3xl md:text-4xl font-bold text-accent">
+                    {stats.tauxSucces}%
+                  </div>
+                )}
                 <div className="text-sm text-gray-300">Taux de succès</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-secondary">20+</div>
+                {loading ? (
+                  <div className="text-3xl md:text-4xl font-bold text-secondary animate-pulse">--</div>
+                ) : (
+                  <div className="text-3xl md:text-4xl font-bold text-secondary">
+                    {formatNumber(stats.entreprisesPartenaires)}
+                  </div>
+                )}
                 <div className="text-sm text-gray-300">Entreprises partenaires</div>
               </div>
             </div>

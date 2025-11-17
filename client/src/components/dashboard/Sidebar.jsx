@@ -18,6 +18,7 @@ import {
   FaStar,
   FaBell,
   FaHistory,
+  FaCalendar,
 } from 'react-icons/fa';
 
 const Sidebar = () => {
@@ -124,6 +125,18 @@ const Sidebar = () => {
       name: 'Demandes de Devis',
       path: '/dashboard/admin/devis',
       icon: FaFileInvoice,
+      admin: true,
+    },
+    {
+      name: 'Talent Days',
+      path: '/dashboard/admin/talent-days',
+      icon: FaCalendar,
+      admin: true,
+    },
+    {
+      name: 'Inscriptions Entreprises',
+      path: '/dashboard/admin/companies',
+      icon: FaBuilding,
       admin: true,
     },
   ];

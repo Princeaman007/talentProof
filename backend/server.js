@@ -14,7 +14,6 @@ import csurf from 'csurf';
 import swaggerUi from 'swagger-ui-express';
 // Start background workers (worker will decide whether to run based on REDIS_URL)
 import './queues/worker.js';
-
 // Import des routes
 import authRoutes from './routes/authRoutes.js';
 import talentRoutes from './routes/talentRoutes.js';
@@ -22,6 +21,10 @@ import teamRoutes from './routes/teamRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js'; 
 import devisRoutes from './routes/devisRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
+import contactRoutes from './routes/contactRoutes.js';
+import talentDayRoutes from './routes/talentDayRoutes.js';
+import companyRoutes from './routes/companyRoutes.js';
+
 
 // ✅ Routes admin fusionnées (Phase 1-4)
 import adminRoutes from './routes/adminRoutes.js';
@@ -91,7 +94,7 @@ app.use(
       defaultSrc: ["'self'"],
       scriptSrc,
       styleSrc,
-      imgSrc: ["'self'", 'data:', 'blob:'],
+      imgSrc: ["'self'", 'data:', 'blob:', 'http://localhost:5000', 'http://localhost:5174'],
       connectSrc,
       fontSrc: ["'self'", 'data:', 'https:'],
       objectSrc: ["'none'"],
@@ -100,6 +103,11 @@ app.use(
       formAction: ["'self'"],
     },
   })
+);
+
+// Configuration spéciale de Cross-Origin pour les fichiers statiques
+app.use(
+  helmet.crossOriginResourcePolicy({ policy: "cross-origin" })
 );
 
 if (isProd) {
@@ -119,7 +127,7 @@ console.log('🌍 CORS allowedOrigins:', allowedOrigins); // ← Ajoute cette li
 app.use(cors({
   origin: allowedOrigins,
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization' , 'X-CSRF-Token'],
   optionsSuccessStatus: 200,
   maxAge: 86400, // 24 heures
@@ -224,8 +232,16 @@ const csrfProtection = csurf({
 
 // Apply CSRF middleware for API routes while skipping non-API or safe public routes
 app.use((req, res, next) => {
-  // Skip docs, health checks and static uploads
-  if (req.path.startsWith('/api-docs') || req.path === '/api/health' || req.path.startsWith('/uploads')) {
+  // Skip docs, health checks, static uploads, public forms (contact, company registration)
+  if (
+    req.path.startsWith('/api-docs') || 
+    req.path === '/api/health' || 
+    req.path.startsWith('/uploads') ||
+    req.path === '/api/contact' ||
+    req.path.startsWith('/api/talent-days') ||
+    (req.path === '/api/companies' && req.method === 'POST') // Public company registration
+    
+  ) {
     return next();
   }
 
@@ -247,8 +263,14 @@ app.get('/api/csrf-token', (req, res) => {
   }
 });
 
-// Servir les fichiers statiques (uploads)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Servir les fichiers statiques (uploads) avec CORS
+app.use('/uploads', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static(path.join(__dirname, 'uploads')));
 
 // ✅ DOCUMENTATION: Swagger UI
 app.use('/api-docs', swaggerUi.serve);
@@ -296,6 +318,9 @@ app.use('/api/team', teamRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/devis', devisRoutes);
 app.use('/api/public', publicRoutes);
+app.use('/api/contact', contactRoutes);
+app.use('/api/talent-days', talentDayRoutes);
+app.use('/api/companies', companyRoutes);
 
 // ✅ Routes admin (fusionnées Phase 1-4)
 app.use('/api/admin', adminRoutes);
