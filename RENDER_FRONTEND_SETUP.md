@@ -51,6 +51,27 @@
   ```
   Si cette ligne n'apparaît pas, le fichier _redirects n'est pas dans dist!
 
+### ⚠️ Si les routes ne fonctionnent toujours pas:
+
+**Render Static Sites** ne supporte pas toujours `_redirects` comme Netlify. Si vous voyez toujours des 404:
+
+1. **Vérifier le type de service**:
+   - Dashboard Render → Votre service `talentproof-client`
+   - Settings → Type doit être **"Static Site"** (pas "Web Service")
+
+2. **Headers/Redirects Configuration** (Render Dashboard):
+   - Si disponible, ajouter manuellement la règle de redirection:
+   ```
+   /* /index.html 200
+   ```
+
+3. **Alternative: Passer à Web Service** (si Static Site ne fonctionne pas):
+   - Change Type: Web Service
+   - Build Command: `bash build.sh`
+   - Start Command: `npx serve -s dist -l 3000`
+   - Ajouter variable d'environnement: `NODE_ENV=production`
+   - Note: Cela consommera plus de ressources mais garantit le routing
+
 ## Debugging
 
 Si le build échoue avec "dist does not exist":

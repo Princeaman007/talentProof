@@ -19,6 +19,12 @@ else
   exit 1
 fi
 
+# Also copy render.json if it exists (alternative routing config)
+if [ -f "public/render.json" ]; then
+  cp public/render.json dist/render.json
+  echo "✅ render.json copied successfully"
+fi
+
 # Verify _redirects is in dist
 if [ -f "dist/_redirects" ]; then
   echo "✅ Verified: _redirects is in dist/"

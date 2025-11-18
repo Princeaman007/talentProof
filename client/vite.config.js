@@ -5,6 +5,12 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   publicDir: 'public', // Ensure public folder is copied to dist
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    // Ensure _redirects and other public files are copied
+    copyPublicDir: true,
+  },
   server: {
     port: 5173,
     proxy: {
