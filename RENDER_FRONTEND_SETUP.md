@@ -11,9 +11,15 @@
    Name: talentproof-client
    Branch: master
    Root Directory: client
-   Build Command: bash build.sh
+   Build Command: npm install --legacy-peer-deps && npm run build
    Publish Directory: dist
+   Auto-Deploy: Yes
    ```
+
+   ⚠️ **IMPORTANT**: 
+   - `Root Directory` doit être exactement `client` (sans `./` ni `/`)
+   - `Publish Directory` doit être exactement `dist` (PAS `./dist` ni `client/dist`)
+   - Le chemin est relatif au Root Directory
 
 4. **Environment Variables**:
    ```
@@ -35,9 +41,32 @@
 ## Debugging
 
 Si le build échoue avec "dist does not exist":
-1. Vérifier que `Build Command` est bien `bash build.sh`
-2. Vérifier les logs pour voir si `npm run build` s'exécute
-3. S'assurer que `Root Directory` est `client` (pas vide)
+
+**Causes possibles:**
+
+1. ⚠️ **Root Directory mal configuré**
+   - Vérifier: Doit être `client` (sans slash, sans point)
+   - PAS `./client`, PAS `/client`, PAS vide
+
+2. ⚠️ **Publish Directory mal configuré**
+   - Vérifier: Doit être `dist`
+   - PAS `./dist`, PAS `client/dist`, PAS `/dist`
+
+3. ⚠️ **Build Command**
+   - Recommandé: `npm install --legacy-peer-deps && npm run build`
+   - Alternative: `bash build.sh` (si bash disponible)
+
+4. **Vérification dans les logs:**
+   ```
+   ✓ built in X.XXs
+   ```
+   Si cette ligne apparaît, le build fonctionne. Le problème est la configuration du Publish Directory.
+
+**Solution:**
+- Aller dans **Settings** → **Build & Deploy**
+- Root Directory: `client`
+- Publish Directory: `dist`
+- Sauvegarder et **Manual Deploy**
 
 Si 404 sur les routes:
 1. Vérifier que `_redirects` est dans le dossier dist
