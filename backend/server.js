@@ -124,9 +124,28 @@ if (isProd) {
 
 // ✅ SÉCURITÉ: CORS restrictif (au lieu de cors() ouvert)
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:5174,http://localhost:3000').split(',');
-console.log('🌍 CORS allowedOrigins:', allowedOrigins); // ← Ajoute cette ligne
+console.log('🌍 CORS allowedOrigins:', allowedOrigins);
+
+// CORS configuration with dynamic origin validation
 app.use(cors({
-  origin: allowedOrigins,
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Check if origin is in allowed list
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // In production, also allow *.onrender.com domains
+    if (process.env.NODE_ENV === 'production' && origin.endsWith('.onrender.com')) {
+      console.log('✅ Allowing Render domain:', origin);
+      return callback(null, true);
+    }
+    
+    console.warn('❌ CORS blocked origin:', origin);
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization' , 'X-CSRF-Token'],
