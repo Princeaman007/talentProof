@@ -16,7 +16,8 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-    const [error, setError] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoggingIn, setIsLoggingIn] = useState(false); // ✅ Protection contre appels multiples
 
   // Charger l'utilisateur depuis localStorage au démarrage
   useEffect(() => {
@@ -65,7 +66,15 @@ export const AuthProvider = ({ children }) => {
 
   // Connexion
   const login = async (email, password) => {
+    // ✅ Protection: Si déjà en train de se connecter, ignorer
+    if (isLoggingIn) {
+      console.warn('Login already in progress, ignoring duplicate request');
+      return { success: false, message: 'Connexion en cours...' };
+    }
+    
+    setIsLoggingIn(true);
     setError(null); 
+    
     try {
       const response = await api.post('/auth/login', { email, password });
       const { token, data } = response.data;
@@ -96,6 +105,8 @@ export const AuthProvider = ({ children }) => {
       const message = error.response?.data?.message || 'Erreur de connexion';
       setError(message);
       return { success: false, message };
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 

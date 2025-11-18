@@ -29,6 +29,10 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // ✅ Protection: Empêcher les soumissions multiples
+    if (loading) return;
+    
     setError('');
 
     // Validation
@@ -44,19 +48,23 @@ const Register = () => {
 
     setLoading(true);
 
-    const result = await register({
-      nom: formData.nom,
-      email: formData.email,
-      password: formData.password,
-      nombreEmployes: formData.nombreEmployes,
-    });
+    try {
+      const result = await register({
+        nom: formData.nom,
+        email: formData.email,
+        password: formData.password,
+        nombreEmployes: formData.nombreEmployes,
+      });
 
-    setLoading(false);
-
-    if (result.success) {
-      navigate('/email-confirmation');
-    } else {
-      setError(result.message);
+      if (result.success) {
+        navigate('/email-confirmation');
+      } else {
+        setError(result.message);
+      }
+    } catch (err) {
+      setError('Une erreur inattendue s\'est produite');
+    } finally {
+      setLoading(false);
     }
   };
 
