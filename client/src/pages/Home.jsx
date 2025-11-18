@@ -1,7 +1,7 @@
 import Hero from '../components/home/Hero';
-import ProblemSolution from '../components/home/ProblemSolution';
-import Services from '../components/home/Services';
-import HowItWorks from '../components/home/HowItWorks';
+import ProblemSolution from '../components/home/Problemsolution';
+import Services from '../components/home/services';
+import HowItWorks from '../components/home/Howitworks';
 
 const Home = () => {
   return (
