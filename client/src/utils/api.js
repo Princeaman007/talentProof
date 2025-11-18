@@ -22,18 +22,10 @@ const api = axios.create({
 // Intercepteur pour ajouter le token JWT et CSRF automatiquement
 api.interceptors.request.use(
   async (config) => {
-    // Skip auth for public routes
-    const publicRoutes = ['/talent-days', '/csrf-token', '/auth/login', '/auth/register'];
-    const isPublicRoute = publicRoutes.some(route => 
-      config.url?.includes(route) && config.method?.toLowerCase() === 'get'
-    );
-    
-    // 1. Token JWT (fallback si localStorage) - skip for public GET requests
-    if (!isPublicRoute) {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    // 1. Token JWT depuis localStorage - toujours l'ajouter si disponible
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     // 2. ✅ CSRF Token - Récupérer si manquant (pour mutations uniquement)

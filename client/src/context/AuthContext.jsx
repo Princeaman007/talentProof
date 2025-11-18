@@ -21,14 +21,13 @@ export const AuthProvider = ({ children }) => {
 
   // Charger l'utilisateur depuis localStorage au démarrage
   useEffect(() => {
-    // ✅ SÉCURITÉ: Pas besoin de récupérer le token depuis localStorage
-    // Le token est maintenant dans le cookie HttpOnly
+    const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
 
-    if (storedUser) {
+    if (storedToken && storedUser) {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
-      setToken('authenticated'); // Marker que l'utilisateur est connecté via cookie
+      setToken(storedToken);
       checkIsAdmin(parsedUser);
     }
     // Try to initialize CSRF token for the app (useful if server rotated tokens)
@@ -79,13 +78,14 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post('/auth/login', { email, password });
       const { token, data } = response.data;
 
-      // ✅ SÉCURITÉ: Pas besoin de sauvegarder le token dans localStorage
-      // Le token est maintenant dans le cookie HttpOnly (géré automatiquement)
-      // Sauvegarder seulement les données utilisateur
+      // ✅ Sauvegarder le token ET les données utilisateur
+      // Note: Cookies HttpOnly ne fonctionnent pas avec des domaines séparés sur Render
+      // (talentproof.onrender.com ≠ talentproof-client.onrender.com)
+      localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(data));
 
       // Mettre à jour l'état
-      setToken('authenticated'); // Marker au lieu du vrai token
+      setToken(token);
       setUser(data);
       checkIsAdmin(data);
 
