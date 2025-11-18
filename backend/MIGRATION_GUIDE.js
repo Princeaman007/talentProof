@@ -7,8 +7,8 @@
 // ============ AVANT ============
 // authController.js (OLD - 469 lignes)
 import Company from '../models/Company.js';
-import { hashPassword, comparePassword, generateToken } from '../utils/auth.js';
-import { sendEmail } from '../utils/email.js';
+import { hashPassword, comparePassword, generateToken } from '../utils/Auth.js';
+import { sendEmail } from '../utils/Email.js';
 
 export const login = async (req, res) => {
   try {

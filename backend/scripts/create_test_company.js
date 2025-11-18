@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import Company from '../models/Company.js';
-import { hashPassword } from '../utils/auth.js';
+import { hashPassword } from '../utils/Auth.js';
 
 dotenv.config();
 

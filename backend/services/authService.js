@@ -16,7 +16,7 @@ import { sendEmail } from './emailService.js';
 import {
   confirmationEmailTemplate,
   resetPasswordTemplate,
-} from './Emailtemplates.js';
+} from './emailTemplates.js';
 import {
   AuthenticationError,
   ValidationError,

@@ -1,6 +1,6 @@
 import Talent from '../models/Talent.js';
 import ContactRequest from '../models/ContactRequest.js';
-import { sendEmail } from '../utils/email.js';
+import { sendEmail } from '../utils/Email.js';
 import { contactNotificationTemplate, contactConfirmationTemplate } from '../utils/emailTemplates.js';
 
 /**

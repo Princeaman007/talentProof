@@ -1,6 +1,6 @@
 import Company from '../models/Company.js';
-import { hashPassword, comparePassword, generateToken, generateRandomToken, hashToken } from '../utils/auth.js';
-import { sendEmail } from '../utils/email.js';
+import { hashPassword, comparePassword, generateToken, generateRandomToken, hashToken } from '../utils/Auth.js';
+import { sendEmail } from '../utils/Email.js';
 import { confirmationEmailTemplate, resetPasswordTemplate } from '../utils/emailTemplates.js';
 import { setTokenCookie, clearTokenCookie, setRefreshTokenCookie, clearRefreshTokenCookie } from '../utils/cookieConfig.js';
 
