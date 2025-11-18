@@ -76,6 +76,7 @@ const externalFontHosts = ['https://fonts.googleapis.com', 'https://fonts.gstati
 const scriptSrc = ["'self'"];
 const styleSrc = ["'self'"];
 const connectSrc = ["'self'"];
+const fontSrc = ["'self'", 'data:', 'https:'];
 
 if (!isProd) {
   // Vite dev server and local frontend
@@ -96,7 +97,7 @@ app.use(
       styleSrc,
       imgSrc: ["'self'", 'data:', 'blob:', 'http://localhost:5000', 'http://localhost:5174'],
       connectSrc,
-      fontSrc: ["'self'", 'data:', 'https:'],
+      fontSrc,
       objectSrc: ["'none'"],
       frameAncestors: ["'none'"],
       baseUri: ["'self'"],
