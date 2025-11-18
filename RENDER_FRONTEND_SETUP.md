@@ -11,7 +11,7 @@
    Name: talentproof-client
    Branch: master
    Root Directory: client
-   Build Command: npm install --legacy-peer-deps && npm run build
+   Build Command: rm -rf node_modules package-lock.json && npm install --legacy-peer-deps && npm run build
    Publish Directory: dist
    Auto-Deploy: Yes
    ```
@@ -20,6 +20,7 @@
    - `Root Directory` doit être exactement `client` (sans `./` ni `/`)
    - `Publish Directory` doit être exactement `dist` (PAS `./dist` ni `client/dist`)
    - Le chemin est relatif au Root Directory
+   - Le `rm -rf` au début nettoie le cache pour éviter les bugs npm/rollup
 
 4. **Environment Variables**:
    ```
@@ -53,8 +54,9 @@ Si le build échoue avec "dist does not exist":
    - PAS `./dist`, PAS `client/dist`, PAS `/dist`
 
 3. ⚠️ **Build Command**
-   - Recommandé: `npm install --legacy-peer-deps && npm run build`
-   - Alternative: `bash build.sh` (si bash disponible)
+   - Recommandé: `rm -rf node_modules package-lock.json && npm install --legacy-peer-deps && npm run build`
+   - Cette commande nettoie le cache pour éviter le bug Rollup sur Linux
+   - Alternative (si problème persiste): `npm ci --legacy-peer-deps && npm run build`
 
 4. **Vérification dans les logs:**
    ```
@@ -70,4 +72,11 @@ Si le build échoue avec "dist does not exist":
 
 Si 404 sur les routes:
 1. Vérifier que `_redirects` est dans le dossier dist
-2. Logs du build doivent montrer: `🔄 Copying SPA redirect rules...`
+2. Logs du build doivent montrer: `_redirects` copié automatiquement par Vite
+
+Si erreur "Cannot find module @rollup/rollup-linux-x64-gnu":
+1. **C'est le bug npm décrit ci-dessus**
+2. Solution: Mettre à jour Build Command avec `rm -rf` au début
+3. Build Command: `rm -rf node_modules package-lock.json && npm install --legacy-peer-deps && npm run build`
+4. Trigger Manual Deploy
+5. Le nettoyage du cache résout le problème des dépendances optionnelles Rollup
