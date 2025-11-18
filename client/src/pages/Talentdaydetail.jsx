@@ -13,6 +13,7 @@ const TalentDayDetail = () => {
   const [talentDay, setTalentDay] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showInscriptionModal, setShowInscriptionModal] = useState(false);
 
  useEffect(() => {
   const fetchTalentDay = async () => {
@@ -536,7 +537,7 @@ const TalentDayDetail = () => {
               <div className="border-t pt-6">
                 {canRegister ? (
                   <button
-                    onClick={() => navigate(`/talent-days/${id}/register`)}
+                    onClick={() => setShowInscriptionModal(true)}
                     className="w-full bg-gradient-to-r from-secondary to-orange-600 text-white font-semibold py-4 px-6 rounded-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                   >
                     S'inscrire maintenant
@@ -581,6 +582,70 @@ const TalentDayDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal Inscription */}
+      {showInscriptionModal && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowInscriptionModal(false)}
+        >
+          <div 
+            className="bg-white rounded-xl shadow-2xl max-w-md w-full p-8 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Bouton Fermer */}
+            <button
+              onClick={() => setShowInscriptionModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Fermer"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Titre */}
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              Choisissez votre profil
+            </h3>
+            <p className="text-gray-600 mb-8">
+              Comment souhaitez-vous vous inscrire à cet événement ?
+            </p>
+
+            {/* Options */}
+            <div className="space-y-4">
+              {/* Option Talent */}
+              <button
+                onClick={() => {
+                  setShowInscriptionModal(false);
+                  navigate(`/talent-days/${id}/register`);
+                }}
+                className="w-full bg-gradient-to-r from-secondary to-orange-600 text-white font-semibold py-4 px-6 rounded-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-3"
+              >
+                <span className="text-2xl">🎓</span>
+                <span>Je suis un talent</span>
+              </button>
+
+              {/* Option Entreprise */}
+              <button
+                onClick={() => {
+                  setShowInscriptionModal(false);
+                  navigate('/company-registration');
+                }}
+                className="w-full bg-white border-2 border-primary text-primary font-semibold py-4 px-6 rounded-lg hover:bg-primary hover:text-white transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-3"
+              >
+                <span className="text-2xl">🏢</span>
+                <span>Je représente une entreprise</span>
+              </button>
+            </div>
+
+            {/* Info complémentaire */}
+            <p className="text-sm text-gray-500 text-center mt-6">
+              Sélectionnez l'option qui correspond à votre situation
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

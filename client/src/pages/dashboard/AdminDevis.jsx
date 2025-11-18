@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 
 const AdminDevis = () => {
   const [devis, setDevis] = useState([]);
@@ -18,12 +18,8 @@ const AdminDevis = () => {
   const fetchDevis = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
       const params = filtreStatut ? { statut: filtreStatut } : {};
-      const response = await axios.get('/api/admin/devis', {
-        headers: { Authorization: `Bearer ${token}` },
-        params
-      });
+      const response = await api.get('/admin/devis', { params });
       setDevis(response.data.data);
     } catch (error) {
       console.error('Erreur chargement devis:', error);
@@ -35,10 +31,7 @@ const AdminDevis = () => {
 
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get('/api/admin/devis/stats/overview', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await api.get('/admin/devis/stats/overview');
       setStats(response.data.data);
     } catch (error) {
       console.error('Erreur stats:', error);
@@ -57,11 +50,7 @@ const AdminDevis = () => {
 
   const handleUpdateStatut = async (id, nouveauStatut) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.put(`/api/admin/devis/${id}`, 
-        { statut: nouveauStatut },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.put(`/admin/devis/${id}`, { statut: nouveauStatut });
       setMessage({ type: 'success', text: 'Statut mis à jour' });
       fetchDevis();
       fetchStats();
@@ -74,11 +63,7 @@ const AdminDevis = () => {
 
   const handleUpdatePriorite = async (id, nouvellePriorite) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.put(`/api/admin/devis/${id}`, 
-        { priorite: nouvellePriorite },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.put(`/admin/devis/${id}`, { priorite: nouvellePriorite });
       setMessage({ type: 'success', text: 'Priorité mise à jour' });
       fetchDevis();
       setTimeout(() => setMessage({ type: '', text: '' }), 3000);
@@ -92,10 +77,7 @@ const AdminDevis = () => {
     if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce devis ?')) return;
     
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`/api/admin/devis/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.delete(`/admin/devis/${id}`);
       setMessage({ type: 'success', text: 'Devis supprimé' });
       fetchDevis();
       fetchStats();
