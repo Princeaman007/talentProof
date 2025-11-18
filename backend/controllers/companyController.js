@@ -1,6 +1,6 @@
 import CompanyRegistration from '../models/CompanyRegistration.js';
 import TalentDay from '../models/Talentday.js';
-import Talent from '../models/talent.js';
+import Talent from '../models/Talent.js';
 import { sendEmail } from '../utils/emailService.js';
 import { validationResult } from 'express-validator';
 
