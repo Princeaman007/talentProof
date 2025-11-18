@@ -33,17 +33,12 @@ services:
         sync: false
     healthCheckPath: /api/health
 
-  # Frontend Static Site
-  - type: web
-    name: talentproof-client
-    runtime: static
-    region: frankfurt
-    plan: free
-    rootDir: client
-    buildCommand: npm install --legacy-peer-deps && npm run build
-    staticPublishPath: dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://talentproof.onrender.com/api
-      - key: VITE_SERVER_URL
-        value: https://talentproof.onrender.com
+# Frontend must be created as a separate Static Site on Render Dashboard
+# Configuration for manual setup:
+#   - Type: Static Site
+#   - Root Directory: client
+#   - Build Command: bash build.sh
+#   - Publish Directory: dist
+#   - Environment Variables:
+#     - VITE_API_URL=https://talentproof.onrender.com/api
+#     - VITE_SERVER_URL=https://talentproof.onrender.com
