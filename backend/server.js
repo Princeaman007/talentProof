@@ -245,8 +245,8 @@ app.use(cookieParser());
 const csrfProtection = csurf({
   cookie: {
     httpOnly: false, // frontend needs to read the token
-    sameSite: process.env.NODE_ENV === 'production' ? 'Strict' : 'Lax',
-    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', // 'None' for cross-origin in production
+    secure: process.env.NODE_ENV === 'production', // Must be true when sameSite='None'
   },
 });
 

@@ -9,7 +9,7 @@ export const getCookieOptions = () => {
   return {
     httpOnly: true,        // ✅ JavaScript ne peut pas accéder (protection XSS)
     secure: isProduction,  // ✅ HTTPS seulement en production
-    sameSite: 'Strict',    // ✅ Prévention CSRF
+    sameSite: isProduction ? 'None' : 'Lax',    // ✅ 'None' pour cross-origin en production
     maxAge: 24 * 60 * 60 * 1000, // 24 heures en millisecondes
     path: '/',
   };
@@ -40,7 +40,7 @@ export const getRefreshCookieOptions = () => {
   return {
     httpOnly: true,
     secure: isProduction,
-    sameSite: 'Strict',
+    sameSite: isProduction ? 'None' : 'Lax',    // ✅ 'None' pour cross-origin en production
     // Par défaut 7 jours
     maxAge: parseInt(process.env.REFRESH_TOKEN_EXPIRE_MS, 10) || 7 * 24 * 60 * 60 * 1000,
     path: '/',
