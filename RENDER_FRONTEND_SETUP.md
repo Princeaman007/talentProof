@@ -1,6 +1,45 @@
 # Configuration Frontend pour Render Dashboard
 
-## Créer le service Static Site
+## ⚠️ PROBLÈME COURANT: Variables d'environnement non compilées
+
+**SYMPTÔME:** 
+- Backend fonctionne (https://talentproof.onrender.com/api/health → 200 OK)
+- CORS OK, MongoDB connecté
+- Mais frontend ne récupère pas les données
+- Connexion échoue en production mais fonctionne en local
+
+**CAUSE:** Les variables `VITE_API_URL` et `VITE_SERVER_URL` ont été ajoutées APRÈS le premier build. Vite injecte les variables au moment du BUILD, pas à l'exécution.
+
+**VÉRIFICATION:**
+1. Aller sur: `https://talentproof-client.onrender.com/env-check.html`
+2. Si vous voyez "localhost:5000" dans le bundle → Les variables ne sont PAS compilées
+3. Si vous voyez "talentproof.onrender.com" → Les variables SONT compilées ✅
+
+**SOLUTION:**
+
+### Étape 1: Vérifier les variables sur Render
+Dashboard → `talentproof-client` → Settings → Environment
+
+Variables requises:
+```
+VITE_API_URL=https://talentproof.onrender.com/api
+VITE_SERVER_URL=https://talentproof.onrender.com
+```
+
+### Étape 2: Rebuilder (OBLIGATOIRE)
+Après avoir ajouté/vérifié les variables:
+1. Aller dans l'onglet "Manual Deploy"
+2. Cliquer sur "Clear build cache & deploy"
+3. Attendre la fin du build (5-10 minutes)
+
+### Étape 3: Vérifier le nouveau build
+1. Retourner sur: `https://talentproof-client.onrender.com/env-check.html`
+2. Vous devriez maintenant voir "talentproof.onrender.com" ✅
+3. Tester la connexion sur `/login`
+
+---
+
+
 
 1. **Dashboard Render** → **New** → **Static Site**
 

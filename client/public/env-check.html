@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environment Variables Check</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+        }
+        .env-item {
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #2563eb;
+            background: #f8fafc;
+        }
+        .env-item.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .env-item.success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        .label {
+            font-weight: bold;
+            color: #374151;
+        }
+        .value {
+            color: #6b7280;
+            font-family: monospace;
+            word-break: break-all;
+            margin-top: 5px;
+        }
+        .expected {
+            color: #9ca3af;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .warning {
+            background: #fffbeb;
+            border: 1px solid #fbbf24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .success-box {
+            background: #f0fdf4;
+            border: 1px solid #10b981;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Environment Variables Check</h1>
+        <p>Cette page affiche les variables d'environnement compilées dans le build Vite.</p>
+        
+        <div id="results"></div>
+        
+        <div style="margin-top: 30px; padding: 15px; background: #f8fafc; border-radius: 5px;">
+            <p><strong>Note:</strong> Les variables Vite sont injectées au moment du BUILD.</p>
+            <p>Si vous voyez "undefined" ou "localhost", vous devez:</p>
+            <ol>
+                <li>Vérifier que les variables sont dans Settings → Environment sur Render</li>
+                <li>Faire un "Manual Deploy" pour rebuilder avec les nouvelles variables</li>
+            </ol>
+        </div>
+    </div>
+
+    <script type="module">
+        // Cette page ne peut pas accéder aux variables Vite directement
+        // Car elles sont compilées dans le bundle JavaScript
+        // Mais on peut faire une requête au bundle pour voir ce qui est compilé
+        
+        const results = document.getElementById('results');
+        
+        // Afficher les informations
+        let html = '';
+        
+        // Test 1: Vérifier l'URL attendue
+        const expectedAPI = 'https://talentproof.onrender.com/api';
+        const expectedServer = 'https://talentproof.onrender.com';
+        
+        html += `
+            <div class="env-item">
+                <div class="label">URL attendue (API):</div>
+                <div class="value">${expectedAPI}</div>
+            </div>
+            
+            <div class="env-item">
+                <div class="label">URL attendue (Server):</div>
+                <div class="value">${expectedServer}</div>
+            </div>
+        `;
+        
+        // Test 2: Faire un appel pour voir quelle URL est utilisée
+        html += `
+            <div class="warning">
+                <strong>⚠️ Test de l'URL compilée</strong>
+                <p>Vérification de l'URL réellement utilisée par le frontend...</p>
+                <div id="url-test">Chargement...</div>
+            </div>
+        `;
+        
+        results.innerHTML = html;
+        
+        // Tester l'URL utilisée
+        setTimeout(async () => {
+            const urlTestDiv = document.getElementById('url-test');
+            
+            try {
+                // Cette requête va vers le main JS bundle qui contient les variables compilées
+                const response = await fetch('/assets/index.js');
+                const text = await response.text();
+                
+                // Chercher les URLs dans le code compilé
+                const localhostMatches = text.match(/localhost:5000/g);
+                const renderMatches = text.match(/talentproof\.onrender\.com/g);
+                
+                let message = '<ul>';
+                
+                if (localhostMatches && localhostMatches.length > 0) {
+                    message += `<li style="color: #ef4444;">❌ Trouvé ${localhostMatches.length} références à "localhost:5000" dans le bundle</li>`;
+                    message += `<li style="color: #ef4444;">→ Les variables d'environnement n'ont PAS été utilisées lors du build</li>`;
+                }
+                
+                if (renderMatches && renderMatches.length > 0) {
+                    message += `<li style="color: #10b981;">✅ Trouvé ${renderMatches.length} références à "talentproof.onrender.com" dans le bundle</li>`;
+                    message += `<li style="color: #10b981;">→ Les variables d'environnement ont été correctement utilisées</li>`;
+                }
+                
+                if (!localhostMatches && !renderMatches) {
+                    message += `<li style="color: #f59e0b;">⚠️ Impossible de déterminer les URLs dans le bundle</li>`;
+                }
+                
+                message += '</ul>';
+                
+                if (localhostMatches && localhostMatches.length > 0) {
+                    message += `
+                        <div style="margin-top: 15px; padding: 10px; background: #fee2e2; border-radius: 5px;">
+                            <strong>🔴 ACTION REQUISE:</strong>
+                            <ol>
+                                <li>Aller sur Render Dashboard → talentproof-client</li>
+                                <li>Settings → Environment</li>
+                                <li>Vérifier que VITE_API_URL et VITE_SERVER_URL existent</li>
+                                <li>Si elles existent, faire "Manual Deploy" pour rebuilder</li>
+                                <li>Si elles n'existent pas, les ajouter puis rebuilder</li>
+                            </ol>
+                        </div>
+                    `;
+                } else if (renderMatches) {
+                    message += `
+                        <div style="margin-top: 15px; padding: 10px; background: #d1fae5; border-radius: 5px;">
+                            <strong>✅ Configuration correcte!</strong>
+                            <p>Les variables d'environnement sont bien compilées dans le build.</p>
+                            <p>Si la connexion ne fonctionne toujours pas, vérifiez la console du navigateur.</p>
+                        </div>
+                    `;
+                }
+                
+                urlTestDiv.innerHTML = message;
+                
+            } catch (error) {
+                urlTestDiv.innerHTML = `
+                    <p style="color: #ef4444;">❌ Erreur lors de la vérification: ${error.message}</p>
+                    <p>Ouvrez la console du navigateur (F12) et regardez les requêtes réseau.</p>
+                    <p>Si vous voyez des requêtes vers "localhost:5000", le build n'a pas les bonnes variables.</p>
+                `;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
