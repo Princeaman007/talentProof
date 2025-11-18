@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../../utils/api';
+import api, { getImageUrl } from '../../utils/api';
 
 const AdminPortfolio = () => {
   const [projets, setProjets] = useState([]);
@@ -240,7 +240,7 @@ const AdminPortfolio = () => {
             <div key={projet._id} className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="relative h-48">
                 <img
-                  src={`http://localhost:5000${projet.screenshot}`}
+                  src={getImageUrl(projet.screenshot)}
                   alt={projet.titre}
                   className="w-full h-full object-cover"
                 />

@@ -1,0 +1,182 @@
+/**
+ * Tests pour le formulaire de contact
+ * Couvre: Validation, soumission, gestion erreurs
+ */
+
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
+import axios from 'axios';
+import Contactform from '../components/contact/Contactform';
+
+// Mock axios
+vi.mock('axios');
+
+describe('ContactForm Component', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test('should render all form fields', () => {
+    render(<Contactform />);
+    
+    expect(screen.getByLabelText(/nom complet/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^email$/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/t\u00e9l\u00e9phone/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/entreprise/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/sujet/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/message/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /envoyer/i })).toBeInTheDocument();
+  });
+
+  test('should show validation errors for empty required fields', async () => {
+    render(<Contactform />);
+    
+    const submitButton = screen.getByRole('button', { name: /envoyer/i });
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      const errors = screen.queryAllByText(/requis/i);
+      expect(errors.length).toBeGreaterThan(0);
+    });
+  });
+
+  test('should show error for invalid email format', async () => {
+    render(<Contactform />);
+    
+    const emailInput = screen.getByLabelText(/^email$/i);
+    fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
+    fireEvent.blur(emailInput);
+
+    await waitFor(() => {
+      expect(screen.getByText(/email invalide/i)).toBeInTheDocument();
+    });
+  });
+
+  test('should show error for short message', async () => {
+    render(<Contactform />);
+    
+    const messageInput = screen.getByLabelText(/message/i);
+    fireEvent.change(messageInput, { target: { value: 'Court' } });
+    fireEvent.blur(messageInput);
+
+    await waitFor(() => {
+      expect(screen.getByText(/minimum 10 caractères/i)).toBeInTheDocument();
+    });
+  });
+
+  test('should submit form with valid data', async () => {
+    axios.post.mockResolvedValueOnce({
+      data: { success: true, message: 'Message envoyé avec succès' }
+    });
+
+    render(<Contactform />);
+    
+    fireEvent.change(screen.getByLabelText(/nom complet/i), { 
+      target: { value: 'Dubois Sophie' } 
+    });
+    fireEvent.change(screen.getByLabelText(/^email$/i), { 
+      target: { value: 'sophie.dubois@example.com' } 
+    });
+    fireEvent.change(screen.getByLabelText(/téléphone/i), { 
+      target: { value: '+32 456 123 789' } 
+    });
+    fireEvent.change(screen.getByLabelText(/entreprise/i), { 
+      target: { value: 'Digital Solutions' } 
+    });
+    fireEvent.change(screen.getByLabelText(/sujet/i), { 
+      target: { value: 'Demande d\'information' } 
+    });
+    fireEvent.change(screen.getByLabelText(/message/i), { 
+      target: { value: 'Bonjour, je souhaite obtenir plus d\'informations.' } 
+    });
+
+    const submitButton = screen.getByRole('button', { name: /envoyer/i });
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(axios.post).toHaveBeenCalledWith('/api/contact', expect.objectContaining({
+        nom: 'Dubois',
+        prenom: 'Sophie',
+        email: 'sophie.dubois@example.com'
+      }));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/message envoyé avec succès/i)).toBeInTheDocument();
+    });
+  });
+
+  test('should show error message on submission failure', async () => {
+    axios.post.mockRejectedValueOnce({
+      response: { 
+        data: { message: 'Erreur lors de l\'envoi' } 
+      }
+    });
+
+    render(<Contactform />);
+    
+    // Remplir les champs
+    fireEvent.change(screen.getByLabelText(/nom complet/i), { 
+      target: { value: 'Test User' } 
+    });
+    fireEvent.change(screen.getByLabelText(/^email$/i), { 
+      target: { value: 'test@example.com' } 
+    });
+    fireEvent.change(screen.getByLabelText(/message/i), { 
+      target: { value: 'Message de test pour échec' } 
+    });
+
+    const submitButton = screen.getByRole('button', { name: /envoyer/i });
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/erreur lors de l'envoi/i)).toBeInTheDocument();
+    });
+  });
+
+  test('should disable submit button while submitting', async () => {
+    axios.post.mockImplementationOnce(() => 
+      new Promise(resolve => setTimeout(() => resolve({ 
+        data: { success: true } 
+      }), 1000))
+    );
+
+    render(<Contactform />);
+    
+    // Remplir les champs
+    fireEvent.change(screen.getByLabelText(/nom complet/i), { target: { value: 'Test User' } });
+    fireEvent.change(screen.getByLabelText(/^email$/i), { target: { value: 'test@example.com' } });
+    fireEvent.change(screen.getByLabelText(/message/i), { target: { value: 'Test message' } });
+
+    const submitButton = screen.getByRole('button', { name: /envoyer/i });
+    fireEvent.click(submitButton);
+
+    // Le bouton devrait être désactivé pendant la soumission
+    expect(submitButton).toBeDisabled();
+  });
+
+  test('should clear form after successful submission', async () => {
+    axios.post.mockResolvedValueOnce({
+      data: { success: true, message: 'Message envoyé' }
+    });
+
+    render(<Contactform />);
+    
+    const nomInput = screen.getByLabelText(/nom complet/i);
+    const emailInput = screen.getByLabelText(/^email$/i);
+    const messageInput = screen.getByLabelText(/message/i);
+
+    fireEvent.change(nomInput, { target: { value: 'Dupont' } });
+    fireEvent.change(emailInput, { target: { value: 'dupont@example.com' } });
+    fireEvent.change(messageInput, { target: { value: 'Message de test' } });
+
+    const submitButton = screen.getByRole('button', { name: /envoyer/i });
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(nomInput.value).toBe('');
+      expect(emailInput.value).toBe('');
+      expect(messageInput.value).toBe('');
+    });
+  });
+});

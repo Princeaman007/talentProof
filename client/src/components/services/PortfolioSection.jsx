@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { getImageUrl } from '../../utils/api';
 
 const PortfolioSection = () => {
   const [projets, setProjets] = useState([]);
@@ -108,7 +109,7 @@ const PortfolioSection = () => {
                 {/* Image du projet */}
                 <div className="relative h-48 overflow-hidden">
                   <img
-                    src={`http://localhost:5000${projet.screenshot}`}
+                    src={getImageUrl(projet.screenshot)}
                     alt={projet.titre}
                     className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
                   />

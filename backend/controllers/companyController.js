@@ -2,6 +2,7 @@ import CompanyRegistration from '../models/CompanyRegistration.js';
 import TalentDay from '../models/Talentday.js';
 import Talent from '../models/talent.js';
 import { sendEmail } from '../utils/emailService.js';
+import { validationResult } from 'express-validator';
 
 /**
  * @desc    Créer une inscription entreprise
@@ -10,6 +11,16 @@ import { sendEmail } from '../utils/emailService.js';
  */
 export const createCompanyRegistration = async (req, res) => {
   try {
+    // Vérifier les erreurs de validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Erreur de validation',
+        errors: errors.array()
+      });
+    }
+
     const { companyName, contactPerson, email, phone, website, interestedTalentDays, notes } = req.body;
 
     // Vérifier si l'email existe déjà

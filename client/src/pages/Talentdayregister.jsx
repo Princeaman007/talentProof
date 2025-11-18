@@ -22,7 +22,7 @@ const TalentDayRegister = () => {
   useEffect(() => {
     const fetchTalentDay = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/talent-days/${id}`);
+        const response = await axios.get(`/api/talent-days/${id}`);
         if (response.data.success) {
           const td = response.data.data;
           
@@ -63,7 +63,7 @@ const TalentDayRegister = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/talent-days/${id}/register`,
+        `/api/talent-days/${id}/register`,
         formData
       );
 

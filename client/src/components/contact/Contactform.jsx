@@ -34,7 +34,7 @@ const ContactForm = () => {
     setSuccess(false);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/contact', formData);
+      const response = await axios.post('/api/contact', formData);
       
       if (response.data.success) {
         setSuccess(true);

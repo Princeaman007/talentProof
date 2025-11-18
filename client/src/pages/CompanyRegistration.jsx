@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+axios.defaults.baseURL = API_URL;
 import { Building2, User, Mail, Phone, Globe, FileText, Calendar, CheckCircle } from 'lucide-react';
 
 const CompanyRegistration = () => {
@@ -25,7 +28,7 @@ const CompanyRegistration = () => {
 
   const fetchTalentDays = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/talent-days?statut=inscriptions-ouvertes');
+      const response = await axios.get('/api/talent-days?statut=inscriptions-ouvertes');
       if (response.data.success) {
         setTalentDays(response.data.data);
       }
@@ -99,7 +102,7 @@ const CompanyRegistration = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:5000/api/companies', formData);
+      const response = await axios.post('/api/companies', formData);
 
       if (response.data.success) {
         setSuccess(true);
