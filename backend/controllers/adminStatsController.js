@@ -1,6 +1,6 @@
 import Company from '../models/Company.js';
 import Talent from '../models/Talent.js';
-import ContactRequest from '../models/Contactrequest.js';
+import ContactRequest from '../models/ContactRequest.js';
 import Devis from '../models/Devis.js';
 
 // @desc    Obtenir statistiques globales avancées

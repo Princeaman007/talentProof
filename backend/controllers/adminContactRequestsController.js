@@ -1,4 +1,4 @@
-import ContactRequest from '../models/Contactrequest.js';
+import ContactRequest from '../models/ContactRequest.js';
 
 // @desc    Obtenir toutes les demandes de contact
 // @route   GET /api/admin/contact-requests

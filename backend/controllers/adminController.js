@@ -1,5 +1,5 @@
 import Talent from '../models/Talent.js';
-import ContactRequest from '../models/Contactrequest.js';
+import ContactRequest from '../models/ContactRequest.js';
 import Company from '../models/Company.js';
 
 /**
