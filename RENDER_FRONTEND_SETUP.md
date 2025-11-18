@@ -11,9 +11,14 @@
    Name: talentproof-client
    Branch: master
    Root Directory: client
-   Build Command: rm -rf node_modules package-lock.json && npm install --legacy-peer-deps && npm run build
+   Build Command: bash build.sh
    Publish Directory: dist
    Auto-Deploy: Yes
+   ```
+   
+   **Alternative Build Command** (si build.sh ne fonctionne pas):
+   ```
+   rm -rf node_modules package-lock.json && npm install --legacy-peer-deps && npm run build && cp public/_redirects dist/_redirects
    ```
 
    ⚠️ **IMPORTANT**: 
@@ -38,6 +43,11 @@
 - ✅ URL accessible: `https://talentproof-client.onrender.com`
 - ✅ Routes fonctionnent (pas de 404 sur /login, /dashboard)
 - ✅ Appels API vers le backend fonctionnent
+- ✅ **CRITIQUE**: Vérifier dans les logs de build que `_redirects` est copié
+  ```
+  🔄 Copying SPA redirect rules...
+  ```
+  Si cette ligne n'apparaît pas, le fichier _redirects n'est pas dans dist!
 
 ## Debugging
 
@@ -70,9 +80,22 @@ Si le build échoue avec "dist does not exist":
 - Publish Directory: `dist`
 - Sauvegarder et **Manual Deploy**
 
-Si 404 sur les routes:
-1. Vérifier que `_redirects` est dans le dossier dist
-2. Logs du build doivent montrer: `_redirects` copié automatiquement par Vite
+Si 404 ou "Not Found" après connexion:
+1. **CAUSE**: Le fichier `_redirects` n'est PAS dans le dossier dist sur Render
+2. **SYMPTÔME**: La connexion réussit, mais la redirection vers /dashboard affiche "Not Found"
+3. **SOLUTION**:
+   - Vérifier les logs de build pour confirmer que `_redirects` est copié
+   - Chercher la ligne: `🔄 Copying SPA redirect rules...`
+   - Si absente, utiliser la commande de build alternative avec `&& cp public/_redirects dist/_redirects`
+   - Ou utiliser `bash build.sh` qui gère la copie automatiquement
+4. **VÉRIFICATION**: 
+   - Dans les logs Render, après le build, vous devriez voir:
+     ```
+     ✓ built in X.XXs
+     🔄 Copying SPA redirect rules...
+     ✅ Build completed successfully!
+     ```
+   - Le fichier `_redirects` DOIT être présent dans le dossier `dist/` publié
 
 Si erreur "Cannot find module @rollup/rollup-linux-x64-gnu":
 1. **C'est le bug npm décrit ci-dessus**
