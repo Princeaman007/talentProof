@@ -32,3 +32,18 @@ services:
       - key: REDIS_URL
         sync: false
     healthCheckPath: /api/health
+
+  # Frontend Static Site
+  - type: web
+    name: talentproof-client
+    runtime: static
+    region: frankfurt
+    plan: free
+    rootDir: client
+    buildCommand: npm install --legacy-peer-deps && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://talentproof.onrender.com/api
+      - key: VITE_SERVER_URL
+        value: https://talentproof.onrender.com
