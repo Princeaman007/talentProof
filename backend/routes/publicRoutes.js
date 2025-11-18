@@ -2,7 +2,7 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import Entreprise from '../models/Company.js';
 import Talent from '../models/Talent.js';
-import ContactRequest from '../models/Contactrequest.js'; // ← Ajoute cet import
+import ContactRequest from '../models/ContactRequest.js'; // ← Ajoute cet import
 
 const router = express.Router();
 
