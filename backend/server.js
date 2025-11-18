@@ -144,7 +144,7 @@ try {
     const store = new RedisStore({ client: redisClient, prefix: 'rl:' });
     globalLimiter = rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 100,
+      max: process.env.NODE_ENV === 'production' ? 100 : 500, // 500 en dev, 100 en prod
       message: 'Trop de requêtes, veuillez réessayer plus tard.',
       standardHeaders: true,
       legacyHeaders: false,
@@ -154,7 +154,7 @@ try {
   } else {
     globalLimiter = rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 100, // 100 requêtes par 15 min
+      max: process.env.NODE_ENV === 'production' ? 100 : 500, // 500 en dev, 100 en prod
       message: 'Trop de requêtes, veuillez réessayer plus tard.',
       standardHeaders: true,
       legacyHeaders: false,
@@ -164,7 +164,7 @@ try {
   logger.error('Unable to setup Redis-backed rate limiter, falling back to memory store', { error: e.message });
   globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100,
+    max: process.env.NODE_ENV === 'production' ? 100 : 500, // 500 en dev, 100 en prod
     message: 'Trop de requêtes, veuillez réessayer plus tard.',
     standardHeaders: true,
     legacyHeaders: false,
