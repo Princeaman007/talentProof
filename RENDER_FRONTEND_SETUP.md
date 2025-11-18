@@ -29,11 +29,25 @@
    - Le chemin est relatif au Root Directory
    - Le `rm -rf` au début nettoie le cache pour éviter les bugs npm/rollup
 
-4. **Environment Variables**:
+4. **Environment Variables** (⚠️ CRITIQUE):
+   
+   **Aller dans Settings → Environment → Add Environment Variable**
+   
+   Ajouter ces deux variables **EXACTEMENT**:
    ```
-   VITE_API_URL=https://talentproof.onrender.com/api
-   VITE_SERVER_URL=https://talentproof.onrender.com
+   Key: VITE_API_URL
+   Value: https://talentproof.onrender.com/api
+   
+   Key: VITE_SERVER_URL
+   Value: https://talentproof.onrender.com
    ```
+   
+   ⚠️ **IMPORTANT**: 
+   - Les variables DOIVENT commencer par `VITE_` pour être accessibles dans le code
+   - Pas d'espace avant ou après les URLs
+   - Pas de `/` à la fin de `VITE_SERVER_URL`
+   - Un `/api` à la fin de `VITE_API_URL`
+   - **Sauvegarder et redéployer après avoir ajouté les variables**
 
 5. **Advanced Settings** (optionnel):
    - Auto-Deploy: Yes
@@ -41,15 +55,35 @@
 
 ## Vérification Post-Déploiement
 
+### Étape 1: Vérifier le build
 - ✅ Build réussi sans erreurs
 - ✅ URL accessible: `https://talentproof-client.onrender.com`
-- ✅ Routes fonctionnent (pas de 404 sur /login, /dashboard)
-- ✅ Appels API vers le backend fonctionnent
 - ✅ **CRITIQUE**: Vérifier dans les logs de build que `_redirects` est copié
   ```
   🔄 Copying SPA redirect rules...
   ```
-  Si cette ligne n'apparaît pas, le fichier _redirects n'est pas dans dist!
+
+### Étape 2: Vérifier la configuration API
+Aller sur: `https://talentproof-client.onrender.com/config-check.html`
+
+Ce fichier teste:
+- ✅ Backend Health Check
+- ✅ CORS configuration
+- ✅ Routes publiques fonctionnent
+
+Si tous les tests passent ✅, la configuration est correcte.
+
+### Étape 3: Vérifier les routes
+- ✅ `/login` - Page de connexion s'affiche
+- ✅ `/dashboard` - Pas de 404 (mais redirige vers login si non connecté)
+- ✅ Console browser sans erreurs CORS
+
+### Étape 4: Tester la connexion
+1. Aller sur `/login`
+2. Entrer des identifiants valides
+3. ✅ Devrait rediriger vers `/dashboard`
+4. ✅ Dashboard affiche les données
+5. ✅ Pas de boucle de redirection
 
 ### ⚠️ Si les routes ne fonctionnent toujours pas:
 
