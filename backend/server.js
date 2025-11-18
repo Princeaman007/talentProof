@@ -256,6 +256,7 @@ app.use((req, res, next) => {
   if (
     req.path.startsWith('/api-docs') || 
     req.path === '/api/health' || 
+    req.path === '/api/csrf-token' || // Allow CSRF token fetch without token
     req.path.startsWith('/uploads') ||
     req.path === '/api/contact' ||
     req.path.startsWith('/api/talent-days') ||
@@ -274,9 +275,22 @@ app.use((req, res, next) => {
 });
 
 // Expose an endpoint for the frontend to fetch the CSRF token (GET is safe)
+// IMPORTANT: Must be placed AFTER cookieParser but will skip CSRF validation above
 app.get('/api/csrf-token', (req, res) => {
   try {
-    return res.status(200).json({ csrfToken: req.csrfToken() });
+    // Generate a new CSRF token without requiring an existing one
+    const token = req.csrfToken ? req.csrfToken() : null;
+    if (!token) {
+      // If csrfToken method not available, manually trigger csurf middleware
+      return csrfProtection(req, res, (err) => {
+        if (err) {
+          logger.error('CSRF middleware error', { error: err.message });
+          return res.status(500).json({ success: false, message: 'CSRF error' });
+        }
+        return res.status(200).json({ csrfToken: req.csrfToken() });
+      });
+    }
+    return res.status(200).json({ csrfToken: token });
   } catch (err) {
     logger.error('CSRF token generation failed', { error: err && err.message });
     return res.status(500).json({ success: false, message: 'Impossible de générer CSRF token' });
