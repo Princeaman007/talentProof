@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { FaFilter, FaStar, FaCheckCircle, FaEnvelope, FaTimes, FaBriefcase, FaMapMarkerAlt, FaGlobe, FaUser, FaBuilding } from 'react-icons/fa';
 import api from '../../utils/api';
 
@@ -80,7 +79,7 @@ const TalentsDashboard = () => {
         return acc;
       }, {});
 
-      const response = await axios.get('/api/talents/filter', { params });
+      const response = await api.get('/talents/filter', { params });
 
       if (response.data.success && Array.isArray(response.data.data)) {
         setTalents(response.data.data);

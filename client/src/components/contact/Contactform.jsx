@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Send, Loader2 } from 'lucide-react';
-import axios from 'axios';
+import api from '../../utils/api';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -34,7 +34,7 @@ const ContactForm = () => {
     setSuccess(false);
 
     try {
-      const response = await axios.post('/api/contact', formData);
+      const response = await api.post('/contact', formData);
       
       if (response.data.success) {
         setSuccess(true);

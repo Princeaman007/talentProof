@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react';
 
 const TalentDayRegister = () => {
@@ -22,7 +22,7 @@ const TalentDayRegister = () => {
   useEffect(() => {
     const fetchTalentDay = async () => {
       try {
-        const response = await axios.get(`/api/talent-days/${id}`);
+        const response = await api.get(`/talent-days/${id}`);
         if (response.data.success) {
           const td = response.data.data;
           
@@ -62,8 +62,8 @@ const TalentDayRegister = () => {
     setError('');
 
     try {
-      const response = await axios.post(
-        `/api/talent-days/${id}/register`,
+      const response = await api.post(
+        `/talent-days/${id}/register`,
         formData
       );
 

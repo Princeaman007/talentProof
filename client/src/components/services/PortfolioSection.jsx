@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { getImageUrl } from '../../utils/api';
+import api, { getImageUrl } from '../../utils/api';
 
 const PortfolioSection = () => {
   const [projets, setProjets] = useState([]);
@@ -16,7 +15,7 @@ const PortfolioSection = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('/api/portfolio/categories');
+      const response = await api.get('/portfolio/categories');
       setCategories([
         { value: 'tous', label: 'Tous les projets' },
         ...response.data.data
@@ -32,7 +31,7 @@ const PortfolioSection = () => {
     const params = categorieActive !== 'tous' ? { categorie: categorieActive } : {};
     
     console.log('🔍 Paramètres de recherche:', params);
-    const response = await axios.get('/api/portfolio', { params });
+    const response = await api.get('/portfolio', { params });
     
     console.log('📦 Réponse API:', response.data);
     console.log('📊 Nombre de projets:', response.data.count);
