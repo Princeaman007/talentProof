@@ -16,6 +16,8 @@
    Auto-Deploy: Yes
    ```
    
+   ⚠️ **IMPORTANT**: Le script `build.sh` nettoie automatiquement le cache npm pour éviter le bug Rollup.
+   
    **Alternative Build Command** (si build.sh ne fonctionne pas):
    ```
    rm -rf node_modules package-lock.json && npm install --legacy-peer-deps && npm run build && cp public/_redirects dist/_redirects

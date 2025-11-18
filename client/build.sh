@@ -1,6 +1,9 @@
 #!/bin/bash
 # Build script for Render deployment - SPA with routing support
 
+echo "🧹 Cleaning npm cache and node_modules (fixes Rollup Linux bug)..."
+rm -rf node_modules package-lock.json
+
 echo "📦 Installing dependencies..."
 npm install --legacy-peer-deps
 
