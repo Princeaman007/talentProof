@@ -199,13 +199,16 @@ try {
   const redisUrl = process.env.REDIS_URL;
   const isDev = process.env.NODE_ENV !== 'production';
   
+  // ⚠️ TEMPORAIRE: Limite plus élevée en production pour les tests
+  const maxAttempts = isDev ? 100 : 50; // 100 en dev, 50 en production (au lieu de 5)
+  
   if (redisUrl) {
     const redisClient2 = new Redis(redisUrl);
     const RedisStore = RedisStorePkg.default || RedisStorePkg;
     const store2 = new RedisStore({ client: redisClient2, prefix: 'rl_auth:' });
     authLimiter = rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
-      max: isDev ? 100 : 5, // 100 en dev, 5 en production
+      max: maxAttempts,
       message: 'Trop de tentatives de connexion. Réessayez dans 15 minutes.',
       skipSuccessfulRequests: true,
       standardHeaders: true,
@@ -215,7 +218,7 @@ try {
   } else {
     authLimiter = rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
-      max: isDev ? 100 : 5, // 100 en dev, 5 en production
+      max: maxAttempts,
       message: 'Trop de tentatives de connexion. Réessayez dans 15 minutes.',
       skipSuccessfulRequests: true, // Ne pas compter les requêtes réussies
       standardHeaders: true,
@@ -225,9 +228,10 @@ try {
 } catch (e) {
   logger.error('Unable to setup Redis-backed auth rate limiter, falling back to memory store', { error: e.message });
   const isDev = process.env.NODE_ENV !== 'production';
+  const maxAttempts = isDev ? 100 : 50;
   authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: isDev ? 100 : 5, // 100 en dev, 5 en production
+    max: maxAttempts,
     message: 'Trop de tentatives de connexion. Réessayez dans 15 minutes.',
     skipSuccessfulRequests: true,
     standardHeaders: true,
