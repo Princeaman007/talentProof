@@ -19,7 +19,8 @@ const validateCompanyRegistration = [
   body('email').trim().isEmail().normalizeEmail().withMessage('Email invalide'),
   body('phone').trim().notEmpty().withMessage('Le téléphone est requis'),
   body('website').trim().optional({ checkFalsy: true }).isURL().withMessage('URL invalide'),
-  body('interestedTalentDays').optional({ checkFalsy: true }).isArray().withMessage('Format invalide pour les TalentDays'),
+  body('interestedTalentDays')
+    .isArray({ min: 1 }).withMessage('Sélectionnez au moins un TalentDay'),
   body('notes').trim().optional({ checkFalsy: true }).isLength({ max: 1000 }).withMessage('Les notes ne peuvent pas dépasser 1000 caractères'),
 ];
 
