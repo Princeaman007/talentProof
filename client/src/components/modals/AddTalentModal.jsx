@@ -141,7 +141,7 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
         statut: formData.statut,
       };
 
-      const response = await api.post('/entreprise/talents', payload);
+      const response = await api.post('/admin/talents', payload);
       
       onSuccess('Talent ajouté avec succès !');
       onClose();
