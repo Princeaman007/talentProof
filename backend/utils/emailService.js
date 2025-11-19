@@ -16,7 +16,7 @@ const createTransporter = () => {
     passLength: process.env.EMAIL_PASS?.length || 0,
   });
 
-  return nodemailer.createTransport({
+  return nodemailer.createTransporter({
     host: process.env.EMAIL_HOST,
     port: emailPort,
     secure: isSSL, // true pour 465 (SSL), false pour 587 (TLS)
@@ -28,11 +28,16 @@ const createTransporter = () => {
       rejectUnauthorized: false, // ✅ Important pour éviter les erreurs de certificat
       minVersion: 'TLSv1.2', // ✅ Forcer TLS 1.2 minimum
     },
-    connectionTimeout: 10000, // ✅ 10 secondes de timeout
-    greetingTimeout: 10000, // ✅ Timeout pour le greeting
-    socketTimeout: 10000, // ✅ Timeout pour le socket
-    debug: process.env.NODE_ENV === 'development', // ✅ Debug en dev
-    logger: process.env.NODE_ENV === 'development', // ✅ Logs en dev
+    // ✨ OPTIMISÉ : Timeouts plus longs pour Render
+    connectionTimeout: 60000, // 60 secondes (au lieu de 10s)
+    greetingTimeout: 30000, // 30 secondes
+    socketTimeout: 60000, // 60 secondes
+    debug: process.env.NODE_ENV === 'development',
+    logger: process.env.NODE_ENV === 'development',
+    // Pool de connexions pour meilleure performance
+    pool: true,
+    maxConnections: 5,
+    maxMessages: 100,
   });
 };
 

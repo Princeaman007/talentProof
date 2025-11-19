@@ -44,6 +44,14 @@ export const createTransporter = async () => {
     tls: {
       rejectUnauthorized: tlsRejectUnauthorized,
     },
+    // ✨ NOUVEAU : Configuration pour éviter les timeouts sur Render
+    connectionTimeout: 60000, // 60 secondes au lieu de 2 minutes par défaut
+    greetingTimeout: 30000, // 30 secondes pour le greeting
+    socketTimeout: 60000, // 60 secondes pour les opérations socket
+    // Retry en cas d'échec
+    pool: true, // Utiliser un pool de connexions
+    maxConnections: 5,
+    maxMessages: 100,
   });
 };
 
