@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Auth - TalentProof</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #2563eb;
+        }
+        .section.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .section.success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        .label {
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+        .value {
+            color: #6b7280;
+            font-family: monospace;
+            word-break: break-all;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        button.danger {
+            background: #ef4444;
+        }
+        button.danger:hover {
+            background: #dc2626;
+        }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            max-height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Authentification</h1>
+        <p>Cette page affiche l'état de votre authentification dans localStorage.</p>
+
+        <div id="auth-status"></div>
+
+        <button onclick="checkAuth()">Rafraîchir</button>
+        <button onclick="testLogin()" style="background: #10b981;">Test Login</button>
+        <button onclick="clearAuth()" class="danger">Vider Auth</button>
+
+        <div id="test-result" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            
+            let html = '';
+            
+            // Check token
+            const tokenSection = document.createElement('div');
+            tokenSection.className = token ? 'section success' : 'section error';
+            tokenSection.innerHTML = `
+                <h3>${token ? '✅' : '❌'} Token JWT</h3>
+                <div class="label">État:</div>
+                <div class="value">${token ? 'Présent' : 'Absent'}</div>
+                ${token ? `
+                    <div class="label" style="margin-top: 10px;">Valeur (premiers 50 caractères):</div>
+                    <div class="value">${token.substring(0, 50)}...</div>
+                    <div class="label" style="margin-top: 10px;">Longueur:</div>
+                    <div class="value">${token.length} caractères</div>
+                ` : ''}
+            `;
+            
+            // Check user
+            const userSection = document.createElement('div');
+            userSection.className = user ? 'section success' : 'section error';
+            
+            let userData = null;
+            if (user) {
+                try {
+                    userData = JSON.parse(user);
+                } catch (e) {
+                    userData = { error: 'JSON invalide' };
+                }
+            }
+            
+            userSection.innerHTML = `
+                <h3>${user ? '✅' : '❌'} Données Utilisateur</h3>
+                <div class="label">État:</div>
+                <div class="value">${user ? 'Présent' : 'Absent'}</div>
+                ${userData ? `
+                    <div class="label" style="margin-top: 10px;">Contenu:</div>
+                    <pre>${JSON.stringify(userData, null, 2)}</pre>
+                ` : ''}
+            `;
+            
+            // Diagnosis
+            const diagSection = document.createElement('div');
+            diagSection.className = 'section';
+            
+            let diagnosis = '<h3>🎯 Diagnostic</h3>';
+            
+            if (token && user) {
+                diagnosis += `
+                    <div style="color: #10b981; font-weight: bold; margin-bottom: 10px;">
+                        ✅ Authentification complète
+                    </div>
+                    <p>Le token et les données utilisateur sont présents.</p>
+                    <p><strong>Si la connexion échoue malgré cela:</strong></p>
+                    <ul>
+                        <li>Le token est peut-être expiré</li>
+                        <li>Le token n'est pas envoyé dans les requêtes</li>
+                        <li>Le backend rejette le token</li>
+                    </ul>
+                    <p><strong>Action:</strong> Testez le token avec le bouton "Test Login"</p>
+                `;
+            } else if (token && !user) {
+                diagnosis += `
+                    <div style="color: #f59e0b; font-weight: bold; margin-bottom: 10px;">
+                        ⚠️ Token présent mais pas de données utilisateur
+                    </div>
+                    <p>Le token existe mais les données utilisateur manquent.</p>
+                    <p><strong>Action:</strong> Reconnectez-vous</p>
+                `;
+            } else if (!token && user) {
+                diagnosis += `
+                    <div style="color: #f59e0b; font-weight: bold; margin-bottom: 10px;">
+                        ⚠️ Données utilisateur présentes mais pas de token
+                    </div>
+                    <p>Les données existent mais le token manque.</p>
+                    <p><strong>Action:</strong> Reconnectez-vous</p>
+                `;
+            } else {
+                diagnosis += `
+                    <div style="color: #ef4444; font-weight: bold; margin-bottom: 10px;">
+                        ❌ Aucune authentification
+                    </div>
+                    <p>Ni token ni données utilisateur présents.</p>
+                    <p><strong>Action:</strong> Connectez-vous sur /login</p>
+                `;
+            }
+            
+            diagSection.innerHTML = diagnosis;
+            
+            const container = document.getElementById('auth-status');
+            container.innerHTML = '';
+            container.appendChild(tokenSection);
+            container.appendChild(userSection);
+            container.appendChild(diagSection);
+        }
+
+        async function testLogin() {
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.innerHTML = '<div class="section"><p>Test en cours...</p></div>';
+            
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                resultDiv.innerHTML = `
+                    <div class="section error">
+                        <h3>❌ Pas de token</h3>
+                        <p>Impossible de tester sans token. Connectez-vous d'abord.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            try {
+                // Test avec le token actuel
+                const response = await fetch('https://talentproof.onrender.com/api/auth/me', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="section success">
+                            <h3>✅ Token valide!</h3>
+                            <p>Le backend accepte votre token.</p>
+                            <div class="label">Réponse:</div>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                            <p style="margin-top: 15px;"><strong>Si la connexion échoue malgré un token valide:</strong></p>
+                            <ol>
+                                <li>Ouvrez la console du navigateur (F12)</li>
+                                <li>Regardez les erreurs lors de la connexion</li>
+                                <li>Vérifiez que le token est envoyé dans les requêtes (Network tab)</li>
+                            </ol>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="section error">
+                            <h3>❌ Token invalide ou expiré</h3>
+                            <p>Le backend rejette votre token (Status: ${response.status}).</p>
+                            <div class="label">Erreur:</div>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                            <p style="margin-top: 15px;"><strong>Action:</strong></p>
+                            <ol>
+                                <li>Cliquez sur "Vider Auth"</li>
+                                <li>Reconnectez-vous sur /login</li>
+                            </ol>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="section error">
+                        <h3>❌ Erreur de connexion</h3>
+                        <p>${error.message}</p>
+                        <p><strong>Vérifiez:</strong></p>
+                        <ul>
+                            <li>Que vous êtes connecté à Internet</li>
+                            <li>Que le backend est accessible</li>
+                        </ul>
+                    </div>
+                `;
+            }
+        }
+
+        function clearAuth() {
+            if (confirm('Êtes-vous sûr de vouloir vider l\'authentification?')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                alert('Authentification vidée. Rechargez la page.');
+                checkAuth();
+            }
+        }
+
+        // Check on load
+        window.onload = checkAuth;
+    </script>
+</body>
+</html>
