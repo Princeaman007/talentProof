@@ -429,10 +429,16 @@ export const devisConfirmationTemplate = (clientNom) => {
   return baseTemplate(content);
 };
 
-/**
- * Email de confirmation d'inscription TalentDay
- */
-export const talentDayConfirmationTemplate = (inscription, talentDay) => {
+// ✨ Import des templates professionnels avec logo TalentProof
+export { 
+  talentDayConfirmationTemplate, 
+  companyTalentDayRegistrationTemplate,
+  contactNotificationTemplate,
+  contactConfirmationTemplate
+} from './emailTemplates.professional.js';
+
+// Note: Les anciens templates restent disponibles ci-dessous pour référence
+// mais ne sont plus utilisés. Ils seront supprimés dans une prochaine version.
   const content = `
     <h1>🎉 Inscription confirmée !</h1>
     <p>Bonjour <strong>${inscription.nom}</strong>,</p>

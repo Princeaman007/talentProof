@@ -1,6 +1,7 @@
 import express from 'express';
 import { sendEmail } from '../utils/emailService.js';
-import { generalContactNotificationTemplate, generalContactConfirmationTemplate } from '../utils/contactEmailTemplate.js';
+// ✨ NOUVEAU : Templates professionnels avec logo et charte graphique TalentProof
+import { generalContactNotificationTemplate, generalContactConfirmationTemplate } from '../utils/emailTemplates.professional.js';
 
 const router = express.Router();
 

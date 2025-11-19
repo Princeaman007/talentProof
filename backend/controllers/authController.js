@@ -1,7 +1,8 @@
 import Company from '../models/Company.js';
 import { hashPassword, comparePassword, generateToken, generateRandomToken, hashToken } from '../utils/Auth.js';
 import { sendEmail } from '../utils/Email.js';
-import { confirmationEmailTemplate, resetPasswordTemplate } from '../utils/emailTemplates.js';
+// ✨ NOUVEAU : Templates professionnels avec logo et charte graphique TalentProof
+import { confirmationEmailTemplate, resetPasswordTemplate } from '../utils/emailTemplates.professional.js';
 import { setTokenCookie, clearTokenCookie, setRefreshTokenCookie, clearRefreshTokenCookie } from '../utils/cookieConfig.js';
 
 /**

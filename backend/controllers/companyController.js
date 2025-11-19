@@ -2,6 +2,8 @@ import CompanyRegistration from '../models/CompanyRegistration.js';
 import TalentDay from '../models/Talentday.js';
 import Talent from '../models/Talent.js';
 import { sendEmail } from '../utils/emailService.js';
+// ✨ Import du template professionnel d'inscription entreprise TalentDay
+import { companyTalentDayRegistrationTemplate } from '../utils/emailTemplates.professional.js';
 import { validationResult } from 'express-validator';
 
 /**
@@ -116,79 +118,20 @@ export const createCompanyRegistration = async (req, res) => {
       `;
     };
 
-    // Envoyer email de confirmation à l'entreprise avec détails TalentDays
+    // ✨ NOUVEAU : Envoyer email professionnel avec logo TalentProof
     try {
+      const companyInfo = {
+        companyName,
+        contactPerson,
+        email,
+        phone,
+        website
+      };
+      
       await sendEmail({
         to: email,
-        subject: '✅ Inscription TalentDay confirmée',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; background: #f9fafb; padding: 30px;">
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-              <h1 style="color: white; margin: 0; font-size: 28px;">🎉 Inscription Confirmée !</h1>
-            </div>
-            
-            <div style="background: white; padding: 30px; border-radius: 0 0 12px 12px;">
-              <p style="font-size: 16px; color: #374151;">Bonjour <strong>${contactPerson}</strong>,</p>
-              <p style="color: #4b5563; line-height: 1.6;">
-                Nous avons bien reçu votre inscription pour participer aux TalentDays en tant qu'entreprise.
-                Votre demande est actuellement <strong style="color: #f59e0b;">en attente de validation</strong> par notre équipe.
-              </p>
-              
-              <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 25px 0;">
-                <h3 style="margin-top: 0; color: #1f2937;">📋 Récapitulatif de votre inscription</h3>
-                <table style="width: 100%; border-collapse: collapse;">
-                  <tr>
-                    <td style="padding: 8px 0; color: #6b7280; font-weight: bold;">🏢 Entreprise :</td>
-                    <td style="padding: 8px 0; color: #1f2937;">${companyName}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 8px 0; color: #6b7280; font-weight: bold;">👤 Contact :</td>
-                    <td style="padding: 8px 0; color: #1f2937;">${contactPerson}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 8px 0; color: #6b7280; font-weight: bold;">📧 Email :</td>
-                    <td style="padding: 8px 0; color: #1f2937;">${email}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 8px 0; color: #6b7280; font-weight: bold;">📞 Téléphone :</td>
-                    <td style="padding: 8px 0; color: #1f2937;">${phone}</td>
-                  </tr>
-                  ${website ? `
-                  <tr>
-                    <td style="padding: 8px 0; color: #6b7280; font-weight: bold;">🌐 Site web :</td>
-                    <td style="padding: 8px 0; color: #1f2937;"><a href="${website}" style="color: #2563eb;">${website}</a></td>
-                  </tr>
-                  ` : ''}
-                </table>
-              </div>
-
-              <h3 style="color: #1f2937; margin-top: 30px;">🎯 TalentDays sélectionnés</h3>
-              ${company.interestedTalentDays.map(td => formatTalentDayDetails(td)).join('')}
-
-              <div style="background: #ecfdf5; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #10b981;">
-                <h4 style="margin-top: 0; color: #059669;">🚀 Prochaines étapes</h4>
-                <ol style="color: #065f46; line-height: 1.8; padding-left: 20px;">
-                  <li>Notre équipe examine votre demande (délai : 24-48h)</li>
-                  <li>Vous recevrez un email de <strong>confirmation</strong> ou de <strong>refus</strong></li>
-                  <li>Une fois confirmé, vous aurez accès à la liste des talents</li>
-                  <li>Vous pourrez réserver des meetings individuels avec les talents</li>
-                </ol>
-              </div>
-
-              <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-                Pour toute question, n'hésitez pas à nous contacter à 
-                <a href="mailto:${process.env.CONTACT_EMAIL || 'info@princeaman.dev'}" style="color: #2563eb;">
-                  ${process.env.CONTACT_EMAIL || 'info@princeaman.dev'}
-                </a>
-              </p>
-
-              <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                <p style="color: #9ca3af; font-size: 14px; margin: 0;">À très bientôt !</p>
-                <p style="color: #1e40af; font-weight: bold; margin: 5px 0;">L'équipe TalentProof</p>
-              </div>
-            </div>
-          </div>
-        `,
+        subject: '✅ Inscription TalentDay confirmée - TalentProof',
+        html: companyTalentDayRegistrationTemplate(companyInfo, company.interestedTalentDays),
       });
     } catch (emailError) {
       console.error('Erreur envoi email entreprise:', emailError);
