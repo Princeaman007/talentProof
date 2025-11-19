@@ -551,7 +551,7 @@ const CreateTalentDay = ({ talentDay, isEditing, onClose, onSuccess }) => {
           {/* Section Entreprises */}
           <div className="mb-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200">
             <h4 className="text-lg font-bold text-blue-900 mb-4 flex items-center gap-2">
-              🏢 Informations pour les Entreprises
+               Informations pour les Entreprises
             </h4>
             <p className="text-sm text-gray-600 mb-4">
               Ces informations seront affichées aux entreprises pour les encourager à s'inscrire à cet événement.

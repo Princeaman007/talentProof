@@ -9,13 +9,13 @@ const createAdminUser = async () => {
   try {
     // Connexion à MongoDB
     await mongoose.connect(process.env.MONGO_URI);
-    console.log('✅ Connecté à MongoDB');
+    console.log(' Connecté à MongoDB');
 
     // Vérifier si l'admin existe déjà
     const existingAdmin = await Company.findOne({ email: 'info@princeaman.dev' });
 
     if (existingAdmin) {
-      console.log('⚠️  Un compte avec cet email existe déjà');
+      console.log('️  Un compte avec cet email existe déjà');
       
       // Mettre à jour en admin si ce n'est pas le cas
       if (existingAdmin.role !== 'admin') {
@@ -23,9 +23,9 @@ const createAdminUser = async () => {
         existingAdmin.isActive = true;
         existingAdmin.isConfirmed = true;
         await existingAdmin.save();
-        console.log('✅ Compte existant mis à jour en admin');
+        console.log(' Compte existant mis à jour en admin');
       } else {
-        console.log('✅ Le compte admin existe déjà');
+        console.log(' Le compte admin existe déjà');
       }
     } else {
       // Créer le compte admin
@@ -41,15 +41,15 @@ const createAdminUser = async () => {
         nombreEmployes: '1-10',
       });
 
-      console.log('✅ Compte admin créé avec succès');
-      console.log('📧 Email:', admin.email);
-      console.log('🔑 Mot de passe: Admin2025!');
-      console.log('⚠️  IMPORTANT: Changez ce mot de passe après la première connexion !');
+      console.log(' Compte admin créé avec succès');
+      console.log(' Email:', admin.email);
+      console.log(' Mot de passe: Admin2025!');
+      console.log('️  IMPORTANT: Changez ce mot de passe après la première connexion !');
     }
 
     process.exit(0);
   } catch (error) {
-    console.error('❌ Erreur:', error);
+    console.error(' Erreur:', error);
     process.exit(1);
   }
 };

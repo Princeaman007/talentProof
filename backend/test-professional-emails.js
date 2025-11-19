@@ -38,11 +38,11 @@ const transporter = nodemailer.createTransport({
 
 const TEST_EMAIL = process.env.EMAIL_USER; // Envoyer à soi-même
 
-console.log('🎨 ═══════════════════════════════════════════════════════════');
-console.log('🎨  TEST DES TEMPLATES EMAILS PROFESSIONNELS TALENTPROOF');
-console.log('🎨 ═══════════════════════════════════════════════════════════\n');
+console.log(' ═══════════════════════════════════════════════════════════');
+console.log('  TEST DES TEMPLATES EMAILS PROFESSIONNELS TALENTPROOF');
+console.log(' ═══════════════════════════════════════════════════════════\n');
 
-console.log('📧 Configuration:');
+console.log(' Configuration:');
 console.log(`   Email destinataire: ${TEST_EMAIL}`);
 console.log(`   SMTP: ${process.env.EMAIL_HOST}:${process.env.EMAIL_PORT}\n`);
 
@@ -50,7 +50,7 @@ console.log(`   SMTP: ${process.env.EMAIL_HOST}:${process.env.EMAIL_PORT}\n`);
  * Test 1: Email de confirmation d'inscription
  */
 async function test1_confirmationInscription() {
-  console.log('📧 Test 1: Email de confirmation d\'inscription');
+  console.log(' Test 1: Email de confirmation d\'inscription');
   try {
     const confirmationLink = `${process.env.CLIENT_URL}/confirm-email/test-token-abc123`;
     
@@ -61,9 +61,9 @@ async function test1_confirmationInscription() {
       html: confirmationEmailTemplate('Entreprise Test SA', confirmationLink),
     });
     
-    console.log('   ✅ Email envoyé avec succès!\n');
+    console.log('    Email envoyé avec succès!\n');
   } catch (error) {
-    console.error('   ❌ Erreur:', error.message, '\n');
+    console.error('    Erreur:', error.message, '\n');
   }
 }
 
@@ -71,7 +71,7 @@ async function test1_confirmationInscription() {
  * Test 2: Email de réinitialisation mot de passe
  */
 async function test2_resetPassword() {
-  console.log('📧 Test 2: Email de réinitialisation mot de passe');
+  console.log(' Test 2: Email de réinitialisation mot de passe');
   try {
     const resetLink = `${process.env.CLIENT_URL}/reset-password/test-reset-xyz789`;
     
@@ -82,9 +82,9 @@ async function test2_resetPassword() {
       html: resetPasswordTemplate('Entreprise Test SA', resetLink),
     });
     
-    console.log('   ✅ Email envoyé avec succès!\n');
+    console.log('    Email envoyé avec succès!\n');
   } catch (error) {
-    console.error('   ❌ Erreur:', error.message, '\n');
+    console.error('    Erreur:', error.message, '\n');
   }
 }
 
@@ -92,7 +92,7 @@ async function test2_resetPassword() {
  * Test 3: Email de notification contact talent (à Prince)
  */
 async function test3_contactTalentNotification() {
-  console.log('📧 Test 3: Email de notification contact talent');
+  console.log(' Test 3: Email de notification contact talent');
   try {
     const talentInfo = {
       prenom: 'Jean',
@@ -113,13 +113,13 @@ async function test3_contactTalentNotification() {
     await transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to: TEST_EMAIL,
-      subject: '[TEST] 🎯 Nouvelle demande de contact talent - TalentProof',
+      subject: '[TEST]  Nouvelle demande de contact talent - TalentProof',
       html: contactNotificationTemplate(talentInfo, recruteurInfo),
     });
     
-    console.log('   ✅ Email envoyé avec succès!\n');
+    console.log('    Email envoyé avec succès!\n');
   } catch (error) {
-    console.error('   ❌ Erreur:', error.message, '\n');
+    console.error('    Erreur:', error.message, '\n');
   }
 }
 
@@ -127,7 +127,7 @@ async function test3_contactTalentNotification() {
  * Test 4: Email de confirmation demande contact (au recruteur)
  */
 async function test4_contactConfirmation() {
-  console.log('📧 Test 4: Email de confirmation demande contact');
+  console.log(' Test 4: Email de confirmation demande contact');
   try {
     await transporter.sendMail({
       from: process.env.EMAIL_FROM,
@@ -136,9 +136,9 @@ async function test4_contactConfirmation() {
       html: contactConfirmationTemplate('Marie Dubois', 'Jean'),
     });
     
-    console.log('   ✅ Email envoyé avec succès!\n');
+    console.log('    Email envoyé avec succès!\n');
   } catch (error) {
-    console.error('   ❌ Erreur:', error.message, '\n');
+    console.error('    Erreur:', error.message, '\n');
   }
 }
 
@@ -146,7 +146,7 @@ async function test4_contactConfirmation() {
  * Test 5: Email de contact général - notification (à Prince)
  */
 async function test5_generalContactNotification() {
-  console.log('📧 Test 5: Email de contact général - notification');
+  console.log(' Test 5: Email de contact général - notification');
   try {
     const contactInfo = {
       nom: 'Pierre Martin',
@@ -160,13 +160,13 @@ async function test5_generalContactNotification() {
     await transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to: TEST_EMAIL,
-      subject: '[TEST] 📬 Nouveau message de contact - TalentProof',
+      subject: '[TEST]  Nouveau message de contact - TalentProof',
       html: generalContactNotificationTemplate(contactInfo),
     });
     
-    console.log('   ✅ Email envoyé avec succès!\n');
+    console.log('    Email envoyé avec succès!\n');
   } catch (error) {
-    console.error('   ❌ Erreur:', error.message, '\n');
+    console.error('    Erreur:', error.message, '\n');
   }
 }
 
@@ -174,7 +174,7 @@ async function test5_generalContactNotification() {
  * Test 6: Email de contact général - confirmation (au visiteur)
  */
 async function test6_generalContactConfirmation() {
-  console.log('📧 Test 6: Email de contact général - confirmation');
+  console.log(' Test 6: Email de contact général - confirmation');
   try {
     await transporter.sendMail({
       from: process.env.EMAIL_FROM,
@@ -183,9 +183,9 @@ async function test6_generalContactConfirmation() {
       html: generalContactConfirmationTemplate('Pierre Martin'),
     });
     
-    console.log('   ✅ Email envoyé avec succès!\n');
+    console.log('    Email envoyé avec succès!\n');
   } catch (error) {
-    console.error('   ❌ Erreur:', error.message, '\n');
+    console.error('    Erreur:', error.message, '\n');
   }
 }
 
@@ -193,7 +193,7 @@ async function test6_generalContactConfirmation() {
  * Test 7: Email de confirmation inscription TalentDay
  */
 async function test7_talentDayConfirmation() {
-  console.log('📧 Test 7: Email de confirmation inscription TalentDay');
+  console.log(' Test 7: Email de confirmation inscription TalentDay');
   try {
     const inscription = {
       prenom: 'Sophie',
@@ -217,13 +217,13 @@ async function test7_talentDayConfirmation() {
     await transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to: TEST_EMAIL,
-      subject: '[TEST] Inscription TalentDay confirmée ! 🎉 - TalentProof',
+      subject: '[TEST] Inscription TalentDay confirmée !  - TalentProof',
       html: talentDayConfirmationTemplate(inscription, talentDay),
     });
     
-    console.log('   ✅ Email envoyé avec succès!\n');
+    console.log('    Email envoyé avec succès!\n');
   } catch (error) {
-    console.error('   ❌ Erreur:', error.message, '\n');
+    console.error('    Erreur:', error.message, '\n');
   }
 }
 
@@ -231,7 +231,7 @@ async function test7_talentDayConfirmation() {
  * Test 8: Email inscription entreprise TalentDay
  */
 async function test8_companyTalentDayRegistration() {
-  console.log('📧 Test 8: Email inscription entreprise TalentDay');
+  console.log(' Test 8: Email inscription entreprise TalentDay');
   try {
     const companyInfo = {
       companyName: 'Tech Innovators SA',
@@ -259,13 +259,13 @@ async function test8_companyTalentDayRegistration() {
     await transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to: TEST_EMAIL,
-      subject: '[TEST] Inscription TalentDay bien reçue ! 🎉 - TalentProof',
+      subject: '[TEST] Inscription TalentDay bien reçue !  - TalentProof',
       html: companyTalentDayRegistrationTemplate(companyInfo, talentDays),
     });
     
-    console.log('   ✅ Email envoyé avec succès!\n');
+    console.log('    Email envoyé avec succès!\n');
   } catch (error) {
-    console.error('   ❌ Erreur:', error.message, '\n');
+    console.error('    Erreur:', error.message, '\n');
   }
 }
 
@@ -273,14 +273,14 @@ async function test8_companyTalentDayRegistration() {
  * Exécution de tous les tests
  */
 async function runAllTests() {
-  console.log('🚀 Démarrage des tests...\n');
+  console.log(' Démarrage des tests...\n');
   
   // Vérifier la connexion SMTP
   try {
     await transporter.verify();
-    console.log('✅ Connexion SMTP validée\n');
+    console.log(' Connexion SMTP validée\n');
   } catch (error) {
-    console.error('❌ Erreur de connexion SMTP:', error.message);
+    console.error(' Erreur de connexion SMTP:', error.message);
     process.exit(1);
   }
   
@@ -309,11 +309,11 @@ async function runAllTests() {
   await test8_companyTalentDayRegistration();
   
   console.log('═══════════════════════════════════════════════════════════');
-  console.log('✅ TOUS LES TESTS SONT TERMINÉS !');
+  console.log(' TOUS LES TESTS SONT TERMINÉS !');
   console.log('═══════════════════════════════════════════════════════════');
-  console.log('\n📬 Vérifiez votre boîte mail:', TEST_EMAIL);
-  console.log('💡 Vous devriez avoir reçu 8 emails de test\n');
-  console.log('🎨 Vérifiez que:');
+  console.log('\n Vérifiez votre boîte mail:', TEST_EMAIL);
+  console.log(' Vous devriez avoir reçu 8 emails de test\n');
+  console.log(' Vérifiez que:');
   console.log('   - Le logo TalentProof est visible');
   console.log('   - La couleur bleue (#2E4A9E) est bien utilisée');
   console.log('   - Les boutons sont cliquables');

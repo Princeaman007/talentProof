@@ -9,7 +9,7 @@ import Company from '../models/Company.js';
  */
 export const createTalent = async (req, res) => {
   try {
-    console.log('📥 Données reçues dans adminController:', req.body);
+    console.log(' Données reçues dans adminController:', req.body);
 
     const {
       prenom,
@@ -32,7 +32,7 @@ export const createTalent = async (req, res) => {
       statut,
     } = req.body;
 
-    // ✅ Créer le talent avec TOUS les champs
+    //  Créer le talent avec TOUS les champs
     const talent = await Talent.create({
       prenom,
       photo,
@@ -54,7 +54,7 @@ export const createTalent = async (req, res) => {
       statut: statut || 'actif',
     });
 
-    console.log('✅ Talent créé avec succès:', talent);
+    console.log(' Talent créé avec succès:', talent);
 
     res.status(201).json({
       success: true,
@@ -62,9 +62,9 @@ export const createTalent = async (req, res) => {
       data: talent,
     });
   } catch (error) {
-    console.error('❌ Erreur createTalent:', error);
+    console.error(' Erreur createTalent:', error);
     
-    // ✅ Meilleure gestion des erreurs de validation
+    //  Meilleure gestion des erreurs de validation
     if (error.name === 'ValidationError') {
       const errors = Object.values(error.errors).map(err => ({
         msg: err.message,
@@ -117,8 +117,8 @@ export const getAllTalentsAdmin = async (req, res) => {
  */
 export const updateTalent = async (req, res) => {
   try {
-    console.log('📝 Mise à jour du talent:', req.params.id);
-    console.log('📥 Données reçues:', req.body);
+    console.log(' Mise à jour du talent:', req.params.id);
+    console.log(' Données reçues:', req.body);
 
     const talent = await Talent.findById(req.params.id);
 
@@ -129,7 +129,7 @@ export const updateTalent = async (req, res) => {
       });
     }
 
-    // ✅ Mettre à jour TOUS les champs possibles
+    //  Mettre à jour TOUS les champs possibles
     const {
       prenom,
       photo,
@@ -173,7 +173,7 @@ export const updateTalent = async (req, res) => {
 
     await talent.save();
 
-    console.log('✅ Talent mis à jour:', talent);
+    console.log(' Talent mis à jour:', talent);
 
     res.status(200).json({
       success: true,
@@ -181,7 +181,7 @@ export const updateTalent = async (req, res) => {
       data: talent,
     });
   } catch (error) {
-    console.error('❌ Erreur updateTalent:', error);
+    console.error(' Erreur updateTalent:', error);
     
     if (error.name === 'ValidationError') {
       const errors = Object.values(error.errors).map(err => ({
@@ -305,7 +305,7 @@ export const updateContactRequestStatus = async (req, res) => {
  */
 export const getEntreprisesCount = async (req, res) => {
   try {
-    // ✅ Compter toutes les entreprises inscrites
+    //  Compter toutes les entreprises inscrites
     const count = await Company.countDocuments();
 
     res.status(200).json({
@@ -313,7 +313,7 @@ export const getEntreprisesCount = async (req, res) => {
       count,
     });
   } catch (error) {
-    console.error('❌ Erreur getEntreprisesCount:', error);
+    console.error(' Erreur getEntreprisesCount:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération du nombre d\'entreprises',
@@ -335,7 +335,7 @@ export const getGlobalStats = async (req, res) => {
     // Nombre total de demandes de contact
     const contactRequestsCount = await ContactRequest.countDocuments();
     
-    // ✅ Nombre d'entreprises inscrites
+    //  Nombre d'entreprises inscrites
     const entreprisesCount = await Company.countDocuments();
     
     // Calculer le taux de succès (% de talents en mission)
@@ -350,7 +350,7 @@ export const getGlobalStats = async (req, res) => {
       tauxSucces,
     });
   } catch (error) {
-    console.error('❌ Erreur getGlobalStats:', error);
+    console.error(' Erreur getGlobalStats:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des statistiques',

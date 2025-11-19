@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /**
- * ✅ Middleware pour vérifier si l'utilisateur est admin
+ *  Middleware pour vérifier si l'utilisateur est admin
  * Phase 4 - Utilise le champ "role" avec fallback sur email
  * À utiliser APRÈS le middleware protect
  */
@@ -17,12 +17,12 @@ export const adminOnly = (req, res, next) => {
       });
     }
 
-    // ✅ MÉTHODE 1 (RECOMMANDÉE) - Vérifier le rôle dans la base de données
+    //  MÉTHODE 1 (RECOMMANDÉE) - Vérifier le rôle dans la base de données
     if (req.company.role === 'admin') {
       return next();
     }
 
-    // ⚠️ MÉTHODE 2 (FALLBACK) - Support de l'ancienne méthode (email hardcodé)
+    // ️ MÉTHODE 2 (FALLBACK) - Support de l'ancienne méthode (email hardcodé)
     // Utile pendant la transition, peut être supprimé après migration complète
     const adminEmails = [
       process.env.ADMIN_EMAIL || 'info@princeaman.dev',
@@ -30,7 +30,7 @@ export const adminOnly = (req, res, next) => {
     ];
     
     if (adminEmails.includes(req.company.email)) {
-      console.warn('⚠️ Admin détecté via email (ancienne méthode). Pensez à mettre à jour le champ "role" en BDD !');
+      console.warn('️ Admin détecté via email (ancienne méthode). Pensez à mettre à jour le champ "role" en BDD !');
       return next();
     }
 
@@ -51,7 +51,7 @@ export const adminOnly = (req, res, next) => {
 
 /**
  * Alternative : Middleware admin avec vérification directe du mot de passe
- * ⚠️ DÉPRÉCIÉ - À éviter, utiliser protect + adminOnly à la place
+ * ️ DÉPRÉCIÉ - À éviter, utiliser protect + adminOnly à la place
  * Conservé pour compatibilité avec anciennes routes
  */
 export const adminAuth = async (req, res, next) => {
@@ -84,7 +84,7 @@ export const adminAuth = async (req, res, next) => {
 };
 
 /**
- * ✅ ALIAS pour compatibilité avec les nouvelles routes Phase 4
+ *  ALIAS pour compatibilité avec les nouvelles routes Phase 4
  * Permet d'utiliser "isAdmin" comme nom de middleware
  */
 export const isAdmin = adminOnly;

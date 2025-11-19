@@ -131,16 +131,16 @@ const CompanyRegistration = () => {
             Merci pour votre intérêt pour les TalentDays !
           </p>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-            <p className="text-blue-900 font-semibold mb-2">📧 Email de confirmation envoyé</p>
+            <p className="text-blue-900 font-semibold mb-2"> Email de confirmation envoyé</p>
             <p className="text-blue-700 text-sm">
               Notre équipe examinera votre demande et vous contactera sous 48 heures.
             </p>
           </div>
           <div className="space-y-2 text-left">
-            <p className="text-gray-700">✅ Validation de votre inscription par notre équipe</p>
-            <p className="text-gray-700">✅ Réception d'un email de confirmation</p>
-            <p className="text-gray-700">✅ Accès à la liste des talents participants</p>
-            <p className="text-gray-700">✅ Possibilité de réserver des meetings individuels</p>
+            <p className="text-gray-700"> Validation de votre inscription par notre équipe</p>
+            <p className="text-gray-700"> Réception d'un email de confirmation</p>
+            <p className="text-gray-700"> Accès à la liste des talents participants</p>
+            <p className="text-gray-700"> Possibilité de réserver des meetings individuels</p>
           </div>
           <p className="text-gray-500 text-sm mt-6">
             Redirection automatique dans quelques secondes...
@@ -345,13 +345,13 @@ const CompanyRegistration = () => {
 
         {/* Info Box */}
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-bold text-blue-900 mb-3">📋 Après votre inscription :</h3>
+          <h3 className="font-bold text-blue-900 mb-3"> Après votre inscription :</h3>
           <ul className="space-y-2 text-blue-800 text-sm">
-            <li>✅ Notre équipe valide votre demande (sous 48h)</li>
-            <li>✅ Vous recevez un email de confirmation</li>
-            <li>✅ Vous accédez à la liste des talents participants</li>
-            <li>✅ Vous pouvez réserver des meetings individuels</li>
-            <li>✅ Vous participez aux événements sélectionnés</li>
+            <li> Notre équipe valide votre demande (sous 48h)</li>
+            <li> Vous recevez un email de confirmation</li>
+            <li> Vous accédez à la liste des talents participants</li>
+            <li> Vous pouvez réserver des meetings individuels</li>
+            <li> Vous participez aux événements sélectionnés</li>
           </ul>
         </div>
       </div>

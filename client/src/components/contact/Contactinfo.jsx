@@ -150,7 +150,7 @@ const ContactInfo = () => {
       {/* Box d'info supplémentaire */}
       <div className="bg-gradient-to-br from-orange-50 to-orange-100 border-l-4 border-secondary rounded-lg p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-2">
-          💡 Besoin d'aide ?
+           Besoin d'aide ?
         </h3>
         <p className="text-gray-700 text-sm leading-relaxed">
           Notre équipe est disponible pour répondre à toutes vos questions concernant nos services, 

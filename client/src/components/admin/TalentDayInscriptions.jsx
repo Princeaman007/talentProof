@@ -15,21 +15,21 @@ const TalentDayInscriptions = ({ talentDayId, onClose }) => {
   const fetchInscriptions = async () => {
     try {
       setLoading(true);
-      console.log('🔍 Fetching inscriptions for TalentDay:', talentDayId);
+      console.log(' Fetching inscriptions for TalentDay:', talentDayId);
       
       const response = await api.get(`/talent-days/${talentDayId}/inscriptions`);
       
-      console.log('✅ Réponse API:', response.data);
-      console.log('📊 Nombre d\'inscriptions:', response.data.count);
+      console.log(' Réponse API:', response.data);
+      console.log(' Nombre d\'inscriptions:', response.data.count);
       
       if (response.data.success) {
         setInscriptions(response.data.data);
-        console.log('✅ Inscriptions chargées:', response.data.data.length);
+        console.log(' Inscriptions chargées:', response.data.data.length);
       } else {
-        console.error('❌ Success = false:', response.data.message);
+        console.error(' Success = false:', response.data.message);
       }
     } catch (err) {
-      console.error('❌ Erreur complète:', err.response?.data || err.message);
+      console.error(' Erreur complète:', err.response?.data || err.message);
       setError('Erreur lors du chargement des inscriptions');
       console.error(err);
     } finally {
@@ -40,36 +40,36 @@ const TalentDayInscriptions = ({ talentDayId, onClose }) => {
   const updateStatut = async (inscriptionIndex, newStatut) => {
     try {
       const inscription = inscriptions[inscriptionIndex];
-      console.log('🔄 Mise à jour statut:', { inscriptionIndex, newStatut, talentDayId });
+      console.log(' Mise à jour statut:', { inscriptionIndex, newStatut, talentDayId });
       
       const response = await api.put(
         `/talent-days/${talentDayId}/inscriptions/${inscriptionIndex}`,
         { statut: newStatut }
       );
       
-      console.log('✅ Statut mis à jour:', response.data);
+      console.log(' Statut mis à jour:', response.data);
       
       // Rafraîchir la liste
       await fetchInscriptions();
       
       // Message personnalisé avec emoji
       const statutEmoji = {
-        'accepte': '✅',
-        'refuse': '❌',
-        'en-attente': '⏳',
-        'liste-attente': '📋'
+        'accepte': '',
+        'refuse': '',
+        'en-attente': '',
+        'liste-attente': ''
       };
       
       const message = response.data.message || `${statutEmoji[newStatut]} ${inscription.nom} - ${newStatut.replace('-', ' ')}`;
       
       // Afficher une notification plus visible
       if (response.data.emailEnvoye) {
-        alert(`${message}\n\n📧 Un email de notification a été envoyé à ${inscription.email}`);
+        alert(`${message}\n\n Un email de notification a été envoyé à ${inscription.email}`);
       } else {
         alert(message);
       }
     } catch (err) {
-      console.error('❌ Erreur mise à jour statut:', err.response?.data || err.message);
+      console.error(' Erreur mise à jour statut:', err.response?.data || err.message);
       alert('Erreur lors de la mise à jour du statut: ' + (err.response?.data?.message || err.message));
     }
   };
@@ -149,7 +149,7 @@ const TalentDayInscriptions = ({ talentDayId, onClose }) => {
             onClick={exportCSV}
             className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-green-700 transition text-sm font-semibold"
           >
-            📥 Exporter CSV
+             Exporter CSV
           </button>
         </div>
 
@@ -219,17 +219,17 @@ const TalentDayInscriptions = ({ talentDayId, onClose }) => {
                           : 'bg-yellow-100 text-yellow-800 border-yellow-300'
                       }`}
                     >
-                      <option value="en-attente">⏳ En attente</option>
-                      <option value="accepte">✅ Accepté</option>
-                      <option value="refuse">❌ Refusé</option>
-                      <option value="liste-attente">📋 Liste d'attente</option>
+                      <option value="en-attente"> En attente</option>
+                      <option value="accepte"> Accepté</option>
+                      <option value="refuse"> Refusé</option>
+                      <option value="liste-attente"> Liste d'attente</option>
                     </select>
                   </div>
 
                   {/* Motivation */}
                   <div className="mt-3 pt-3 border-t border-gray-200">
                     <p className="text-sm font-semibold text-gray-700 mb-2">
-                      💬 Motivation :
+                       Motivation :
                     </p>
                     <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg italic">
                       {inscription.motivation}

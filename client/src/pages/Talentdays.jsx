@@ -85,12 +85,12 @@ const TalentDays = () => {
   // Types d'événements
   const eventTypes = [
     { value: '', label: 'Tous les types' },
-    { value: 'hackathon', label: '💻 Hackathon' },
-    { value: 'workshop', label: '🎓 Workshop' },
-    { value: 'challenge-code', label: '🏆 Challenge Code' },
-    { value: 'portfolio-day', label: '📂 Portfolio Day' },
-    { value: 'entretien-groupe', label: '👥 Entretien Groupe' },
-    { value: 'autre', label: '🎯 Autre' },
+    { value: 'hackathon', label: ' Hackathon' },
+    { value: 'workshop', label: ' Workshop' },
+    { value: 'challenge-code', label: ' Challenge Code' },
+    { value: 'portfolio-day', label: ' Portfolio Day' },
+    { value: 'entretien-groupe', label: ' Entretien Groupe' },
+    { value: 'autre', label: ' Autre' },
   ];
 
   return (
@@ -186,7 +186,7 @@ const TalentDays = () => {
                     : 'bg-white text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                📅 Prochains événements
+                 Prochains événements
               </button>
               <button
                 onClick={() => setActiveTab('all')}
@@ -196,7 +196,7 @@ const TalentDays = () => {
                     : 'bg-white text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                🗂️ Tous les événements
+                ️ Tous les événements
               </button>
               <button
                 onClick={() => setActiveTab('past')}
@@ -206,7 +206,7 @@ const TalentDays = () => {
                     : 'bg-white text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                📜 Événements passés
+                 Événements passés
               </button>
             </div>
 

@@ -59,7 +59,7 @@ const AdminTeam = () => {
     }
 
     try {
-      // ✅ CORRECTION : '/team' au lieu de '/admin/team'
+      //  CORRECTION : '/team' au lieu de '/admin/team'
       await api.delete(`/team/${id}`);
       showMessage('success', 'Membre supprimé avec succès');
       fetchMembers();

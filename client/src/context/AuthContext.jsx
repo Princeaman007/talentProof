@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState(null);
-  const [isLoggingIn, setIsLoggingIn] = useState(false); // ✅ Protection contre appels multiples
+  const [isLoggingIn, setIsLoggingIn] = useState(false); //  Protection contre appels multiples
 
   // Charger l'utilisateur depuis localStorage au démarrage
   useEffect(() => {
@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
     })();
   }, []);
 
-  // ✅ NOUVEAU - Phase 4 - Vérifier si l'utilisateur est admin
+  //  NOUVEAU - Phase 4 - Vérifier si l'utilisateur est admin
   const checkIsAdmin = (userData) => {
     // MÉTHODE 1 (RECOMMANDÉE) - Vérifier le champ role
     if (userData.role === 'admin') {
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
     // MÉTHODE 2 (FALLBACK) - Vérifier l'email (ancienne méthode)
     const adminEmails = ['info@princeaman.dev', 'tobin0031@gmail.com'];
     if (adminEmails.includes(userData.email)) {
-      console.warn('⚠️ Admin détecté via email (ancienne méthode). Le backend devrait utiliser le champ "role".');
+      console.warn('️ Admin détecté via email (ancienne méthode). Le backend devrait utiliser le champ "role".');
       setIsAdmin(true);
       return;
     }
@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }) => {
 
   // Connexion
   const login = async (email, password) => {
-    // ✅ Protection: Si déjà en train de se connecter, ignorer
+    //  Protection: Si déjà en train de se connecter, ignorer
     if (isLoggingIn) {
       console.warn('Login already in progress, ignoring duplicate request');
       return { success: false, message: 'Connexion en cours...' };
@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post('/auth/login', { email, password });
       const { token, data } = response.data;
 
-      // ✅ Sauvegarder le token ET les données utilisateur
+      //  Sauvegarder le token ET les données utilisateur
       // Note: Cookies HttpOnly ne fonctionnent pas avec des domaines séparés sur Render
       // (talentproof.onrender.com ≠ talentproof-client.onrender.com)
       localStorage.setItem('token', token);
@@ -132,7 +132,7 @@ export const AuthProvider = ({ children }) => {
   // Déconnexion
   const logout = async () => {
     try {
-      // ✅ SÉCURITÉ: Appeller l'endpoint logout pour nettoyer le cookie
+      //  SÉCURITÉ: Appeller l'endpoint logout pour nettoyer le cookie
       await api.post('/auth/logout');
     } catch (error) {
       console.error('Erreur lors du logout API:', error);
@@ -156,7 +156,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
       
-      // ✅ Revérifier le statut admin après mise à jour
+      //  Revérifier le statut admin après mise à jour
       checkIsAdmin(updatedUser);
 
       return { success: true, data: updatedUser };

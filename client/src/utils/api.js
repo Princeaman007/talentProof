@@ -28,7 +28,7 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    // 2. ✅ CSRF Token - Récupérer si manquant (pour mutations uniquement)
+    // 2.  CSRF Token - Récupérer si manquant (pour mutations uniquement)
     if (config.method !== 'get' && !api.defaults.headers.common['X-CSRF-Token']) {
       try {
         const res = await axios.get(`${API_URL}/csrf-token`, {
@@ -60,7 +60,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // ✅ Si erreur CSRF (403), récupérer un nouveau token et réessayer
+    //  Si erreur CSRF (403), récupérer un nouveau token et réessayer
     if (error.response?.status === 403 && error.response?.data?.code === 'EBADCSRFTOKEN' && !originalRequest._retryCSRF) {
       originalRequest._retryCSRF = true;
       

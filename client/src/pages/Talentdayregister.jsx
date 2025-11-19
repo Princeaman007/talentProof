@@ -102,7 +102,7 @@ const TalentDayRegister = () => {
           </div>
           
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Inscription confirmée ! 🎉
+            Inscription confirmée ! 
           </h1>
           
           <p className="text-lg text-gray-600 mb-6">
@@ -316,7 +316,7 @@ const TalentDayRegister = () => {
                     </>
                   ) : (
                     <>
-                      ✓ Confirmer mon inscription
+                       Confirmer mon inscription
                     </>
                   )}
                 </button>

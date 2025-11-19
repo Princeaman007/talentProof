@@ -34,12 +34,12 @@ const AdminPortfolio = () => {
   const fetchProjets = async () => {
     try {
       setLoading(true);
-      console.log('🔍 Chargement des projets portfolio...');
+      console.log(' Chargement des projets portfolio...');
       const response = await api.get('/admin/portfolio');
-      console.log('✅ Projets chargés:', response.data);
+      console.log(' Projets chargés:', response.data);
       setProjets(response.data.data);
     } catch (error) {
-      console.error('❌ Erreur chargement projets:', error);
+      console.error(' Erreur chargement projets:', error);
       setMessage({ type: 'error', text: 'Erreur lors du chargement des projets' });
     } finally {
       setLoading(false);
@@ -246,7 +246,7 @@ const AdminPortfolio = () => {
                 />
                 {projet.featured && (
                   <div className="absolute top-2 right-2 bg-accent text-white px-2 py-1 rounded-full text-xs font-bold">
-                    ⭐ Featured
+                     Featured
                   </div>
                 )}
                 <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-bold ${

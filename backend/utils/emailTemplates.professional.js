@@ -107,7 +107,7 @@ const baseTemplate = (heroTitle, content, heroColor = '#2E4A9E') => `
               
               <!-- Slogan -->
               <p style="margin: 0 0 20px 0; text-align: center; color: #2E4A9E; font-size: 16px; font-weight: 600;">
-                🚀 Validez vos talents, accélérez votre carrière
+                 Validez vos talents, accélérez votre carrière
               </p>
               
               <!-- Informations de contact -->
@@ -119,11 +119,11 @@ const baseTemplate = (heroTitle, content, heroColor = '#2E4A9E') => `
                       Avenue de Lille 4 A52, 4020 Liège, Belgique
                     </p>
                     <p style="margin: 15px 0;">
-                      <a href="mailto:info@princeaman.dev" style="color: #2E4A9E; text-decoration: none;">📧 info@princeaman.dev</a><br>
-                      <a href="tel:+32467620878" style="color: #2E4A9E; text-decoration: none;">📞 +32 467 62 08 78</a>
+                      <a href="mailto:info@princeaman.dev" style="color: #2E4A9E; text-decoration: none;"> info@princeaman.dev</a><br>
+                      <a href="tel:+32467620878" style="color: #2E4A9E; text-decoration: none;"> +32 467 62 08 78</a>
                     </p>
                     <p style="margin: 15px 0;">
-                      <a href="https://talentproof-client.onrender.com" style="color: #2E4A9E; text-decoration: none; font-weight: 600;">🌐 Visitez notre plateforme</a>
+                      <a href="https://talentproof-client.onrender.com" style="color: #2E4A9E; text-decoration: none; font-weight: 600;"> Visitez notre plateforme</a>
                     </p>
                   </td>
                 </tr>
@@ -195,7 +195,7 @@ const fallbackLink = (url) => `
 /**
  * Encadré d'information (highlight)
  */
-const infoBox = (content, icon = '💡', color = '#FEF3C7', borderColor = '#F59E0B') => `
+const infoBox = (content, icon = '', color = '#FEF3C7', borderColor = '#F59E0B') => `
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
   <tr>
     <td style="padding: 20px 0;">
@@ -260,7 +260,7 @@ const styledList = (items) => {
 export const confirmationEmailTemplate = (companyName, confirmationLink) => {
   const content = `
     <p style="margin: 0 0 20px 0; font-size: 18px; color: #1F2937;">
-      Bonjour <strong>${companyName}</strong> ! 👋
+      Bonjour <strong>${companyName}</strong> ! 
     </p>
     
     <p style="margin: 0 0 20px 0; color: #374151;">
@@ -271,14 +271,14 @@ export const confirmationEmailTemplate = (companyName, confirmationLink) => {
       Pour activer votre compte et accéder à notre catalogue de talents, confirmez votre adresse email en cliquant sur le bouton ci-dessous :
     </p>
     
-    ${ctaButton('✓ Confirmer mon email', confirmationLink)}
+    ${ctaButton(' Confirmer mon email', confirmationLink)}
     
     ${fallbackLink(confirmationLink)}
     
-    ${infoBox('<strong>⏰ Ce lien expire dans 24 heures.</strong><br>Si vous n\'avez pas créé de compte sur TalentProof, vous pouvez ignorer cet email en toute sécurité.', '🔒', '#DBEAFE', '#2E4A9E')}
+    ${infoBox('<strong> Ce lien expire dans 24 heures.</strong><br>Si vous n\'avez pas créé de compte sur TalentProof, vous pouvez ignorer cet email en toute sécurité.', '', '#DBEAFE', '#2E4A9E')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      🎯 Après confirmation, vous pourrez :
+       Après confirmation, vous pourrez :
     </h3>
     
     ${styledList([
@@ -290,11 +290,11 @@ export const confirmationEmailTemplate = (companyName, confirmationLink) => {
     ])}
     
     <p style="margin: 25px 0 0 0; color: #6B7280; font-size: 15px;">
-      Notre équipe est là pour vous accompagner dans votre recrutement ! 🚀
+      Notre équipe est là pour vous accompagner dans votre recrutement ! 
     </p>
   `;
   
-  return baseTemplate('Bienvenue sur TalentProof ! 🎉', content);
+  return baseTemplate('Bienvenue sur TalentProof ! ', content);
 };
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -315,14 +315,14 @@ export const resetPasswordTemplate = (companyName, resetLink) => {
       Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe sécurisé :
     </p>
     
-    ${ctaButton('🔑 Réinitialiser mon mot de passe', resetLink, '#DC2626')}
+    ${ctaButton(' Réinitialiser mon mot de passe', resetLink, '#DC2626')}
     
     ${fallbackLink(resetLink)}
     
-    ${infoBox('<strong>⏰ Ce lien expire dans 1 heure.</strong><br>Si vous n\'avez pas demandé cette réinitialisation, ignorez cet email. Votre mot de passe actuel restera inchangé.', '🔒', '#FEE2E2', '#DC2626')}
+    ${infoBox('<strong> Ce lien expire dans 1 heure.</strong><br>Si vous n\'avez pas demandé cette réinitialisation, ignorez cet email. Votre mot de passe actuel restera inchangé.', '', '#FEE2E2', '#DC2626')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      🛡️ Conseils de sécurité :
+      ️ Conseils de sécurité :
     </h3>
     
     ${styledList([
@@ -349,7 +349,7 @@ export const resetPasswordTemplate = (companyName, resetLink) => {
 export const contactNotificationTemplate = (talentInfo, recruteurInfo) => {
   const content = `
     <p style="margin: 0 0 20px 0; font-size: 18px; color: #1F2937;">
-      <strong>🎯 Nouvelle demande de contact pour un talent !</strong>
+      <strong> Nouvelle demande de contact pour un talent !</strong>
     </p>
     
     <p style="margin: 0 0 25px 0; color: #374151;">
@@ -357,29 +357,29 @@ export const contactNotificationTemplate = (talentInfo, recruteurInfo) => {
     </p>
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      👤 Informations du talent
+       Informations du talent
     </h3>
     
     ${dataTable([
-      ['🧑‍💻 Prénom', talentInfo.prenom],
-      ['💻 Technologies', talentInfo.technologies.join(', ')],
-      ['📊 Score', `${talentInfo.scoreTest}/100 (${talentInfo.plateforme})`],
-      ['🎯 Niveau', talentInfo.niveau || 'Non spécifié']
+      ['‍ Prénom', talentInfo.prenom],
+      [' Technologies', talentInfo.technologies.join(', ')],
+      [' Score', `${talentInfo.scoreTest}/100 (${talentInfo.plateforme})`],
+      [' Niveau', talentInfo.niveau || 'Non spécifié']
     ])}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      🏢 Informations du recruteur
+       Informations du recruteur
     </h3>
     
     ${dataTable([
-      ['👤 Nom', recruteurInfo.nom],
-      ['📧 Email', `<a href="mailto:${recruteurInfo.email}" style="color: #2E4A9E; text-decoration: none;">${recruteurInfo.email}</a>`],
-      ['📞 Téléphone', `<a href="tel:${recruteurInfo.tel}" style="color: #2E4A9E; text-decoration: none;">${recruteurInfo.tel}</a>`],
-      ['🏢 Entreprise', recruteurInfo.entreprise]
+      [' Nom', recruteurInfo.nom],
+      [' Email', `<a href="mailto:${recruteurInfo.email}" style="color: #2E4A9E; text-decoration: none;">${recruteurInfo.email}</a>`],
+      [' Téléphone', `<a href="tel:${recruteurInfo.tel}" style="color: #2E4A9E; text-decoration: none;">${recruteurInfo.tel}</a>`],
+      [' Entreprise', recruteurInfo.entreprise]
     ])}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      💬 Message du recruteur
+       Message du recruteur
     </h3>
     
     <div style="background-color: #F9FAFB; border-left: 4px solid #2E4A9E; padding: 20px; border-radius: 6px; margin: 20px 0;">
@@ -387,18 +387,18 @@ export const contactNotificationTemplate = (talentInfo, recruteurInfo) => {
     </div>
     
     ${infoBox(`
-      <strong>📋 Actions à effectuer :</strong><br><br>
+      <strong> Actions à effectuer :</strong><br><br>
       ${styledList([
         'Contacter le recruteur par email ou téléphone',
         'Vérifier la disponibilité du talent',
         'Envoyer le CV complet et les coordonnées',
         'Organiser une mise en relation si pertinent'
       ])}
-    `, '✓', '#DBEAFE', '#2E4A9E')}
+    `, '', '#DBEAFE', '#2E4A9E')}
     
     <p style="margin: 25px 0 0 0; text-align: center;">
       <a href="mailto:${recruteurInfo.email}?subject=TalentProof - Contact talent ${talentInfo.prenom}" style="display: inline-block; background-color: #2E4A9E; color: #FFFFFF; text-decoration: none; padding: 14px 30px; border-radius: 8px; font-weight: 600; font-size: 15px;">
-        📧 Répondre au recruteur
+         Répondre au recruteur
       </a>
     </p>
   `;
@@ -413,17 +413,17 @@ export const contactNotificationTemplate = (talentInfo, recruteurInfo) => {
 export const contactConfirmationTemplate = (recruteurNom, talentPrenom) => {
   const content = `
     <p style="margin: 0 0 20px 0; font-size: 18px; color: #1F2937;">
-      Bonjour <strong>${recruteurNom}</strong> ! 👋
+      Bonjour <strong>${recruteurNom}</strong> ! 
     </p>
     
     <p style="margin: 0 0 20px 0; color: #374151;">
       Merci pour votre intérêt pour <strong>${talentPrenom}</strong>, l'un de nos talents validés TalentProof.
     </p>
     
-    ${infoBox('<strong>✓ Demande bien reçue !</strong><br>Votre demande a été transmise à notre équipe et nous allons la traiter dans les plus brefs délais.', '✓', '#D1FAE5', '#059669')}
+    ${infoBox('<strong> Demande bien reçue !</strong><br>Votre demande a été transmise à notre équipe et nous allons la traiter dans les plus brefs délais.', '', '#D1FAE5', '#059669')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      ⏱️ Prochaines étapes
+      ️ Prochaines étapes
     </h3>
     
     ${styledList([
@@ -433,10 +433,10 @@ export const contactConfirmationTemplate = (recruteurNom, talentPrenom) => {
       '<strong>Mise en relation</strong> - Organisation d\'un premier échange si les deux parties sont intéressées'
     ])}
     
-    ${infoBox('<strong>⏰ Délai de réponse : 24-48 heures maximum</strong><br>Nous vous recontacterons rapidement avec les informations complètes sur ce talent.', '⏱️', '#FEF3C7', '#F59E0B')}
+    ${infoBox('<strong> Délai de réponse : 24-48 heures maximum</strong><br>Nous vous recontacterons rapidement avec les informations complètes sur ce talent.', '️', '#FEF3C7', '#F59E0B')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      🎯 Pourquoi TalentProof ?
+       Pourquoi TalentProof ?
     </h3>
     
     ${styledList([
@@ -453,7 +453,7 @@ export const contactConfirmationTemplate = (recruteurNom, talentPrenom) => {
     </p>
   `;
   
-  return baseTemplate('Demande bien reçue ! ✓', content, '#059669');
+  return baseTemplate('Demande bien reçue ! ', content, '#059669');
 };
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -463,7 +463,7 @@ export const contactConfirmationTemplate = (recruteurNom, talentPrenom) => {
 export const generalContactNotificationTemplate = (contactInfo) => {
   const content = `
     <p style="margin: 0 0 20px 0; font-size: 18px; color: #1F2937;">
-      <strong>📬 Nouveau message via le formulaire de contact</strong>
+      <strong> Nouveau message via le formulaire de contact</strong>
     </p>
     
     <p style="margin: 0 0 25px 0; color: #374151;">
@@ -471,15 +471,15 @@ export const generalContactNotificationTemplate = (contactInfo) => {
     </p>
     
     ${dataTable([
-      ['👤 Nom', contactInfo.nom],
-      ['📧 Email', `<a href="mailto:${contactInfo.email}" style="color: #2E4A9E; text-decoration: none;">${contactInfo.email}</a>`],
-      ['📞 Téléphone', contactInfo.telephone ? `<a href="tel:${contactInfo.telephone}" style="color: #2E4A9E; text-decoration: none;">${contactInfo.telephone}</a>` : 'Non renseigné'],
-      ['🏢 Entreprise', contactInfo.entreprise || 'Non renseignée'],
-      ['📋 Sujet', `<strong>${contactInfo.sujet}</strong>`]
+      [' Nom', contactInfo.nom],
+      [' Email', `<a href="mailto:${contactInfo.email}" style="color: #2E4A9E; text-decoration: none;">${contactInfo.email}</a>`],
+      [' Téléphone', contactInfo.telephone ? `<a href="tel:${contactInfo.telephone}" style="color: #2E4A9E; text-decoration: none;">${contactInfo.telephone}</a>` : 'Non renseigné'],
+      [' Entreprise', contactInfo.entreprise || 'Non renseignée'],
+      [' Sujet', `<strong>${contactInfo.sujet}</strong>`]
     ])}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      💬 Message
+       Message
     </h3>
     
     <div style="background-color: #F9FAFB; border-left: 4px solid #2E4A9E; padding: 20px; border-radius: 6px; margin: 20px 0;">
@@ -488,7 +488,7 @@ export const generalContactNotificationTemplate = (contactInfo) => {
     
     <p style="margin: 25px 0 0 0; text-align: center;">
       <a href="mailto:${contactInfo.email}?subject=Re: ${contactInfo.sujet}" style="display: inline-block; background-color: #2E4A9E; color: #FFFFFF; text-decoration: none; padding: 14px 30px; border-radius: 8px; font-weight: 600; font-size: 15px;">
-        📧 Répondre à ${contactInfo.nom}
+         Répondre à ${contactInfo.nom}
       </a>
     </p>
   `;
@@ -503,17 +503,17 @@ export const generalContactNotificationTemplate = (contactInfo) => {
 export const generalContactConfirmationTemplate = (nom) => {
   const content = `
     <p style="margin: 0 0 20px 0; font-size: 18px; color: #1F2937;">
-      Bonjour <strong>${nom}</strong> ! 👋
+      Bonjour <strong>${nom}</strong> ! 
     </p>
     
     <p style="margin: 0 0 20px 0; color: #374151;">
       Merci de nous avoir contactés via <strong>TalentProof</strong>.
     </p>
     
-    ${infoBox('<strong>✓ Message bien reçu !</strong><br>Nous avons bien reçu votre message et nous vous répondrons dans les plus brefs délais.', '✓', '#D1FAE5', '#059669')}
+    ${infoBox('<strong> Message bien reçu !</strong><br>Nous avons bien reçu votre message et nous vous répondrons dans les plus brefs délais.', '', '#D1FAE5', '#059669')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      ⏱️ Que se passe-t-il maintenant ?
+      ️ Que se passe-t-il maintenant ?
     </h3>
     
     ${styledList([
@@ -523,10 +523,10 @@ export const generalContactConfirmationTemplate = (nom) => {
       '<strong>Suivi</strong> - Nous restons disponibles pour toute question complémentaire'
     ])}
     
-    ${infoBox('<strong>⏰ Délai de réponse : 24-48 heures maximum</strong><br>Notre équipe vous recontactera rapidement pour répondre à votre demande.', '⏱️', '#FEF3C7', '#F59E0B')}
+    ${infoBox('<strong> Délai de réponse : 24-48 heures maximum</strong><br>Notre équipe vous recontactera rapidement pour répondre à votre demande.', '️', '#FEF3C7', '#F59E0B')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      🚀 Découvrez TalentProof
+       Découvrez TalentProof
     </h3>
     
     <p style="margin: 0 0 15px 0; color: #374151;">
@@ -542,7 +542,7 @@ export const generalContactConfirmationTemplate = (nom) => {
     
     <p style="margin: 25px 0; text-align: center;">
       <a href="https://talentproof-client.onrender.com" style="display: inline-block; background: linear-gradient(135deg, #2E4A9E 0%, #1E3A8A 100%); color: #FFFFFF; text-decoration: none; padding: 14px 30px; border-radius: 8px; font-weight: 600; font-size: 15px;">
-        🌐 Découvrir la plateforme
+         Découvrir la plateforme
       </a>
     </p>
     
@@ -552,7 +552,7 @@ export const generalContactConfirmationTemplate = (nom) => {
     </p>
   `;
   
-  return baseTemplate('Message bien reçu ! ✓', content, '#8B5CF6');
+  return baseTemplate('Message bien reçu ! ', content, '#8B5CF6');
 };
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -572,34 +572,34 @@ export const talentDayConfirmationTemplate = (inscription, talentDay) => {
   
   const content = `
     <p style="margin: 0 0 20px 0; font-size: 18px; color: #1F2937;">
-      Bonjour <strong>${inscription.prenom}</strong> ! 🎉
+      Bonjour <strong>${inscription.prenom}</strong> ! 
     </p>
     
     <p style="margin: 0 0 20px 0; color: #374151;">
       Félicitations ! Votre inscription au TalentDay <strong>"${talentDay.titre}"</strong> a bien été enregistrée.
     </p>
     
-    ${infoBox('<strong>✓ Inscription confirmée !</strong><br>Vous êtes maintenant inscrit(e) à cet événement. Préparez-vous à rencontrer des entreprises qui recrutent !', '✓', '#D1FAE5', '#059669')}
+    ${infoBox('<strong> Inscription confirmée !</strong><br>Vous êtes maintenant inscrit(e) à cet événement. Préparez-vous à rencontrer des entreprises qui recrutent !', '', '#D1FAE5', '#059669')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      📅 Détails de l'événement
+       Détails de l'événement
     </h3>
     
     ${dataTable([
-      ['🎯 Événement', talentDay.titre],
-      ['📅 Date', formatDate(talentDay.date)],
-      ['📍 Lieu', talentDay.lieu],
-      ['⏰ Horaires', talentDay.horaires || 'À confirmer'],
-      ['👥 Places disponibles', `${talentDay.maxParticipants - talentDay.inscriptions.length} / ${talentDay.maxParticipants}`]
+      [' Événement', talentDay.titre],
+      [' Date', formatDate(talentDay.date)],
+      [' Lieu', talentDay.lieu],
+      [' Horaires', talentDay.horaires || 'À confirmer'],
+      [' Places disponibles', `${talentDay.maxParticipants - talentDay.inscriptions.length} / ${talentDay.maxParticipants}`]
     ])}
     
     <div style="background-color: #F9FAFB; padding: 20px; border-radius: 8px; margin: 25px 0;">
-      <h4 style="margin: 0 0 10px 0; color: #2E4A9E; font-size: 16px;">📝 Description</h4>
+      <h4 style="margin: 0 0 10px 0; color: #2E4A9E; font-size: 16px;"> Description</h4>
       <p style="margin: 0; color: #374151; line-height: 1.6;">${talentDay.description}</p>
     </div>
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      🎯 Comment se préparer ?
+       Comment se préparer ?
     </h3>
     
     ${styledList([
@@ -611,22 +611,22 @@ export const talentDayConfirmationTemplate = (inscription, talentDay) => {
       '<strong>Tenue professionnelle</strong> - Adoptez une tenue adaptée à un entretien'
     ])}
     
-    ${infoBox('<strong>⏰ Arrivez 15 minutes en avance</strong><br>Pour vous enregistrer et prendre vos repères avant le début de l\'événement.', '⏱️', '#FEF3C7', '#F59E0B')}
+    ${infoBox('<strong> Arrivez 15 minutes en avance</strong><br>Pour vous enregistrer et prendre vos repères avant le début de l\'événement.', '️', '#FEF3C7', '#F59E0B')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      💼 Vos informations d'inscription
+       Vos informations d'inscription
     </h3>
     
     ${dataTable([
-      ['👤 Nom complet', `${inscription.prenom} ${inscription.nom}`],
-      ['📧 Email', inscription.email],
-      ['📞 Téléphone', inscription.telephone || 'Non renseigné'],
-      ['💻 Technologies', inscription.technologies?.join(', ') || 'Non spécifiées']
+      [' Nom complet', `${inscription.prenom} ${inscription.nom}`],
+      [' Email', inscription.email],
+      [' Téléphone', inscription.telephone || 'Non renseigné'],
+      [' Technologies', inscription.technologies?.join(', ') || 'Non spécifiées']
     ])}
     
     <p style="margin: 25px 0; text-align: center;">
       <a href="https://talentproof-client.onrender.com/talent-days/${talentDay._id}" style="display: inline-block; background: linear-gradient(135deg, #F97316 0%, #EA580C 100%); color: #FFFFFF; text-decoration: none; padding: 14px 30px; border-radius: 8px; font-weight: 600; font-size: 15px;">
-        📋 Voir les détails complets
+         Voir les détails complets
       </a>
     </p>
     
@@ -636,7 +636,7 @@ export const talentDayConfirmationTemplate = (inscription, talentDay) => {
     </p>
   `;
   
-  return baseTemplate('Inscription TalentDay confirmée ! 🎉', content, '#8B5CF6');
+  return baseTemplate('Inscription TalentDay confirmée ! ', content, '#8B5CF6');
 };
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -647,9 +647,9 @@ export const companyTalentDayRegistrationTemplate = (companyInfo, talentDays) =>
   const talentDaysHtml = talentDays.map(td => `
     <div style="background-color: #F9FAFB; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #2E4A9E;">
       <p style="margin: 0; color: #1F2937;">
-        <strong style="color: #2E4A9E; font-size: 16px;">📅 ${td.titre}</strong><br>
+        <strong style="color: #2E4A9E; font-size: 16px;"> ${td.titre}</strong><br>
         <span style="color: #6B7280; font-size: 14px;">
-          📍 ${td.lieu} • ${new Date(td.date).toLocaleDateString('fr-FR')}
+           ${td.lieu} • ${new Date(td.date).toLocaleDateString('fr-FR')}
         </span>
       </p>
     </div>
@@ -657,35 +657,35 @@ export const companyTalentDayRegistrationTemplate = (companyInfo, talentDays) =>
   
   const content = `
     <p style="margin: 0 0 20px 0; font-size: 18px; color: #1F2937;">
-      Bonjour <strong>${companyInfo.contactPerson}</strong> ! 👋
+      Bonjour <strong>${companyInfo.contactPerson}</strong> ! 
     </p>
     
     <p style="margin: 0 0 20px 0; color: #374151;">
       Nous avons bien reçu votre inscription pour participer aux <strong>TalentDays</strong> en tant qu'entreprise.
     </p>
     
-    ${infoBox('<strong>⏳ Demande en attente de validation</strong><br>Votre inscription est actuellement en cours d\'analyse par notre équipe. Vous recevrez une confirmation sous 24-48 heures.', '⏱️', '#FEF3C7', '#F59E0B')}
+    ${infoBox('<strong> Demande en attente de validation</strong><br>Votre inscription est actuellement en cours d\'analyse par notre équipe. Vous recevrez une confirmation sous 24-48 heures.', '️', '#FEF3C7', '#F59E0B')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      🏢 Récapitulatif de votre inscription
+       Récapitulatif de votre inscription
     </h3>
     
     ${dataTable([
-      ['🏢 Entreprise', companyInfo.companyName],
-      ['👤 Contact', companyInfo.contactPerson],
-      ['📧 Email', companyInfo.email],
-      ['📞 Téléphone', companyInfo.phone],
-      ['🌐 Site web', companyInfo.website ? `<a href="${companyInfo.website}" style="color: #2E4A9E; text-decoration: none;">${companyInfo.website}</a>` : 'Non renseigné']
+      [' Entreprise', companyInfo.companyName],
+      [' Contact', companyInfo.contactPerson],
+      [' Email', companyInfo.email],
+      [' Téléphone', companyInfo.phone],
+      [' Site web', companyInfo.website ? `<a href="${companyInfo.website}" style="color: #2E4A9E; text-decoration: none;">${companyInfo.website}</a>` : 'Non renseigné']
     ])}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      🎯 TalentDays sélectionnés
+       TalentDays sélectionnés
     </h3>
     
     ${talentDaysHtml}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      📋 Prochaines étapes
+       Prochaines étapes
     </h3>
     
     ${styledList([
@@ -696,7 +696,7 @@ export const companyTalentDayRegistrationTemplate = (companyInfo, talentDays) =>
     ])}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      💼 Préparez votre participation
+       Préparez votre participation
     </h3>
     
     ${styledList([
@@ -707,7 +707,7 @@ export const companyTalentDayRegistrationTemplate = (companyInfo, talentDays) =>
       'Prévoyez des supports de présentation (flyers, goodies, etc.)'
     ])}
     
-    ${infoBox('<strong>💡 Conseil</strong><br>Plus vous serez précis sur vos besoins, plus nous pourrons vous mettre en relation avec des talents qui correspondent exactement à vos attentes.', '💡', '#DBEAFE', '#2E4A9E')}
+    ${infoBox('<strong> Conseil</strong><br>Plus vous serez précis sur vos besoins, plus nous pourrons vous mettre en relation avec des talents qui correspondent exactement à vos attentes.', '', '#DBEAFE', '#2E4A9E')}
     
     <p style="margin: 25px 0 0 0; color: #6B7280; font-size: 15px;">
       Des questions en attendant notre validation ? Contactez-nous à 
@@ -716,7 +716,7 @@ export const companyTalentDayRegistrationTemplate = (companyInfo, talentDays) =>
     </p>
   `;
   
-  return baseTemplate('Inscription TalentDay bien reçue ! 🎉', content, '#8B5CF6');
+  return baseTemplate('Inscription TalentDay bien reçue ! ', content, '#8B5CF6');
 };
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -736,28 +736,28 @@ export const talentDayAcceptationTemplate = (inscription, talentDay) => {
   
   const content = `
     <p style="margin: 0 0 20px 0; font-size: 18px; color: #1F2937;">
-      Bonjour <strong>${inscription.prenom}</strong> ! 🎉
+      Bonjour <strong>${inscription.prenom}</strong> ! 
     </p>
     
     <p style="margin: 0 0 20px 0; color: #374151;">
       Nous avons le plaisir de vous informer que votre candidature au TalentDay <strong>"${talentDay.titre}"</strong> a été <strong style="color: #059669;">acceptée</strong> !
     </p>
     
-    ${infoBox('<strong>✅ Félicitations !</strong><br>Vous êtes maintenant officiellement inscrit(e) à cet événement. Préparez-vous à rencontrer des entreprises qui recrutent !', '🎉', '#D1FAE5', '#059669')}
+    ${infoBox('<strong> Félicitations !</strong><br>Vous êtes maintenant officiellement inscrit(e) à cet événement. Préparez-vous à rencontrer des entreprises qui recrutent !', '', '#D1FAE5', '#059669')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      📅 Informations pratiques
+       Informations pratiques
     </h3>
     
     ${dataTable([
-      ['📅 Date', formatDate(talentDay.date)],
-      ['📍 Lieu', talentDay.lieu],
-      ['⏰ Horaires', talentDay.horaires || 'À confirmer'],
-      ['👥 Participants', `${talentDay.inscriptions?.length || 0} / ${talentDay.maxParticipants}`]
+      [' Date', formatDate(talentDay.date)],
+      [' Lieu', talentDay.lieu],
+      [' Horaires', talentDay.horaires || 'À confirmer'],
+      [' Participants', `${talentDay.inscriptions?.length || 0} / ${talentDay.maxParticipants}`]
     ])}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      ✅ Comment bien se préparer ?
+       Comment bien se préparer ?
     </h3>
     
     ${styledList([
@@ -769,11 +769,11 @@ export const talentDayAcceptationTemplate = (inscription, talentDay) => {
       '<strong>Portfolio/GitHub</strong> - Préparez des exemples de vos projets'
     ])}
     
-    ${infoBox('<strong>⏰ Arrivez 15 minutes en avance</strong><br>Pour vous enregistrer et prendre vos repères avant le début de l\'événement.', '⏱️', '#FEF3C7', '#F59E0B')}
+    ${infoBox('<strong> Arrivez 15 minutes en avance</strong><br>Pour vous enregistrer et prendre vos repères avant le début de l\'événement.', '️', '#FEF3C7', '#F59E0B')}
     
     <p style="margin: 25px 0; text-align: center;">
       <a href="https://talentproof-client.onrender.com/talent-days/${talentDay._id}" style="display: inline-block; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #FFFFFF; text-decoration: none; padding: 14px 30px; border-radius: 8px; font-weight: 600; font-size: 15px;">
-        📋 Voir tous les détails
+         Voir tous les détails
       </a>
     </p>
     
@@ -783,7 +783,7 @@ export const talentDayAcceptationTemplate = (inscription, talentDay) => {
     </p>
   `;
   
-  return baseTemplate('Candidature acceptée ! 🎉', content, '#059669');
+  return baseTemplate('Candidature acceptée ! ', content, '#059669');
 };
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -800,11 +800,11 @@ export const talentDayRefusTemplate = (inscription, talentDay, raison = null) =>
       Merci pour votre intérêt et votre candidature au TalentDay <strong>"${talentDay.titre}"</strong>.
     </p>
     
-    ${infoBox('<strong>Candidature non retenue</strong><br>Après examen de votre profil, nous ne pouvons malheureusement pas retenir votre candidature pour cet événement.', '📋', '#FEE2E2', '#DC2626')}
+    ${infoBox('<strong>Candidature non retenue</strong><br>Après examen de votre profil, nous ne pouvons malheureusement pas retenir votre candidature pour cet événement.', '', '#FEE2E2', '#DC2626')}
     
     ${raison ? `
       <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-        📋 Raison
+         Raison
       </h3>
       <div style="background-color: #F9FAFB; padding: 20px; border-radius: 8px; margin: 20px 0;">
         <p style="margin: 0; color: #374151; line-height: 1.6;">${raison}</p>
@@ -816,7 +816,7 @@ export const talentDayRefusTemplate = (inscription, talentDay, raison = null) =>
     </p>
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      🚀 Ne vous découragez pas !
+       Ne vous découragez pas !
     </h3>
     
     ${styledList([
@@ -826,11 +826,11 @@ export const talentDayRefusTemplate = (inscription, talentDay, raison = null) =>
       '<strong>Restez motivé(e)</strong> - Chaque refus est une opportunité d\'apprendre'
     ])}
     
-    ${infoBox('<strong>💡 Conseil</strong><br>Continuez à postuler à nos futurs événements. Votre profil peut évoluer et correspondre parfaitement à nos prochains TalentDays !', '💡', '#DBEAFE', '#2E4A9E')}
+    ${infoBox('<strong> Conseil</strong><br>Continuez à postuler à nos futurs événements. Votre profil peut évoluer et correspondre parfaitement à nos prochains TalentDays !', '', '#DBEAFE', '#2E4A9E')}
     
     <p style="margin: 25px 0; text-align: center;">
       <a href="https://talentproof-client.onrender.com/talent-days" style="display: inline-block; background: linear-gradient(135deg, #2E4A9E 0%, #1E3A8A 100%); color: #FFFFFF; text-decoration: none; padding: 14px 30px; border-radius: 8px; font-weight: 600; font-size: 15px;">
-        🔍 Voir nos prochains événements
+         Voir nos prochains événements
       </a>
     </p>
     
@@ -840,7 +840,7 @@ export const talentDayRefusTemplate = (inscription, talentDay, raison = null) =>
     </p>
     
     <p style="margin: 25px 0 0 0; text-align: center; color: #6B7280; font-size: 14px;">
-      Nous vous souhaitons beaucoup de succès dans vos projets professionnels ! 🚀
+      Nous vous souhaitons beaucoup de succès dans vos projets professionnels ! 
     </p>
   `;
   

@@ -20,27 +20,27 @@ const TalentDayCard = ({ talentDay }) => {
   const getStatusBadge = (statut) => {
     const badges = {
       'inscriptions-ouvertes': {
-        text: '✅ Inscriptions ouvertes',
+        text: ' Inscriptions ouvertes',
         color: 'bg-green-100 text-green-800 border-green-300',
       },
       'complet': {
-        text: '🔴 Complet',
+        text: ' Complet',
         color: 'bg-red-100 text-red-800 border-red-300',
       },
       'a-venir': {
-        text: '⏰ À venir',
+        text: ' À venir',
         color: 'bg-blue-100 text-blue-800 border-blue-300',
       },
       'en-cours': {
-        text: '🔴 En cours',
+        text: ' En cours',
         color: 'bg-orange-100 text-orange-800 border-orange-300',
       },
       'termine': {
-        text: '✔️ Terminé',
+        text: '️ Terminé',
         color: 'bg-gray-100 text-gray-800 border-gray-300',
       },
       'annule': {
-        text: '❌ Annulé',
+        text: ' Annulé',
         color: 'bg-red-100 text-red-800 border-red-300',
       },
     };
@@ -56,12 +56,12 @@ const TalentDayCard = ({ talentDay }) => {
   // Badge de type
   const getTypeBadge = (type) => {
     const types = {
-      'hackathon': { emoji: '💻', text: 'Hackathon', color: 'bg-purple-100 text-purple-800' },
-      'workshop': { emoji: '🎓', text: 'Workshop', color: 'bg-blue-100 text-blue-800' },
-      'challenge-code': { emoji: '🏆', text: 'Challenge Code', color: 'bg-yellow-100 text-yellow-800' },
-      'portfolio-day': { emoji: '📂', text: 'Portfolio Day', color: 'bg-indigo-100 text-indigo-800' },
-      'entretien-groupe': { emoji: '👥', text: 'Entretien Groupe', color: 'bg-green-100 text-green-800' },
-      'autre': { emoji: '🎯', text: 'Autre', color: 'bg-gray-100 text-gray-800' },
+      'hackathon': { emoji: '', text: 'Hackathon', color: 'bg-purple-100 text-purple-800' },
+      'workshop': { emoji: '', text: 'Workshop', color: 'bg-blue-100 text-blue-800' },
+      'challenge-code': { emoji: '', text: 'Challenge Code', color: 'bg-yellow-100 text-yellow-800' },
+      'portfolio-day': { emoji: '', text: 'Portfolio Day', color: 'bg-indigo-100 text-indigo-800' },
+      'entretien-groupe': { emoji: '', text: 'Entretien Groupe', color: 'bg-green-100 text-green-800' },
+      'autre': { emoji: '', text: 'Autre', color: 'bg-gray-100 text-gray-800' },
     };
 
     const typeInfo = types[type] || types['autre'];
@@ -75,9 +75,9 @@ const TalentDayCard = ({ talentDay }) => {
 
   // Icône de lieu
   const getLieuIcon = (type) => {
-    if (type === 'en-ligne') return '🌐';
-    if (type === 'hybride') return '🔄';
-    return '📍';
+    if (type === 'en-ligne') return '';
+    if (type === 'hybride') return '';
+    return '';
   };
 
   // Calcul du taux de remplissage
@@ -260,7 +260,7 @@ const TalentDayCard = ({ talentDay }) => {
                 }}
                 className="w-full bg-gradient-to-r from-secondary to-orange-600 text-white font-semibold py-4 px-6 rounded-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-3"
               >
-                <span className="text-2xl">🎓</span>
+                <span className="text-2xl"></span>
                 <span>Je suis un talent</span>
               </button>
 
@@ -272,7 +272,7 @@ const TalentDayCard = ({ talentDay }) => {
                 }}
                 className="w-full bg-white border-2 border-primary text-primary font-semibold py-4 px-6 rounded-lg hover:bg-primary hover:text-white transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-3"
               >
-                <span className="text-2xl">🏢</span>
+                <span className="text-2xl"></span>
                 <span>Je représente une entreprise</span>
               </button>
             </div>

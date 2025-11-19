@@ -302,7 +302,7 @@ const MesNotifications = () => {
       {/* Info */}
       <div className="card bg-blue-50 border border-blue-200">
         <div className="flex items-start gap-3">
-          <span className="text-2xl">💡</span>
+          <span className="text-2xl"></span>
           <div className="flex-1">
             <h3 className="font-semibold text-primary mb-2">
               Types de notifications

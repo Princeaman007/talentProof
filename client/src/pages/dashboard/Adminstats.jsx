@@ -141,7 +141,7 @@ const AdminStats = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-primary">📊 Statistiques Avancées</h1>
+        <h1 className="text-3xl font-bold text-primary"> Statistiques Avancées</h1>
         <p className="text-neutral mt-2">
           Vue d'ensemble complète de votre plateforme TalentProof
         </p>
@@ -201,7 +201,7 @@ const AdminStats = () => {
       {/* Stats récentes (30 jours) */}
       <div className="card">
         <h2 className="text-xl font-bold text-primary mb-4">
-          📈 Activité des 30 derniers jours
+           Activité des 30 derniers jours
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="text-center p-4 bg-blue-50 rounded-lg">
@@ -280,7 +280,7 @@ const AdminStats = () => {
       <div className="card">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-primary">
-            📊 Évolution dans le temps
+             Évolution dans le temps
           </h2>
           <div className="flex space-x-2">
             {['1m', '3m', '6m', '1y', 'all'].map((p) => (
@@ -339,7 +339,7 @@ const AdminStats = () => {
 
       {/* Actions rapides */}
       <div className="card">
-        <h2 className="text-xl font-bold text-primary mb-4">🚀 Actions rapides</h2>
+        <h2 className="text-xl font-bold text-primary mb-4"> Actions rapides</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link
             to="/dashboard/admin/entreprises"

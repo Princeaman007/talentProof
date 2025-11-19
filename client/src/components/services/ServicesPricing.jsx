@@ -6,7 +6,7 @@ const ServicesPricing = () => {
       id: 1,
       nom: 'Site Vitrine',
       description: 'Site web professionnel pour présenter votre entreprise',
-      icon: '🌐',
+      icon: '',
       prix: 'À partir de 2000€',
       duree: '2-4 semaines',
       features: [
@@ -24,7 +24,7 @@ const ServicesPricing = () => {
       id: 2,
       nom: 'Site E-commerce',
       description: 'Boutique en ligne complète pour vendre vos produits',
-      icon: '🛒',
+      icon: '',
       prix: 'À partir de 5000€',
       duree: '6-8 semaines',
       features: [
@@ -43,7 +43,7 @@ const ServicesPricing = () => {
       id: 3,
       nom: 'Application Web',
       description: 'Plateforme web sur mesure pour votre activité',
-      icon: '💻',
+      icon: '',
       prix: 'À partir de 8000€',
       duree: '8-12 semaines',
       features: [
@@ -62,7 +62,7 @@ const ServicesPricing = () => {
       id: 4,
       nom: 'Application Mobile',
       description: 'Application iOS et Android native ou hybride',
-      icon: '📱',
+      icon: '',
       prix: 'À partir de 10000€',
       duree: '10-16 semaines',
       features: [
@@ -141,7 +141,7 @@ const ServicesPricing = () => {
                 {/* Badge "Plus populaire" */}
                 {service.popular && (
                   <div className="absolute top-0 right-0 bg-gradient-to-r from-secondary to-orange-500 text-white px-4 py-1 text-sm font-semibold">
-                    ⭐ Populaire
+                     Populaire
                   </div>
                 )}
 
@@ -165,7 +165,7 @@ const ServicesPricing = () => {
                       {service.prix}
                     </p>
                     <p className="text-sm text-slate-500">
-                      ⏱️ {service.duree}
+                      ️ {service.duree}
                     </p>
                   </div>
 

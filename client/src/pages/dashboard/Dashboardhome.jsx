@@ -6,7 +6,7 @@ import { FaUsers, FaCheckCircle, FaEnvelope, FaSpinner, FaBuilding, FaChartLine 
 const DashboardHome = () => {
   const { user, isAdmin } = useAuth();
   
-  // ✅ Utiliser le bon hook selon le rôle
+  //  Utiliser le bon hook selon le rôle
   const adminStatsHook = useAdminStats();
   const publicStatsHook = usePublicStats();
   
@@ -14,14 +14,14 @@ const DashboardHome = () => {
   const { stats, loading } = isAdmin ? adminStatsHook : publicStatsHook;
 
   // Debug: Afficher les stats dans la console
-  console.log('🔍 Dashboard Stats:', { stats, loading, isAdmin });
+  console.log(' Dashboard Stats:', { stats, loading, isAdmin });
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-primary">
-          Bienvenue, {user?.nom} ! 👋
+          Bienvenue, {user?.nom} ! 
         </h1>
         <p className="text-neutral mt-2">
           {isAdmin
@@ -117,7 +117,7 @@ const DashboardHome = () => {
       {isAdmin && stats?.recentStats && (
         <div className="card">
           <h2 className="text-xl font-bold text-primary mb-4">
-            📈 Activité des 30 derniers jours
+             Activité des 30 derniers jours
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center p-4 bg-blue-50 rounded-lg">
@@ -296,7 +296,7 @@ const DashboardHome = () => {
       {/* Info avec stats dynamiques */}
       <div className="card bg-blue-50 border border-blue-200">
         <div className="flex items-start gap-3">
-          <span className="text-2xl">💡</span>
+          <span className="text-2xl"></span>
           <div className="flex-1">
             <h3 className="font-semibold text-primary mb-2">
               {isAdmin ? 'Mode Administrateur' : 'Astuce'}
@@ -319,7 +319,7 @@ const DashboardHome = () => {
       {!loading && stats?.talentsCount === 0 && isAdmin && (
         <div className="card bg-yellow-50 border border-yellow-200">
           <div className="flex items-start gap-3">
-            <span className="text-2xl">⚠️</span>
+            <span className="text-2xl">️</span>
             <div className="flex-1">
               <h3 className="font-semibold text-yellow-700 mb-2">
                 Base de données vide

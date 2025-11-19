@@ -138,7 +138,7 @@ const ServicesPage = () => {
             {/* Étape 4 */}
             <div className="text-center">
               <div className="bg-accent text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
-                ✓
+                
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-2">
                 Livraison & Support
@@ -166,7 +166,7 @@ const ServicesPage = () => {
           <div className="grid md:grid-cols-3 gap-8">
             {/* Avantage 1 */}
             <div className="bg-blue-50 rounded-xl p-8 border-2 border-blue-100">
-              <div className="text-4xl mb-4">✅</div>
+              <div className="text-4xl mb-4"></div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">
                 Talents Validés
               </h3>
@@ -177,7 +177,7 @@ const ServicesPage = () => {
 
             {/* Avantage 2 */}
             <div className="bg-orange-50 rounded-xl p-8 border-2 border-orange-100">
-              <div className="text-4xl mb-4">💎</div>
+              <div className="text-4xl mb-4"></div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">
                 Qualité Garantie
               </h3>
@@ -188,7 +188,7 @@ const ServicesPage = () => {
 
             {/* Avantage 3 */}
             <div className="bg-green-50 rounded-xl p-8 border-2 border-green-100">
-              <div className="text-4xl mb-4">🚀</div>
+              <div className="text-4xl mb-4"></div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">
                 Support Inclus
               </h3>
@@ -199,7 +199,7 @@ const ServicesPage = () => {
 
             {/* Avantage 4 */}
             <div className="bg-purple-50 rounded-xl p-8 border-2 border-purple-100">
-              <div className="text-4xl mb-4">💰</div>
+              <div className="text-4xl mb-4"></div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">
                 Tarifs Transparents
               </h3>
@@ -210,7 +210,7 @@ const ServicesPage = () => {
 
             {/* Avantage 5 */}
             <div className="bg-pink-50 rounded-xl p-8 border-2 border-pink-100">
-              <div className="text-4xl mb-4">⚡</div>
+              <div className="text-4xl mb-4"></div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">
                 Livraison Rapide
               </h3>
@@ -221,7 +221,7 @@ const ServicesPage = () => {
 
             {/* Avantage 6 */}
             <div className="bg-cyan-50 rounded-xl p-8 border-2 border-cyan-100">
-              <div className="text-4xl mb-4">🎯</div>
+              <div className="text-4xl mb-4"></div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">
                 Approche Sur Mesure
               </h3>

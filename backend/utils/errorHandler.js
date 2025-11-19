@@ -1,8 +1,8 @@
 /**
  * Gestion d'erreurs centralisée
- * ✅ Classes d'erreurs personnalisées
- * ✅ Messages cohérents
- * ✅ Logging automatique
+ *  Classes d'erreurs personnalisées
+ *  Messages cohérents
+ *  Logging automatique
  */
 import { logger } from './logger.js';
 
@@ -71,7 +71,7 @@ export class ConflictError extends AppError {
 
 /**
  * Middleware de gestion d'erreurs globale
- * ✅ À ajouter dans server.js en dernier
+ *  À ajouter dans server.js en dernier
  */
 export const errorHandler = (err, req, res, next) => {
   // Par défaut: erreur interne

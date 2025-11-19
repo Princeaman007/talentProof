@@ -146,7 +146,7 @@ const ChangePassword = () => {
 
           {/* Conseils de sécurité */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 className="font-semibold text-primary mb-2">🔐 Conseils de sécurité</h3>
+            <h3 className="font-semibold text-primary mb-2"> Conseils de sécurité</h3>
             <ul className="text-sm text-neutral space-y-1">
               <li>• Utilisez au moins 6 caractères</li>
               <li>• Combinez majuscules, minuscules et chiffres</li>

@@ -3,7 +3,7 @@ import api from '../utils/api';
 
 /**
  * Hook personnalisé pour récupérer les statistiques admin
- * ⚠️ À utiliser UNIQUEMENT dans les composants admin
+ * ️ À utiliser UNIQUEMENT dans les composants admin
  */
 export const useAdminStats = () => {
   const [stats, setStats] = useState(null);
@@ -54,7 +54,7 @@ export const usePublicStats = () => {
       setLoading(true);
       setError(null);
       
-      // ✅ Récupérer toutes les stats publiques en une seule requête
+      //  Récupérer toutes les stats publiques en une seule requête
       const response = await api.get('/public/stats');
       
       setStats({

@@ -24,7 +24,7 @@ const EditTalentModal = ({ talent, onClose, onSuccess }) => {
     typeProfil: 'Full-stack',
     niveau: 'Junior',
     typeContrat: 'CDI',
-    anneeExperience: 0,  // ✅ SANS S
+    anneeExperience: 0,  //  SANS S
     technologies: [],
     competences: '',
     scoreTest: '',
@@ -50,7 +50,7 @@ const EditTalentModal = ({ talent, onClose, onSuccess }) => {
         typeProfil: talent.typeProfil || 'Full-stack',
         niveau: talent.niveau || 'Junior',
         typeContrat: talent.typeContrat || 'CDI',
-        anneeExperience: talent.anneeExperience || 0,  // ✅ SANS S
+        anneeExperience: talent.anneeExperience || 0,  //  SANS S
         technologies: talent.technologies || [],
         competences: talent.competences || '',
         scoreTest: talent.scoreTest || '',
@@ -103,16 +103,16 @@ const EditTalentModal = ({ talent, onClose, onSuccess }) => {
       const payload = {
         ...formData,
         scoreTest: Number(formData.scoreTest),
-        anneeExperience: Number(formData.anneeExperience),  // ✅ SANS S
+        anneeExperience: Number(formData.anneeExperience),  //  SANS S
         tarifJournalier: formData.tarifJournalier ? Number(formData.tarifJournalier) : null,
       };
 
-      console.log('📤 Payload envoyé:', payload);  // ✅ DEBUG
+      console.log(' Payload envoyé:', payload);  //  DEBUG
 
       await api.put(`/admin/talents/${talent._id}`, payload);
       onSuccess('Talent modifié avec succès !');
     } catch (error) {
-      console.error('❌ Erreur modification:', error);
+      console.error(' Erreur modification:', error);
       setError(error.response?.data?.message || 'Erreur lors de la modification');
     } finally {
       setLoading(false);
@@ -240,8 +240,8 @@ const EditTalentModal = ({ talent, onClose, onSuccess }) => {
                 </label>
                 <input
                   type="number"
-                  name="anneeExperience"  // ✅ SANS S
-                  value={formData.anneeExperience}  // ✅ SANS S
+                  name="anneeExperience"  //  SANS S
+                  value={formData.anneeExperience}  //  SANS S
                   onChange={handleChange}
                   className="input-field"
                   min="0"

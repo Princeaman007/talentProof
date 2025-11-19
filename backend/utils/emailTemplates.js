@@ -79,7 +79,7 @@ const baseTemplate = (content) => `
 <body>
   <div class="container">
     <div class="header">
-      <div class="logo">✓ TalentProof</div>
+      <div class="logo"> TalentProof</div>
     </div>
     <div class="content">
       ${content}
@@ -105,7 +105,7 @@ const baseTemplate = (content) => `
  */
 export const confirmationEmailTemplate = (companyName, confirmationLink) => {
   const content = `
-    <h1>Bienvenue sur TalentProof, ${companyName} ! 🎉</h1>
+    <h1>Bienvenue sur TalentProof, ${companyName} ! </h1>
     <p>Merci de vous être inscrit sur TalentProof, la plateforme de recrutement des meilleurs talents tech juniors.</p>
     <p>Pour activer votre compte et accéder à notre catalogue de talents, veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous :</p>
     <div style="text-align: center;">
@@ -116,7 +116,7 @@ export const confirmationEmailTemplate = (companyName, confirmationLink) => {
       <a href="${confirmationLink}" style="color: #1E3A8A; word-break: break-all;">${confirmationLink}</a>
     </p>
     <div class="highlight">
-      <strong>⏰ Ce lien expire dans 24 heures.</strong><br>
+      <strong> Ce lien expire dans 24 heures.</strong><br>
       Si vous n'avez pas créé de compte sur TalentProof, vous pouvez ignorer cet email.
     </div>
   `;
@@ -139,7 +139,7 @@ export const resetPasswordTemplate = (companyName, resetLink) => {
       <a href="${resetLink}" style="color: #1E3A8A; word-break: break-all;">${resetLink}</a>
     </p>
     <div class="highlight">
-      <strong>⏰ Ce lien expire dans 1 heure.</strong><br>
+      <strong> Ce lien expire dans 1 heure.</strong><br>
       Si vous n'avez pas demandé cette réinitialisation, ignorez cet email. Votre mot de passe restera inchangé.
     </div>
     <p style="margin-top: 30px; font-size: 14px; color: #64748B;">
@@ -154,10 +154,10 @@ export const resetPasswordTemplate = (companyName, resetLink) => {
  */
 export const contactNotificationTemplate = (talentInfo, recruteurInfo) => {
   const content = `
-    <h1>🎯 Nouvelle demande de contact talent</h1>
+    <h1> Nouvelle demande de contact talent</h1>
     <p><strong>Un recruteur souhaite entrer en contact avec un de vos talents validés.</strong></p>
     
-    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;">👤 Informations du talent</h2>
+    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;"> Informations du talent</h2>
     <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
       <tr>
         <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Prénom :</strong></td>
@@ -173,7 +173,7 @@ export const contactNotificationTemplate = (talentInfo, recruteurInfo) => {
       </tr>
     </table>
 
-    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;">🏢 Informations du recruteur</h2>
+    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;"> Informations du recruteur</h2>
     <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
       <tr>
         <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Nom :</strong></td>
@@ -198,12 +198,12 @@ export const contactNotificationTemplate = (talentInfo, recruteurInfo) => {
     </table>
 
     <div class="highlight" style="margin-top: 30px;">
-      <strong>💬 Message du recruteur :</strong><br><br>
+      <strong> Message du recruteur :</strong><br><br>
       ${recruteurInfo.message.replace(/\n/g, '<br>')}
     </div>
 
     <div style="margin-top: 30px; padding: 20px; background-color: #f1f5f9; border-radius: 8px;">
-      <strong>📋 Actions à faire :</strong>
+      <strong> Actions à faire :</strong>
       <ol style="margin: 10px 0;">
         <li>Contacter le recruteur par email ou téléphone</li>
         <li>Envoyer le CV complet du talent</li>
@@ -219,12 +219,12 @@ export const contactNotificationTemplate = (talentInfo, recruteurInfo) => {
  */
 export const contactConfirmationTemplate = (recruteurNom, talentPrenom) => {
   const content = `
-    <h1>Demande bien reçue ! ✓</h1>
+    <h1>Demande bien reçue ! </h1>
     <p>Bonjour ${recruteurNom},</p>
     <p>Merci pour votre intérêt pour <strong>${talentPrenom}</strong>, l'un de nos talents validés TalentProof.</p>
     <p>Votre demande a bien été reçue et nous allons la traiter dans les plus brefs délais.</p>
     <div class="highlight">
-      <strong>⏱️ Délai de réponse : 24-48 heures</strong><br>
+      <strong>️ Délai de réponse : 24-48 heures</strong><br>
       Nous vous recontacterons rapidement avec les informations complètes sur ce talent.
     </div>
     <p>Notre équipe va :</p>

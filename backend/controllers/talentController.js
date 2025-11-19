@@ -1,6 +1,6 @@
 import Talent from '../models/Talent.js';
 import ContactRequest from '../models/ContactRequest.js';
-import { sendEmail } from '../utils/emailService.js'; // ✅ CORRIGÉ : utiliser emailService.js
+import { sendEmail } from '../utils/emailService.js'; //  CORRIGÉ : utiliser emailService.js
 import { contactNotificationTemplate, contactConfirmationTemplate } from '../utils/emailTemplates.js';
 
 /**
@@ -51,7 +51,7 @@ export const filterTalents = async (req, res) => {
 
     let query = { statut: 'actif' };
 
-    // ✅ Filtrer par technologies (ancien + amélioré)
+    //  Filtrer par technologies (ancien + amélioré)
     if (technologies) {
       const techArray = Array.isArray(technologies) 
         ? technologies 
@@ -59,46 +59,46 @@ export const filterTalents = async (req, res) => {
       query.technologies = { $in: techArray };
     }
 
-    // ✅ NOUVEAU - Filtrer par type de profil
+    //  NOUVEAU - Filtrer par type de profil
     if (typeProfil) {
       query.typeProfil = typeProfil;
     }
 
-    // ✅ NOUVEAU - Filtrer par niveau
+    //  NOUVEAU - Filtrer par niveau
     if (niveau) {
       query.niveau = niveau;
     }
 
-    // ✅ NOUVEAU - Filtrer par type de contrat
+    //  NOUVEAU - Filtrer par type de contrat
     if (typeContrat) {
       query.typeContrat = typeContrat;
     }
 
-    // ✅ NOUVEAU - Filtrer par disponibilité
+    //  NOUVEAU - Filtrer par disponibilité
     if (disponibilite) {
       query.disponibilite = disponibilite;
     }
 
-    // ✅ Filtrer par score (ancien)
+    //  Filtrer par score (ancien)
     if (minScore || maxScore) {
       query.scoreTest = {};
       if (minScore) query.scoreTest.$gte = parseInt(minScore);
       if (maxScore) query.scoreTest.$lte = parseInt(maxScore);
     }
 
-    // ✅ CORRIGÉ - Filtrer par années d'expérience (SANS S)
+    //  CORRIGÉ - Filtrer par années d'expérience (SANS S)
     if (experienceMin !== undefined || experienceMax !== undefined) {
       query.anneeExperience = {};
       if (experienceMin !== undefined) query.anneeExperience.$gte = parseInt(experienceMin);
       if (experienceMax !== undefined) query.anneeExperience.$lte = parseInt(experienceMax);
     }
 
-    // ✅ NOUVEAU - Filtrer par localisation (recherche partielle)
+    //  NOUVEAU - Filtrer par localisation (recherche partielle)
     if (localisation) {
       query.localisation = { $regex: localisation, $options: 'i' };
     }
 
-    // ✅ NOUVEAU - Filtrer par langue
+    //  NOUVEAU - Filtrer par langue
     if (langue) {
       query.langues = { $in: [langue] };
     }
@@ -194,13 +194,13 @@ export const contactTalent = async (req, res) => {
       message,
     });
 
-    // ✅ CORRIGÉ - Préparer les données pour l'email à Prince (SANS S)
+    //  CORRIGÉ - Préparer les données pour l'email à Prince (SANS S)
     const talentInfo = {
       prenom: talent.prenom,
       typeProfil: talent.typeProfil,
       niveau: talent.niveau,
       typeContrat: talent.typeContrat,
-      anneeExperience: talent.anneeExperience, // ✅ SANS S
+      anneeExperience: talent.anneeExperience, //  SANS S
       technologies: talent.technologies,
       scoreTest: talent.scoreTest,
       plateforme: talent.plateforme,
@@ -328,7 +328,7 @@ export const getTalentsStats = async (req, res) => {
  */
 export const createTalent = async (req, res) => {
   try {
-    console.log('📥 Données reçues dans le backend:', req.body);
+    console.log(' Données reçues dans le backend:', req.body);
 
     const {
       prenom,
@@ -384,7 +384,7 @@ export const createTalent = async (req, res) => {
       statut,
     });
 
-    console.log('✅ Talent créé:', talent);
+    console.log(' Talent créé:', talent);
 
     res.status(201).json({
       success: true,
@@ -392,7 +392,7 @@ export const createTalent = async (req, res) => {
       data: talent,
     });
   } catch (error) {
-    console.error('❌ Erreur createTalent:', error);
+    console.error(' Erreur createTalent:', error);
     
     // Erreur de validation Mongoose
     if (error.name === 'ValidationError') {

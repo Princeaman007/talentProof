@@ -98,7 +98,7 @@ const companySchema = new mongoose.Schema({
   timestamps: true,
 });
 
-// ✅ SUPPRIMÉ - companySchema.index({ email: 1 }); (doublon avec unique: true)
+//  SUPPRIMÉ - companySchema.index({ email: 1 }); (doublon avec unique: true)
 
 // INDEX - PHASE 4
 companySchema.index({ role: 1 });
@@ -108,7 +108,7 @@ companySchema.index({ createdAt: -1 });
 companySchema.index({ refreshToken: 1 }, { partialFilterExpression: { refreshToken: { $exists: true } } });
 companySchema.index({ refreshTokenExpires: 1 }, { partialFilterExpression: { refreshTokenExpires: { $exists: true } } });
 
-// ✅ Protection contre OverwriteModelError
+//  Protection contre OverwriteModelError
 const Company = mongoose.models.Company || mongoose.model('Company', companySchema);
 
 export default Company;

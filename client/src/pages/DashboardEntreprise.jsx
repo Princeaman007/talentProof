@@ -15,13 +15,13 @@ import AdminDevis from './dashboard/AdminDevis';
 import AdminPortfolio from './dashboard/AdminPortfolio';
 import AdminTalentDays from './dashboard/AdminTalentDays';
 
-// ✅ NOUVELLES PAGES - PHASE 4 ADMIN
+//  NOUVELLES PAGES - PHASE 4 ADMIN
 import AdminStats from './dashboard/Adminstats';
 import AdminEntreprises from './dashboard/Adminentreprises';
 import AdminContactRequests from './dashboard/Admincontactrequests';
 import AdminCompanies from './dashboard/AdminCompanies';
 
-// ✅ NOUVELLES PAGES - PHASE 4 ENTREPRISE
+//  NOUVELLES PAGES - PHASE 4 ENTREPRISE
 import MesFavoris from './dashboard/MesFavoris';
 import MesDemandesContact from './dashboard/MesDemandesContact';
 import MesNotifications from './dashboard/MesNotifications';
@@ -47,7 +47,7 @@ const DashboardEntreprise = () => {
               <Route path="/change-password" element={<ChangePassword />} />
               <Route path="/talents" element={<TalentsDashboard />} />
               
-              {/* ✅ NOUVELLES ROUTES ENTREPRISE - PHASE 4 */}
+              {/*  NOUVELLES ROUTES ENTREPRISE - PHASE 4 */}
               <Route path="/mes-favoris" element={<MesFavoris />} />
               <Route path="/mes-demandes" element={<MesDemandesContact />} />
               <Route path="/notifications" element={<MesNotifications />} />
@@ -55,7 +55,7 @@ const DashboardEntreprise = () => {
               {/* Routes Admin */}
               {isAdmin && (
                 <>
-                  {/* ✅ NOUVELLES ROUTES ADMIN - PHASE 4 */}
+                  {/*  NOUVELLES ROUTES ADMIN - PHASE 4 */}
                   <Route path="/admin/stats" element={<AdminStats />} />
                   <Route path="/admin/entreprises" element={<AdminEntreprises />} />
                   <Route path="/admin/contact-requests" element={<AdminContactRequests />} />

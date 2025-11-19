@@ -2,7 +2,7 @@ import CompanyRegistration from '../models/CompanyRegistration.js';
 import TalentDay from '../models/Talentday.js';
 import Talent from '../models/Talent.js';
 import { sendEmail } from '../utils/emailService.js';
-// ✨ Import du template professionnel d'inscription entreprise TalentDay
+//  Import du template professionnel d'inscription entreprise TalentDay
 import { companyTalentDayRegistrationTemplate } from '../utils/emailTemplates.professional.js';
 import { validationResult } from 'express-validator';
 
@@ -74,33 +74,33 @@ export const createCompanyRegistration = async (req, res) => {
           
           <div style="display: grid; gap: 10px; margin-top: 15px;">
             <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">📅 Date :</span>
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Date :</span>
               <span>${dateFormatted}</span>
             </div>
             <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">⏰ Horaire :</span>
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Horaire :</span>
               <span>${td.heureDebut} - ${td.heureFin}</span>
             </div>
             <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">📍 Lieu :</span>
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Lieu :</span>
               <span>${lieuText}</span>
             </div>
             <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">🎯 Type :</span>
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Type :</span>
               <span style="text-transform: capitalize;">${td.typeEvenement.replace('-', ' ')}</span>
             </div>
             <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">📊 Niveau :</span>
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Niveau :</span>
               <span style="text-transform: capitalize;">${td.niveauRequis.replace('-', ' ')}</span>
             </div>
             <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">👥 Places :</span>
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Places :</span>
               <span>${td.placesDisponibles} participants</span>
             </div>
           </div>
 
           <div style="margin-top: 15px;">
-            <p style="color: #6b7280; font-weight: bold; margin-bottom: 8px;">💻 Technologies :</p>
+            <p style="color: #6b7280; font-weight: bold; margin-bottom: 8px;"> Technologies :</p>
             <div style="display: flex; flex-wrap: wrap; gap: 8px;">
               ${td.technologies.map(tech => 
                 `<span style="background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 12px; font-size: 14px;">${tech}</span>`
@@ -111,14 +111,14 @@ export const createCompanyRegistration = async (req, res) => {
           <div style="background: #f9fafb; padding: 12px; border-radius: 6px; margin-top: 15px;">
             <p style="margin: 0; font-size: 14px; color: #6b7280;">
               <strong>Organisateur :</strong> ${td.organisateur.nom}<br>
-              📧 ${td.organisateur.email} | 📞 ${td.organisateur.telephone}
+               ${td.organisateur.email} |  ${td.organisateur.telephone}
             </p>
           </div>
         </div>
       `;
     };
 
-    // ✨ NOUVEAU : Envoyer email professionnel avec logo TalentProof
+    //  NOUVEAU : Envoyer email professionnel avec logo TalentProof
     try {
       const companyInfo = {
         companyName,
@@ -130,7 +130,7 @@ export const createCompanyRegistration = async (req, res) => {
       
       await sendEmail({
         to: email,
-        subject: '✅ Inscription TalentDay confirmée - TalentProof',
+        subject: ' Inscription TalentDay confirmée - TalentProof',
         html: companyTalentDayRegistrationTemplate(companyInfo, company.interestedTalentDays),
       });
     } catch (emailError) {
@@ -141,7 +141,7 @@ export const createCompanyRegistration = async (req, res) => {
     try {
       await sendEmail({
         to: process.env.ADMIN_EMAIL || 'admin@talentproof.com',
-        subject: '🏢 Nouvelle inscription entreprise TalentDay',
+        subject: ' Nouvelle inscription entreprise TalentDay',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #dc2626;">Nouvelle inscription entreprise</h2>
@@ -326,29 +326,29 @@ export const updateCompanyStatus = async (req, res) => {
           
           <div style="display: grid; gap: 10px; margin-top: 15px;">
             <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">📅 Date :</span>
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Date :</span>
               <span>${dateFormatted}</span>
             </div>
             <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">⏰ Horaire :</span>
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Horaire :</span>
               <span>${td.heureDebut} - ${td.heureFin}</span>
             </div>
             <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">📍 Lieu :</span>
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Lieu :</span>
               <span>${lieuText}</span>
             </div>
             <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">🎯 Type :</span>
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Type :</span>
               <span style="text-transform: capitalize;">${td.typeEvenement.replace('-', ' ')}</span>
             </div>
             <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">👥 Places :</span>
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Places :</span>
               <span>${td.placesDisponibles} participants</span>
             </div>
           </div>
 
           <div style="margin-top: 15px;">
-            <p style="color: #6b7280; font-weight: bold; margin-bottom: 8px;">💻 Technologies :</p>
+            <p style="color: #6b7280; font-weight: bold; margin-bottom: 8px;"> Technologies :</p>
             <div style="display: flex; flex-wrap: wrap; gap: 8px;">
               ${td.technologies.map(tech => 
                 `<span style="background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 12px; font-size: 14px;">${tech}</span>`
@@ -359,7 +359,7 @@ export const updateCompanyStatus = async (req, res) => {
           <div style="background: #f9fafb; padding: 12px; border-radius: 6px; margin-top: 15px;">
             <p style="margin: 0; font-size: 14px; color: #6b7280;">
               <strong>Contact organisateur :</strong><br>
-              📧 ${td.organisateur.email} | 📞 ${td.organisateur.telephone}
+               ${td.organisateur.email} |  ${td.organisateur.telephone}
             </p>
           </div>
         </div>
@@ -371,11 +371,11 @@ export const updateCompanyStatus = async (req, res) => {
     let emailContent = '';
 
     if (status === 'confirmed') {
-      emailSubject = '✅ Votre inscription TalentDay a été confirmée !';
+      emailSubject = ' Votre inscription TalentDay a été confirmée !';
       emailContent = `
         <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; background: #f9fafb; padding: 30px;">
           <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 28px;">🎉 Félicitations !</h1>
+            <h1 style="color: white; margin: 0; font-size: 28px;"> Félicitations !</h1>
             <p style="color: #d1fae5; margin: 10px 0 0 0; font-size: 16px;">Votre inscription est confirmée</p>
           </div>
           
@@ -387,7 +387,7 @@ export const updateCompanyStatus = async (req, res) => {
             </p>
             
             <div style="background: #d1fae5; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #059669;">
-              <h3 style="margin-top: 0; color: #065f46;">🚀 Vous pouvez maintenant :</h3>
+              <h3 style="margin-top: 0; color: #065f46;"> Vous pouvez maintenant :</h3>
               <ul style="color: #065f46; line-height: 1.8; margin: 10px 0;">
                 <li><strong>Consulter</strong> la liste des talents participants</li>
                 <li><strong>Parcourir</strong> les profils, portfolios et compétences</li>
@@ -396,12 +396,12 @@ export const updateCompanyStatus = async (req, res) => {
               </ul>
             </div>
 
-            <h3 style="color: #1f2937; margin-top: 30px;">📅 Vos TalentDays</h3>
+            <h3 style="color: #1f2937; margin-top: 30px;"> Vos TalentDays</h3>
             <p style="color: #6b7280;">Voici les détails complets des événements auxquels vous participerez :</p>
             ${company.interestedTalentDays.map(td => formatTalentDayDetails(td)).join('')}
 
             <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #f59e0b;">
-              <h4 style="margin-top: 0; color: #92400e;">💡 Conseils pour maximiser votre participation</h4>
+              <h4 style="margin-top: 0; color: #92400e;"> Conseils pour maximiser votre participation</h4>
               <ul style="color: #78350f; line-height: 1.8;">
                 <li>Préparez vos critères de recrutement à l'avance</li>
                 <li>Consultez les portfolios des talents avant les meetings</li>
@@ -452,18 +452,18 @@ export const updateCompanyStatus = async (req, res) => {
               </p>
             </div>
 
-            <h3 style="color: #1f2937;">📋 TalentDays concernés</h3>
+            <h3 style="color: #1f2937;"> TalentDays concernés</h3>
             ${company.interestedTalentDays.map(td => `
               <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 15px; margin: 10px 0;">
                 <h4 style="margin: 0 0 5px 0; color: #374151;">${td.titre}</h4>
                 <p style="margin: 0; color: #6b7280; font-size: 14px;">
-                  📅 ${new Date(td.date).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                   ${new Date(td.date).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                 </p>
               </div>
             `).join('')}
 
             <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #f59e0b;">
-              <h4 style="margin-top: 0; color: #92400e;">ℹ️ Raisons possibles</h4>
+              <h4 style="margin-top: 0; color: #92400e;">️ Raisons possibles</h4>
               <ul style="color: #78350f; line-height: 1.8; margin: 10px 0;">
                 <li>Nombre limité de places entreprises disponibles</li>
                 <li>Événements déjà complets au moment du traitement</li>
@@ -473,7 +473,7 @@ export const updateCompanyStatus = async (req, res) => {
             </div>
 
             <div style="background: #dbeafe; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #2563eb;">
-              <h4 style="margin-top: 0; color: #1e40af;">🔄 Prochaines opportunités</h4>
+              <h4 style="margin-top: 0; color: #1e40af;"> Prochaines opportunités</h4>
               <p style="color: #1e3a8a; margin: 0; line-height: 1.6;">
                 Nous organisons régulièrement des TalentDays thématiques. N'hésitez pas à :
               </p>
@@ -487,10 +487,10 @@ export const updateCompanyStatus = async (req, res) => {
             <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
               <p style="color: #6b7280; font-size: 14px; margin: 5px 0;">
                 Pour toute question ou information complémentaire :<br>
-                📧 <a href="mailto:${process.env.CONTACT_EMAIL || 'info@princeaman.dev'}" style="color: #2563eb;">
+                 <a href="mailto:${process.env.CONTACT_EMAIL || 'info@princeaman.dev'}" style="color: #2563eb;">
                   ${process.env.CONTACT_EMAIL || 'info@princeaman.dev'}
                 </a><br>
-                📞 ${company.interestedTalentDays[0]?.organisateur?.telephone || '+32 467 62 08 78'}
+                 ${company.interestedTalentDays[0]?.organisateur?.telephone || '+32 467 62 08 78'}
               </p>
               <p style="color: #1e40af; font-weight: bold; margin: 15px 0;">Cordialement,</p>
               <p style="color: #9ca3af; font-size: 14px;">L'équipe TalentProof</p>
@@ -593,7 +593,7 @@ export const bookTalentMeeting = async (req, res) => {
     try {
       await sendEmail({
         to: talent.email,
-        subject: `🤝 Demande de meeting de ${company.companyName}`,
+        subject: ` Demande de meeting de ${company.companyName}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #1e40af;">Nouvelle demande de meeting !</h2>
@@ -629,7 +629,7 @@ export const bookTalentMeeting = async (req, res) => {
     try {
       await sendEmail({
         to: company.email,
-        subject: '✅ Demande de meeting envoyée',
+        subject: ' Demande de meeting envoyée',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #059669;">Demande envoyée avec succès !</h2>

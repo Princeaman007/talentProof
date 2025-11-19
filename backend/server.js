@@ -26,24 +26,24 @@ import talentDayRoutes from './routes/talentDayRoutes.js';
 import companyRoutes from './routes/companyRoutes.js';
 
 
-// ✅ Routes admin fusionnées (Phase 1-4)
+//  Routes admin fusionnées (Phase 1-4)
 import adminRoutes from './routes/adminRoutes.js';
 
-// ✅ Routes entreprise (Phase 4)
+//  Routes entreprise (Phase 4)
 import entrepriseRoutes from './routes/entreprise.js';
 
-// ✅ Documentation Swagger
+//  Documentation Swagger
 import { swaggerSpec } from './utils/swagger.js';
 import { logger } from './utils/logger.js';
 import { errorHandler } from './utils/errorHandler.js';
 
 dotenv.config();
 
-// ✅ SÉCURITÉ: Valider les variables d'environnement critiques au démarrage
+//  SÉCURITÉ: Valider les variables d'environnement critiques au démarrage
 const requiredEnvVars = ['MONGODB_URI', 'JWT_SECRET', 'CLIENT_URL'];
 const missingEnvVars = requiredEnvVars.filter(env => !process.env[env]);
 if (missingEnvVars.length > 0) {
-  console.error('❌ ERREUR: Variables d\'environnement manquantes:', missingEnvVars.join(', '));
+  console.error(' ERREUR: Variables d\'environnement manquantes:', missingEnvVars.join(', '));
   process.exit(1);
 }
 
@@ -61,7 +61,7 @@ if (process.env.NODE_ENV === 'production') {
 // Response compression
 app.use(compression());
 
-// ✅ SÉCURITÉ: Headers de sécurité (helmet)
+//  SÉCURITÉ: Headers de sécurité (helmet)
 app.use(helmet());
 
 // Content Security Policy and HSTS
@@ -122,9 +122,9 @@ if (isProd) {
   );
 }
 
-// ✅ SÉCURITÉ: CORS restrictif (au lieu de cors() ouvert)
+//  SÉCURITÉ: CORS restrictif (au lieu de cors() ouvert)
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:5174,http://localhost:3000').split(',');
-console.log('🌍 CORS allowedOrigins:', allowedOrigins);
+console.log(' CORS allowedOrigins:', allowedOrigins);
 
 // CORS configuration with dynamic origin validation
 app.use(cors({
@@ -139,11 +139,11 @@ app.use(cors({
     
     // In production, also allow *.onrender.com domains
     if (process.env.NODE_ENV === 'production' && origin.endsWith('.onrender.com')) {
-      console.log('✅ Allowing Render domain:', origin);
+      console.log(' Allowing Render domain:', origin);
       return callback(null, true);
     }
     
-    console.warn('❌ CORS blocked origin:', origin);
+    console.warn(' CORS blocked origin:', origin);
     callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
@@ -153,7 +153,7 @@ app.use(cors({
   maxAge: 86400, // 24 heures
 }));
 
-// ✅ SÉCURITÉ: Rate limiting global (moins strict)
+//  SÉCURITÉ: Rate limiting global (moins strict)
 // Configure rate limiter store: prefer Redis when REDIS_URL is set (cluster-ready)
 let globalLimiter;
 try {
@@ -192,14 +192,14 @@ try {
 }
 app.use(globalLimiter);
 
-// ✅ SÉCURITÉ: Rate limiting strict pour authentification
+//  SÉCURITÉ: Rate limiting strict pour authentification
 let authLimiter;
 try {
   // Try to reuse same Redis store if available
   const redisUrl = process.env.REDIS_URL;
   const isDev = process.env.NODE_ENV !== 'production';
   
-  // ⚠️ TEMPORAIRE: Limite plus élevée en production pour les tests
+  // ️ TEMPORAIRE: Limite plus élevée en production pour les tests
   const maxAttempts = isDev ? 100 : 50; // 100 en dev, 50 en production (au lieu de 5)
   
   if (redisUrl) {
@@ -243,10 +243,10 @@ try {
 app.use(express.json({ limit: process.env.REQUEST_BODY_LIMIT || '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: process.env.REQUEST_BODY_LIMIT || '10mb' }));
 
-// ✅ SÉCURITÉ: Parser les cookies
+//  SÉCURITÉ: Parser les cookies
 app.use(cookieParser());
 
-// ✅ CSRF protection - double-submit cookie pattern
+//  CSRF protection - double-submit cookie pattern
 // Configure cookie options (secure in production). We run csurf middleware for
 // `/api` routes but skip it for health/docs/static endpoints.
 const csrfProtection = csurf({
@@ -313,7 +313,7 @@ app.use('/uploads', (req, res, next) => {
   next();
 }, express.static(path.join(__dirname, 'uploads')));
 
-// ✅ DOCUMENTATION: Swagger UI
+//  DOCUMENTATION: Swagger UI
 app.use('/api-docs', swaggerUi.serve);
 app.get('/api-docs', swaggerUi.setup(swaggerSpec, { customCss: '.swagger-ui { max-width: 1200px; }' }));
 
@@ -333,8 +333,8 @@ app.get('/', (req, res) => {
       team: '/api/team',
       portfolio: '/api/portfolio',
       devis: '/api/devis',
-      admin: '/api/admin',           // ✅ Dashboard admin (stats, entreprises, CRUD)
-      entreprise: '/api/entreprise', // ✅ Dashboard entreprise (favoris, notifications)
+      admin: '/api/admin',           //  Dashboard admin (stats, entreprises, CRUD)
+      entreprise: '/api/entreprise', //  Dashboard entreprise (favoris, notifications)
     }
   });
 });
@@ -363,10 +363,10 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/talent-days', talentDayRoutes);
 app.use('/api/companies', companyRoutes);
 
-// ✅ Routes admin (fusionnées Phase 1-4)
+//  Routes admin (fusionnées Phase 1-4)
 app.use('/api/admin', adminRoutes);
 
-// ✅ Routes entreprise dashboard (Phase 4)
+//  Routes entreprise dashboard (Phase 4)
 app.use('/api/entreprise', entrepriseRoutes);
 
 // Route 404
@@ -382,7 +382,7 @@ app.use((req, res) => {
   });
 });
 
-// ✅ Gestion d'erreurs centralisée
+//  Gestion d'erreurs centralisée
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
@@ -396,11 +396,11 @@ if (process.env.NODE_ENV !== 'test') {
       environment: process.env.NODE_ENV || 'development',
       mongoConnection: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
     });
-    console.log(`🚀 Serveur TalentProof démarré`);
-    console.log(`📍 http://localhost:${PORT}`);
-    console.log(`📚 Documentation API: http://localhost:${PORT}/api-docs`);
-    console.log(`🌍 Environnement: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🔒 Sécurité: Helmet activé, CORS restrictif, Rate-limiting actif`);
+    console.log(` Serveur TalentProof démarré`);
+    console.log(` http://localhost:${PORT}`);
+    console.log(` Documentation API: http://localhost:${PORT}/api-docs`);
+    console.log(` Environnement: ${process.env.NODE_ENV || 'development'}`);
+    console.log(` Sécurité: Helmet activé, CORS restrictif, Rate-limiting actif`);
   });
 }
 

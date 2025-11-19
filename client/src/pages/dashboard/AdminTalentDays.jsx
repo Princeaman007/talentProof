@@ -12,7 +12,7 @@ const AdminTalentDays = () => {
   const [editingId, setEditingId] = useState(null);
   const [selectedTalentDay, setSelectedTalentDay] = useState(null);
   
-  // ✅ NOUVEAUX ÉTATS POUR LES INSCRIPTIONS
+  //  NOUVEAUX ÉTATS POUR LES INSCRIPTIONS
   const [showInscriptions, setShowInscriptions] = useState(false);
   const [selectedTalentDayId, setSelectedTalentDayId] = useState(null);
 
@@ -148,7 +148,7 @@ const AdminTalentDays = () => {
                     {talentDay.placesRestantes}/{talentDay.placesDisponibles}
                   </td>
                   
-                  {/* ✅ NOUVELLE COLONNE INSCRIPTIONS */}
+                  {/*  NOUVELLE COLONNE INSCRIPTIONS */}
                   <td className="px-6 py-4 text-sm">
                     <button
                       onClick={() => {
@@ -205,7 +205,7 @@ const AdminTalentDays = () => {
         />
       )}
 
-      {/* ✅ MODAL INSCRIPTIONS */}
+      {/*  MODAL INSCRIPTIONS */}
       {showInscriptions && (
         <TalentDayInscriptions
           talentDayId={selectedTalentDayId}

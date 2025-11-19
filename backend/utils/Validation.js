@@ -6,7 +6,7 @@ import { body, validationResult } from 'express-validator';
 export const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error('❌ Erreurs de validation:', errors.array());
+    console.error(' Erreurs de validation:', errors.array());
     return res.status(400).json({ 
       success: false,
       message: 'Erreur de validation',
@@ -85,7 +85,7 @@ export const resetPasswordValidation = [
 ];
 
 /**
- * ✅ CORRIGÉ - Validation pour création/modification talent
+ *  CORRIGÉ - Validation pour création/modification talent
  */
 export const talentValidation = [
   body('prenom')
@@ -199,7 +199,7 @@ export const contactRequestValidation = [
 ];
 
 /**
- * ✅ Validation pour membre d'équipe - CORRIGÉE
+ *  Validation pour membre d'équipe - CORRIGÉE
  */
 export const teamMemberValidation = [
   body('nom')
@@ -221,7 +221,7 @@ export const teamMemberValidation = [
     .notEmpty().withMessage('La biographie est requise')
     .isLength({ min: 20 }).withMessage('La biographie doit contenir au moins 20 caractères'),
   
-  // ✅ CORRECTION : trim() AVANT optional() pour gérer correctement les chaînes vides
+  //  CORRECTION : trim() AVANT optional() pour gérer correctement les chaînes vides
   body('email')
     .trim()
     .optional({ checkFalsy: true })

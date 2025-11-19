@@ -231,7 +231,7 @@ export const getAllTalentsService = async ({ filters, pagination }) => {
 /**
  * CHECKLIST MIGRATION
  * 
- * [ ] Créer services/authService.js ✅
+ * [ ] Créer services/authService.js 
  * [ ] Créer services/talentService.js
  * [ ] Créer services/portfolioService.js
  * [ ] Créer services/teamService.js

@@ -18,7 +18,7 @@ async function getTalentDayId() {
     
     await mongoose.disconnect();
   } catch (error) {
-    console.error('❌ Erreur:', error);
+    console.error(' Erreur:', error);
     process.exit(1);
   }
 }

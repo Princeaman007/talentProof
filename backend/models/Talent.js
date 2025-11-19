@@ -11,7 +11,7 @@ const talentSchema = new mongoose.Schema({
     default: null,
   },
   
-  // ✅ NOUVEAU - Type de profil
+  //  NOUVEAU - Type de profil
   typeProfil: {
     type: String,
     required: [true, 'Le type de profil est requis'],
@@ -19,7 +19,7 @@ const talentSchema = new mongoose.Schema({
     default: 'Full-stack',
   },
   
-  // ✅ NOUVEAU - Niveau d'expérience
+  //  NOUVEAU - Niveau d'expérience
   niveau: {
     type: String,
     required: [true, 'Le niveau est requis'],
@@ -27,7 +27,7 @@ const talentSchema = new mongoose.Schema({
     default: 'Junior',
   },
   
-  // ✅ NOUVEAU - Type de contrat
+  //  NOUVEAU - Type de contrat
   typeContrat: {
     type: String,
     required: [true, 'Le type de contrat est requis'],
@@ -35,7 +35,7 @@ const talentSchema = new mongoose.Schema({
     default: 'CDI',
   },
   
-  // ✅ CORRIGÉ - Sans S pour être cohérent avec le reste du code
+  //  CORRIGÉ - Sans S pour être cohérent avec le reste du code
   anneeExperience: {
     type: Number,
     required: [true, 'Les années d\'expérience sont requises'],
@@ -67,34 +67,34 @@ const talentSchema = new mongoose.Schema({
     enum: ['Codingame', 'HackerRank', 'LeetCode', 'CodeWars', 'Autre'],
   },
   
-  // ✅ NOUVEAU - Disponibilité
+  //  NOUVEAU - Disponibilité
   disponibilite: {
     type: String,
     enum: ['Immédiate', '1-2 semaines', '1 mois', 'Non disponible'],
     default: 'Immédiate',
   },
   
-  // ✅ NOUVEAU - Localisation
+  //  NOUVEAU - Localisation
   localisation: {
     type: String,
     trim: true,
     default: 'Belgique',
   },
   
-  // ✅ NOUVEAU - Langues parlées
+  //  NOUVEAU - Langues parlées
   langues: [{
     type: String,
     default: ['Français'],
   }],
   
-  // ✅ NOUVEAU - Tarif journalier (pour freelances)
+  //  NOUVEAU - Tarif journalier (pour freelances)
   tarifJournalier: {
     type: Number,
     min: 0,
     default: null,
   },
   
-  // ✅ NOUVEAU - Portfolio / GitHub
+  //  NOUVEAU - Portfolio / GitHub
   portfolio: {
     type: String,
     trim: true,
@@ -131,7 +131,7 @@ talentSchema.index({ niveau: 1 });
 talentSchema.index({ typeContrat: 1 });
 talentSchema.index({ disponibilite: 1 });
 
-// ✅ CORRIGÉ - Méthode virtuelle qui affiche simplement les années d'expérience
+//  CORRIGÉ - Méthode virtuelle qui affiche simplement les années d'expérience
 // Junior = niveau, pas "débutant"
 talentSchema.virtual('experienceText').get(function() {
   if (this.anneeExperience === 0) {

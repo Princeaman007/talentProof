@@ -11,7 +11,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user, logout, isAdmin } = useAuth();
 
-  // ✅ NOUVEAU - Récupérer le nombre de notifications non lues
+  //  NOUVEAU - Récupérer le nombre de notifications non lues
   useEffect(() => {
     if (user && !isAdmin) {
       fetchUnreadCount();
@@ -91,7 +91,7 @@ const Navbar = () => {
             {/* Si l'utilisateur est connecté */}
             {user ? (
               <div className="flex items-center space-x-4">
-                {/* ✅ NOUVEAU - Badge Notifications (seulement pour entreprises, pas admin) */}
+                {/*  NOUVEAU - Badge Notifications (seulement pour entreprises, pas admin) */}
                 {/* {!isAdmin && (
                   <Link
                     to="/dashboard/notifications"
@@ -165,7 +165,7 @@ const Navbar = () => {
             {/* Mobile - Si connecté */}
             {user ? (
               <>
-                {/* ✅ NOUVEAU - Notifications mobile (seulement pour entreprises) */}
+                {/*  NOUVEAU - Notifications mobile (seulement pour entreprises) */}
                 {/* {!isAdmin && (
                   <Link
                     to="/dashboard/notifications"

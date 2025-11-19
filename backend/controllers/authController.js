@@ -1,7 +1,7 @@
 import Company from '../models/Company.js';
 import { hashPassword, comparePassword, generateToken, generateRandomToken, hashToken } from '../utils/Auth.js';
-import { sendEmail } from '../utils/emailService.js'; // ✅ CORRIGÉ : utiliser emailService.js au lieu de Email.js
-// ✨ NOUVEAU : Templates professionnels avec logo et charte graphique TalentProof
+import { sendEmail } from '../utils/emailService.js'; //  CORRIGÉ : utiliser emailService.js au lieu de Email.js
+//  NOUVEAU : Templates professionnels avec logo et charte graphique TalentProof
 import { confirmationEmailTemplate, resetPasswordTemplate } from '../utils/emailTemplates.professional.js';
 import { setTokenCookie, clearTokenCookie, setRefreshTokenCookie, clearRefreshTokenCookie } from '../utils/cookieConfig.js';
 
@@ -38,7 +38,7 @@ export const register = async (req, res) => {
       nombreEmployes: nombreEmployes || '1-10',
       profilsRecherches: profilsRecherches || [],
       confirmationToken: hashedToken,
-      // ✅ Les nouveaux champs Phase 4 ont des valeurs par défaut dans le modèle
+      //  Les nouveaux champs Phase 4 ont des valeurs par défaut dans le modèle
       // role: 'entreprise' (défaut)
       // isActive: true (défaut)
     });
@@ -47,11 +47,11 @@ export const register = async (req, res) => {
     const confirmationLink = `${process.env.CLIENT_URL}/confirm-email/${confirmationToken}`;
 
     // Envoyer l'email de confirmation
-    console.log('📧 Tentative d\'envoi email de confirmation à:', email);
-    console.log('🔗 Lien de confirmation:', confirmationLink);
+    console.log(' Tentative d\'envoi email de confirmation à:', email);
+    console.log(' Lien de confirmation:', confirmationLink);
     
     try {
-      // ✨ Version simplifiée du template pour éviter le filtre anti-spam
+      //  Version simplifiée du template pour éviter le filtre anti-spam
       const simpleHtml = `
         <!DOCTYPE html>
         <html>
@@ -89,11 +89,11 @@ L'équipe TalentProof
         to: email,
         subject: 'Confirmez votre inscription sur TalentProof',
         html: simpleHtml,
-        text: simpleText, // ✅ IMPORTANT : version texte pour éviter spam
+        text: simpleText, //  IMPORTANT : version texte pour éviter spam
       });
-      console.log('✅ Email de confirmation envoyé avec succès:', emailResult.messageId);
+      console.log(' Email de confirmation envoyé avec succès:', emailResult.messageId);
     } catch (emailError) {
-      console.error('❌ ERREUR CRITIQUE - Envoi email échoué:', {
+      console.error(' ERREUR CRITIQUE - Envoi email échoué:', {
         error: emailError.message,
         code: emailError.code,
         stack: emailError.stack,
@@ -176,7 +176,7 @@ export const confirmEmail = async (req, res) => {
  * @route   POST /api/auth/login
  * @desc    Connexion d'une entreprise
  * @access  Public
- * ✅ Phase 4 - Retourne le role et isActive
+ *  Phase 4 - Retourne le role et isActive
  */
 export const login = async (req, res) => {
   try {
@@ -210,7 +210,7 @@ export const login = async (req, res) => {
       });
     }
 
-    // ✅ NOUVEAU - Phase 4 - Vérifier si le compte est actif
+    //  NOUVEAU - Phase 4 - Vérifier si le compte est actif
     if (company.isActive === false) {
       return res.status(403).json({
         success: false,
@@ -220,7 +220,7 @@ export const login = async (req, res) => {
       });
     }
 
-    // ✅ NOUVEAU - Phase 4 - Mettre à jour lastLogin
+    //  NOUVEAU - Phase 4 - Mettre à jour lastLogin
     company.lastLogin = new Date();
     await company.save();
 
@@ -240,7 +240,7 @@ export const login = async (req, res) => {
     setTokenCookie(res, token);
     setRefreshTokenCookie(res, refreshToken);
 
-    // ✅ MODIFIÉ - Phase 4 - Inclure role et isActive
+    //  MODIFIÉ - Phase 4 - Inclure role et isActive
     const companyData = {
       id: company._id,
       nom: company.nom,
@@ -251,9 +251,9 @@ export const login = async (req, res) => {
       secteurActivite: company.secteurActivite,
       nombreEmployes: company.nombreEmployes,
       profilsRecherches: company.profilsRecherches,
-      role: company.role || 'entreprise', // ✅ NOUVEAU
-      isActive: company.isActive !== undefined ? company.isActive : true, // ✅ NOUVEAU
-      lastLogin: company.lastLogin, // ✅ NOUVEAU (optionnel)
+      role: company.role || 'entreprise', //  NOUVEAU
+      isActive: company.isActive !== undefined ? company.isActive : true, //  NOUVEAU
+      lastLogin: company.lastLogin, //  NOUVEAU (optionnel)
     };
 
     // Optionnel: inclure le token dans le body pour compatibilité (deprecated)
@@ -350,7 +350,7 @@ export const forgotPassword = async (req, res) => {
  */
 export const logout = async (req, res) => {
   try {
-    // ✅ SÉCURITÉ - Nettoyer les cookies token + refresh
+    //  SÉCURITÉ - Nettoyer les cookies token + refresh
     clearTokenCookie(res);
     clearRefreshTokenCookie(res);
 
@@ -441,7 +441,7 @@ export const resetPassword = async (req, res) => {
  * @route   GET /api/auth/profile
  * @desc    Obtenir le profil de l'entreprise connectée
  * @access  Private
- * ✅ Phase 4 - Inclut role et isActive
+ *  Phase 4 - Inclut role et isActive
  */
 export const getProfile = async (req, res) => {
   try {
@@ -450,7 +450,7 @@ export const getProfile = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      company: { // ✅ Changé "data" en "company" pour cohérence
+      company: { //  Changé "data" en "company" pour cohérence
         id: company._id,
         nom: company.nom,
         email: company.email,
@@ -460,10 +460,10 @@ export const getProfile = async (req, res) => {
         secteurActivite: company.secteurActivite,
         nombreEmployes: company.nombreEmployes,
         profilsRecherches: company.profilsRecherches,
-        role: company.role || 'entreprise', // ✅ NOUVEAU
-        isActive: company.isActive !== undefined ? company.isActive : true, // ✅ NOUVEAU
+        role: company.role || 'entreprise', //  NOUVEAU
+        isActive: company.isActive !== undefined ? company.isActive : true, //  NOUVEAU
         createdAt: company.createdAt,
-        lastLogin: company.lastLogin, // ✅ NOUVEAU
+        lastLogin: company.lastLogin, //  NOUVEAU
       },
     });
   } catch (error) {
@@ -480,7 +480,7 @@ export const getProfile = async (req, res) => {
  * @route   PUT /api/auth/profile
  * @desc    Modifier le profil de l'entreprise
  * @access  Private
- * ✅ Phase 4 - Retourne role et isActive
+ *  Phase 4 - Retourne role et isActive
  */
 export const updateProfile = async (req, res) => {
   try {

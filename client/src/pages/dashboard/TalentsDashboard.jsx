@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { FaFilter, FaStar, FaCheckCircle, FaEnvelope, FaTimes, FaBriefcase, FaMapMarkerAlt, FaGlobe, FaUser, FaBuilding } from 'react-icons/fa';
 import api from '../../utils/api';
 
-// ✅ Constantes (gardées identiques)
+//  Constantes (gardées identiques)
 const TECHNOLOGIES = [
   'React.js', 'Vue.js', 'Angular', 'Svelte', 'Next.js', 'Node.js', 'Express',
   'Python', 'Django', 'PHP', 'Laravel', 'Java', 'MongoDB', 'PostgreSQL',
@@ -296,7 +296,7 @@ const TalentsDashboard = () => {
       {/* Message d'erreur */}
       {error && (
         <div className="card bg-red-50 border border-red-200">
-          <p className="text-red-700">⚠️ {error}</p>
+          <p className="text-red-700">️ {error}</p>
         </div>
       )}
 
@@ -325,7 +325,7 @@ const TalentsDashboard = () => {
         </div>
       ) : talents.length === 0 ? (
         <div className="card text-center py-12">
-          <div className="text-6xl mb-4">🔍</div>
+          <div className="text-6xl mb-4"></div>
           <p className="text-neutral text-lg mb-2 font-semibold">
             Aucun talent disponible
           </p>
@@ -471,7 +471,7 @@ const TalentsDashboard = () => {
       {!loading && talents.length > 0 && (
         <div className="card bg-blue-50 border border-blue-200">
           <div className="flex items-start gap-3">
-            <span className="text-2xl">💡</span>
+            <span className="text-2xl"></span>
             <div>
               <p className="font-semibold text-primary mb-1">Comment ça marche ?</p>
               <p className="text-sm text-neutral">
@@ -482,7 +482,7 @@ const TalentsDashboard = () => {
         </div>
       )}
 
-      {/* ✅ Modal de contact */}
+      {/*  Modal de contact */}
       {showContactModal && selectedTalent && (
         <ContactTalentModal
           talent={selectedTalent}
@@ -493,7 +493,7 @@ const TalentsDashboard = () => {
   );
 };
 
-// ✅ Modal de contact CORRIGÉ
+//  Modal de contact CORRIGÉ
 const ContactTalentModal = ({ talent, onClose }) => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -501,7 +501,7 @@ const ContactTalentModal = ({ talent, onClose }) => {
   const [success, setSuccess] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
 
-  // ✅ Récupérer les infos de l'utilisateur connecté
+  //  Récupérer les infos de l'utilisateur connecté
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     setUserInfo(user);
@@ -513,24 +513,24 @@ const ContactTalentModal = ({ talent, onClose }) => {
     setError('');
 
     try {
-      // ✅ CORRECTION - Payload avec les bons champs
+      //  CORRECTION - Payload avec les bons champs
       const payload = {
   talentId: talent._id,
   recruteurNom: userInfo?.nom || 'Non renseigné',
   recruteurEmail: userInfo?.email || '',
   entreprise: userInfo?.nom || 'Non renseigné',
-  message: message || 'Je suis intéressé par ce profil et souhaite en discuter.', // ✅ 56 caractères
+  message: message || 'Je suis intéressé par ce profil et souhaite en discuter.', //  56 caractères
 };
 
         if (userInfo?.telephone && userInfo.telephone.trim() !== '') {
     payload.recruteurTel = userInfo.telephone;
   }
 
-      console.log('📤 Payload envoyé:', payload);
+      console.log(' Payload envoyé:', payload);
 
       const response = await api.post('/talents/contact', payload);
 
-      console.log('✅ Réponse:', response.data);
+      console.log(' Réponse:', response.data);
 
       setSuccess(true);
 
@@ -539,7 +539,7 @@ const ContactTalentModal = ({ talent, onClose }) => {
         onClose();
       }, 2000);
     } catch (err) {
-      console.error('❌ Erreur contact:', err.response?.data || err.message);
+      console.error(' Erreur contact:', err.response?.data || err.message);
       setError(err.response?.data?.message || 'Erreur lors de l\'envoi de la demande');
     } finally {
       setLoading(false);
@@ -584,7 +584,7 @@ const ContactTalentModal = ({ talent, onClose }) => {
               </div>
             )}
 
-            {/* ✅ Affichage des infos de l'entreprise (CORRIGÉ) */}
+            {/*  Affichage des infos de l'entreprise (CORRIGÉ) */}
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
               <h3 className="font-semibold text-primary mb-3 flex items-center gap-2">
                 <FaUser />
@@ -612,11 +612,11 @@ const ContactTalentModal = ({ talent, onClose }) => {
                 </div>
               </div>
               <p className="text-xs text-blue-600 mt-2">
-                💡 Pour ajouter un numéro de téléphone, mettez à jour votre profil
+                 Pour ajouter un numéro de téléphone, mettez à jour votre profil
               </p>
             </div>
 
-            {/* ✅ Champ message (optionnel) */}
+            {/*  Champ message (optionnel) */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Message (optionnel)
@@ -636,7 +636,7 @@ const ContactTalentModal = ({ talent, onClose }) => {
             {/* Info */}
             <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-sm text-blue-800">
-                💡 <strong>Prochaines étapes :</strong> Notre équipe vous recontactera sous 24-48h avec le CV complet et les coordonnées directes du talent pour organiser un entretien.
+                 <strong>Prochaines étapes :</strong> Notre équipe vous recontactera sous 24-48h avec le CV complet et les coordonnées directes du talent pour organiser un entretien.
               </p>
             </div>
 

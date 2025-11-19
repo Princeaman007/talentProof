@@ -81,7 +81,7 @@ export const generalContactNotificationTemplate = (contactInfo) => {
 <body>
   <div class="container">
     <div class="header">
-      <div class="logo">✓ TalentProof</div>
+      <div class="logo"> TalentProof</div>
     </div>
     <div class="content">
       ${content}
@@ -103,10 +103,10 @@ export const generalContactNotificationTemplate = (contactInfo) => {
 `;
 
   const content = `
-    <h1>📧 Nouveau message depuis le formulaire de contact</h1>
+    <h1> Nouveau message depuis le formulaire de contact</h1>
     <p><strong>Une personne souhaite entrer en contact avec TalentProof.</strong></p>
     
-    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;">👤 Informations de contact</h2>
+    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;"> Informations de contact</h2>
     <table>
       <tr>
         <td style="width: 35%;"><strong>Nom complet :</strong></td>
@@ -143,12 +143,12 @@ export const generalContactNotificationTemplate = (contactInfo) => {
     </table>
 
     <div class="highlight" style="margin-top: 30px;">
-      <strong>💬 Message :</strong><br><br>
+      <strong> Message :</strong><br><br>
       ${contactInfo.message.replace(/\n/g, '<br>')}
     </div>
 
     <div style="margin-top: 30px; padding: 20px; background-color: #f1f5f9; border-radius: 8px;">
-      <strong>📋 Actions suggérées :</strong>
+      <strong> Actions suggérées :</strong>
       <ul style="margin: 10px 0; padding-left: 20px;">
         <li>Répondre dans les 24h pour un service optimal</li>
         <li>Contacter par email ou téléphone selon l'urgence</li>
@@ -245,7 +245,7 @@ export const generalContactConfirmationTemplate = (nom) => {
 <body>
   <div class="container">
     <div class="header">
-      <div class="logo">✓ TalentProof</div>
+      <div class="logo"> TalentProof</div>
     </div>
     <div class="content">
       ${content}
@@ -267,12 +267,12 @@ export const generalContactConfirmationTemplate = (nom) => {
 `;
 
   const content = `
-    <h1>Message bien reçu ! ✓</h1>
+    <h1>Message bien reçu ! </h1>
     <p>Bonjour ${nom},</p>
     <p>Merci de nous avoir contactés. Nous avons bien reçu votre message et nous vous en remercions.</p>
     
     <div class="highlight">
-      <strong>⏱️ Délai de réponse : 24-48 heures</strong><br>
+      <strong>️ Délai de réponse : 24-48 heures</strong><br>
       Notre équipe va analyser votre demande et vous recontacter dans les plus brefs délais.
     </div>
 
@@ -286,7 +286,7 @@ export const generalContactConfirmationTemplate = (nom) => {
     </ul>
 
     <div class="contact-box">
-      <p style="margin: 0;"><strong>📞 Contact direct :</strong></p>
+      <p style="margin: 0;"><strong> Contact direct :</strong></p>
       <p style="margin: 10px 0 0 0;">
         <a href="mailto:info@princeaman.dev">info@princeaman.dev</a><br>
         <a href="tel:+32467620878">+32 467 62 08 78</a>
@@ -294,7 +294,7 @@ export const generalContactConfirmationTemplate = (nom) => {
     </div>
 
     <p style="margin-top: 30px; font-size: 14px; color: #64748B;">
-      Nous avons hâte d'échanger avec vous ! 🚀
+      Nous avons hâte d'échanger avec vous ! 
     </p>
   `;
   

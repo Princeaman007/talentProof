@@ -92,10 +92,10 @@ const upload = multer({
 // ROUTES STATISTIQUES
 // ========================================
 
-// ✅ NOUVEAU - Stats globales avancées Phase 4
+//  NOUVEAU - Stats globales avancées Phase 4
 router.get('/stats', getAdminStats);
 
-// ✅ NOUVEAU - Évolution temporelle pour graphiques
+//  NOUVEAU - Évolution temporelle pour graphiques
 router.get('/stats/timeline', getStatsTimeline);
 
 // Ancienne route stats (peut être gardée pour compatibilité)
@@ -110,7 +110,7 @@ router.put('/talents/:id', updateTalent);
 router.delete('/talents/:id', deleteTalent);
 
 // ========================================
-// ROUTES GESTION ENTREPRISES (✅ NOUVEAU - PHASE 4)
+// ROUTES GESTION ENTREPRISES ( NOUVEAU - PHASE 4)
 // ========================================
 
 // Obtenir toutes les entreprises avec filtres
@@ -132,13 +132,13 @@ router.get('/entreprises/count', getEntreprisesCount);
 // ROUTES GESTION DEMANDES DE CONTACT
 // ========================================
 
-// ✅ PHASE 4 - Route avancée avec filtres et pagination
+//  PHASE 4 - Route avancée avec filtres et pagination
 router.get('/contact-requests', getAllContactRequestsPhase4);
 
-// ✅ PHASE 4 - Changer statut (nouveau/traité)
+//  PHASE 4 - Changer statut (nouveau/traité)
 router.put('/contact-requests/:id/status', updateContactRequestStatusPhase4);
 
-// ✅ PHASE 4 - Supprimer une demande
+//  PHASE 4 - Supprimer une demande
 router.delete('/contact-requests/:id', deleteContactRequest);
 
 // Ancienne route (compatibilité si besoin)

@@ -69,7 +69,7 @@ const ConfirmEmail = () => {
 
           {/* Titre */}
           <h2 className="text-2xl font-bold text-primary mb-4">
-            🎉 Email confirmé !
+             Email confirmé !
           </h2>
 
           {/* Message */}
@@ -79,7 +79,7 @@ const ConfirmEmail = () => {
 
           {/* Info */}
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 text-left">
-            <h3 className="font-semibold text-green-800 mb-2">✅ Votre compte est activé</h3>
+            <h3 className="font-semibold text-green-800 mb-2"> Votre compte est activé</h3>
             <p className="text-sm text-green-700">
               Vous pouvez maintenant vous connecter et accéder à toutes les fonctionnalités de TalentProof.
             </p>
@@ -109,7 +109,7 @@ const ConfirmEmail = () => {
 
         {/* Titre */}
         <h2 className="text-2xl font-bold text-red-600 mb-4">
-          ❌ Erreur de confirmation
+           Erreur de confirmation
         </h2>
 
         {/* Message d'erreur */}

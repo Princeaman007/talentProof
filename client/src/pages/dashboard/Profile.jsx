@@ -349,7 +349,7 @@ const Profile = () => {
       {/* Info */}
       <div className="card bg-blue-50 border border-blue-200 max-w-3xl">
         <p className="text-sm text-neutral">
-          💡 <strong>Astuce :</strong> Vos informations sont utilisées pour personnaliser
+           <strong>Astuce :</strong> Vos informations sont utilisées pour personnaliser
           votre expérience et faciliter les échanges avec les talents.
         </p>
       </div>

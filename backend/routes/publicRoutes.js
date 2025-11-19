@@ -38,7 +38,7 @@ router.get('/talents/count', publicStatsLimiter, async (req, res) => {
   }
 });
 
-// ✅ NOUVELLE ROUTE : Statistiques complètes avec taux de succès
+//  NOUVELLE ROUTE : Statistiques complètes avec taux de succès
 router.get('/stats', publicStatsLimiter, async (req, res) => {
   try {
     const [entreprisesCount, talentsCount, totalDemandes, demandesTraitees] = await Promise.all([

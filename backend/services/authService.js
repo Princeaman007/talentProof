@@ -1,8 +1,8 @@
 /**
  * Service d'authentification
- * ✅ Logique métier centralisée
- * ✅ Réutilisable dans les contrôleurs
- * ✅ Séparation concerns
+ *  Logique métier centralisée
+ *  Réutilisable dans les contrôleurs
+ *  Séparation concerns
  */
 import Company from '../models/Company.js';
 import {

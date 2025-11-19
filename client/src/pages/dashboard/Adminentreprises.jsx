@@ -105,7 +105,7 @@ const AdminEntreprises = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-primary">🏢 Gestion des Entreprises</h1>
+        <h1 className="text-3xl font-bold text-primary"> Gestion des Entreprises</h1>
         <p className="text-neutral mt-2">
           Gérez les entreprises inscrites sur TalentProof
         </p>

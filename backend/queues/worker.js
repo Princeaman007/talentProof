@@ -9,7 +9,7 @@ let worker = null;
 
 const startWorker = () => {
   if (!connection) {
-    console.log('🔁 Email worker not started (no REDIS_URL configured)');
+    console.log(' Email worker not started (no REDIS_URL configured)');
     return;
   }
 
@@ -25,33 +25,33 @@ const startWorker = () => {
   );
 
   worker.on('completed', (job) => {
-    console.log(`📧 Email job ${job.id} completed`);
+    console.log(` Email job ${job.id} completed`);
   });
 
   worker.on('failed', (job, err) => {
-    console.error(`❌ Email job ${job.id} failed:`, err?.message || err);
+    console.error(` Email job ${job.id} failed:`, err?.message || err);
   });
 
-  console.log('🔁 Email worker started (connected to Redis)');
+  console.log(' Email worker started (connected to Redis)');
 };
 
 startWorker();
 
 // Graceful shutdown
 const shutdown = async (signal) => {
-  console.log(`🔁 Email worker shutting down (${signal})`);
+  console.log(` Email worker shutting down (${signal})`);
   try {
     if (worker) {
       await worker.close();
-      console.log('🔁 Worker closed');
+      console.log(' Worker closed');
     }
     if (connection) {
       await connection.quit();
-      console.log('🔁 Redis connection closed');
+      console.log(' Redis connection closed');
     }
     process.exit(0);
   } catch (err) {
-    console.error('🔁 Error during worker shutdown', err);
+    console.error(' Error during worker shutdown', err);
     process.exit(1);
   }
 };

@@ -23,7 +23,7 @@ const EmailConfirmation = () => {
 
         {/* Info */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left">
-          <h3 className="font-semibold text-primary mb-2">📬 Que faire maintenant ?</h3>
+          <h3 className="font-semibold text-primary mb-2"> Que faire maintenant ?</h3>
           <ul className="text-sm text-neutral space-y-1">
             <li>1. Ouvrez votre boîte mail</li>
             <li>2. Cherchez l'email de TalentProof</li>
@@ -34,7 +34,7 @@ const EmailConfirmation = () => {
 
         {/* Note */}
         <p className="text-sm text-neutral mb-6">
-          💡 <strong>Note :</strong> En mode développement, le compte est activé automatiquement.
+           <strong>Note :</strong> En mode développement, le compte est activé automatiquement.
           Vous pouvez vous connecter directement.
         </p>
 

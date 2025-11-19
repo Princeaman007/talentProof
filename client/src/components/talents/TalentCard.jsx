@@ -82,7 +82,7 @@ const TalentCard = ({ talent, onContact }) => {
 
   return (
     <div className="card group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl relative">
-      {/* ✅ NOUVEAU - Bouton Favoris en haut à droite */}
+      {/*  NOUVEAU - Bouton Favoris en haut à droite */}
       {isAuthenticated && (
         <button
           onClick={handleToggleFavorite}

@@ -19,14 +19,14 @@ const createTestTalentDay = async () => {
       throw new Error('MONGODB_URI not found in .env file');
     }
     await mongoose.connect(mongoUri);
-    console.log('✅ MongoDB connecté');
+    console.log(' MongoDB connecté');
 
     // Vérifier si des TalentDays existent déjà
     const existingCount = await TalentDay.countDocuments();
-    console.log(`📊 TalentDays existants: ${existingCount}`);
+    console.log(` TalentDays existants: ${existingCount}`);
 
     if (existingCount > 0) {
-      console.log('⚠️ Des TalentDays existent déjà. Voulez-vous continuer ?');
+      console.log('️ Des TalentDays existent déjà. Voulez-vous continuer ?');
       // Continue anyway for testing
     }
 
@@ -94,11 +94,11 @@ const createTestTalentDay = async () => {
 
     // Insérer les TalentDays
     const created = await TalentDay.insertMany(talentDays);
-    console.log(`✅ ${created.length} TalentDays créés avec succès`);
+    console.log(` ${created.length} TalentDays créés avec succès`);
 
     // Afficher les IDs créés
     created.forEach((td, index) => {
-      console.log(`\n📅 TalentDay ${index + 1}:`);
+      console.log(`\n TalentDay ${index + 1}:`);
       console.log(`   ID: ${td._id}`);
       console.log(`   Titre: ${td.titre}`);
       console.log(`   Date: ${td.date.toLocaleDateString('fr-FR')}`);
@@ -108,10 +108,10 @@ const createTestTalentDay = async () => {
       console.log(`   Technologies: ${td.technologies.join(', ')}`);
     });
 
-    console.log('\n✅ Script terminé avec succès');
+    console.log('\n Script terminé avec succès');
     process.exit(0);
   } catch (error) {
-    console.error('❌ Erreur:', error.message);
+    console.error(' Erreur:', error.message);
     process.exit(1);
   }
 };

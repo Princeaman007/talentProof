@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
     
     // Envoyer email de notification à Prince
     const emailContent = `
-      <h2>🎯 Nouvelle Demande de Devis - TalentProof</h2>
+      <h2> Nouvelle Demande de Devis - TalentProof</h2>
       
       <h3>Informations Client</h3>
       <ul>
@@ -107,8 +107,8 @@ router.post('/', async (req, res) => {
       
       <p>Si vous avez des questions, n'hésitez pas à nous contacter :</p>
       <ul>
-        <li>📧 Email: info@princeaman.dev</li>
-        <li>📱 Téléphone: +32 467 62 08 78</li>
+        <li> Email: info@princeaman.dev</li>
+        <li> Téléphone: +32 467 62 08 78</li>
       </ul>
       
       <p>À très bientôt,<br>

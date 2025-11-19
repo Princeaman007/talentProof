@@ -1,8 +1,8 @@
 /**
  * Utilitaire de pagination sécurisée
- * ✅ Limites max enforced
- * ✅ Validation des params
- * ✅ Réutilisable partout
+ *  Limites max enforced
+ *  Validation des params
+ *  Réutilisable partout
  */
 
 /**
@@ -23,7 +23,7 @@ export const getPaginationParams = (
   // Validation et sécurité
   if (page < 1) page = 1;
   if (limit < 1) limit = defaultLimit;
-  if (limit > maxLimit) limit = maxLimit; // 🔒 Enforce max limit
+  if (limit > maxLimit) limit = maxLimit; //  Enforce max limit
 
   const skip = (page - 1) * limit;
 
@@ -60,7 +60,7 @@ export const buildPaginatedResponse = (items, totalCount, paginationParams) => {
 
 /**
  * Middleware pour ajouter les paramètres de pagination à req
- * ✅ À utiliser dans les routes nécessitant pagination
+ *  À utiliser dans les routes nécessitant pagination
  */
 export const paginationMiddleware = (defaultLimit = 20, maxLimit = 100) => {
   return (req, res, next) => {

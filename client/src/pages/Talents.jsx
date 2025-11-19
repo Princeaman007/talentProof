@@ -17,7 +17,7 @@ const Talents = () => {
   const [showFilters, setShowFilters] = useState(true);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
-  // ✅ Vérifier si l'utilisateur est connecté
+  //  Vérifier si l'utilisateur est connecté
   const isAuthenticated = () => {
     const token = localStorage.getItem('token');
     return !!token;
@@ -64,7 +64,7 @@ const Talents = () => {
     setSelectedTechs(techs);
   };
 
-  // ✅ MODIFIÉ - Vérifier l'authentification avant de contacter
+  //  MODIFIÉ - Vérifier l'authentification avant de contacter
   const handleContact = (talent) => {
     if (isAuthenticated()) {
       // Si connecté, ouvrir le modal de contact
@@ -75,12 +75,12 @@ const Talents = () => {
     }
   };
 
-  // ✅ Rediriger vers la page de connexion
+  //  Rediriger vers la page de connexion
   const handleLogin = () => {
     navigate('/login');
   };
 
-  // ✅ Rediriger vers la page d'inscription
+  //  Rediriger vers la page d'inscription
   const handleRegister = () => {
     navigate('/register');
   };
@@ -110,11 +110,11 @@ const Talents = () => {
             pratiques sans IA.
           </p>
           
-          {/* ✅ AJOUT - Message pour les non-connectés */}
+          {/*  AJOUT - Message pour les non-connectés */}
           {!isAuthenticated() && (
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg max-w-2xl mx-auto">
               <p className="text-sm text-blue-800">
-                💡 <strong>Entreprise ?</strong> Connectez-vous pour contacter nos talents et accéder à leurs profils complets.
+                 <strong>Entreprise ?</strong> Connectez-vous pour contacter nos talents et accéder à leurs profils complets.
               </p>
               <div className="flex gap-3 justify-center mt-3">
                 <button onClick={handleLogin} className="btn-primary text-sm px-6 py-2">
@@ -196,7 +196,7 @@ const Talents = () => {
         </div>
       </div>
 
-      {/* ✅ Modal de connexion requis */}
+      {/*  Modal de connexion requis */}
       {showLoginPrompt && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-md w-full p-8 text-center">
@@ -225,7 +225,7 @@ const Talents = () => {
         </div>
       )}
 
-      {/* ✅ Modal Contact - Seulement si authentifié */}
+      {/*  Modal Contact - Seulement si authentifié */}
       {selectedTalent && isAuthenticated() && (
         <ContactTalentModal talent={selectedTalent} onClose={() => setSelectedTalent(null)} />
       )}

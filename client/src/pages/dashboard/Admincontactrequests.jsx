@@ -92,7 +92,7 @@ const AdminContactRequests = () => {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-primary">
-          📬 Gestion des Demandes de Contact
+           Gestion des Demandes de Contact
         </h1>
         <p className="text-neutral mt-2">
           Gérez les demandes de contact des entreprises pour les talents
@@ -223,7 +223,7 @@ const AdminContactRequests = () => {
                       <span>{demande.recruteurEmail}</span>
                     </div>
                     <div className="text-neutral-dark">
-                      📞 {demande.recruteurTel}
+                       {demande.recruteurTel}
                     </div>
                   </div>
 

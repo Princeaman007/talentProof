@@ -260,7 +260,7 @@ router.post('/:id/register', async (req, res) => {
       dateInscription: new Date(),
     };
     
-    // ✅ ATOMIC UPDATE - Use MongoDB atomic operators to avoid race conditions
+    //  ATOMIC UPDATE - Use MongoDB atomic operators to avoid race conditions
     const updatedTalentDay = await TalentDay.findByIdAndUpdate(
       req.params.id,
       {
@@ -276,17 +276,17 @@ router.post('/:id/register', async (req, res) => {
       await updatedTalentDay.save();
     }
     
-    // ✅ ENVOYER L'EMAIL DE CONFIRMATION
+    //  ENVOYER L'EMAIL DE CONFIRMATION
     try {
       const emailHtml = talentDayConfirmationTemplate(inscriptionData, updatedTalentDay);
       await sendEmail({
         to: inscriptionData.email,
-        subject: `✅ Inscription confirmée - ${updatedTalentDay.titre}`,
+        subject: ` Inscription confirmée - ${updatedTalentDay.titre}`,
         html: emailHtml,
       });
-      console.log('✅ Email de confirmation envoyé à:', inscriptionData.email);
+      console.log(' Email de confirmation envoyé à:', inscriptionData.email);
     } catch (emailError) {
-      console.error('❌ Erreur envoi email:', emailError);
+      console.error(' Erreur envoi email:', emailError);
       // Ne pas bloquer l'inscription si l'email échoue
     }
     
@@ -630,7 +630,7 @@ router.put('/:id/inscriptions/:inscriptionIndex', protect, adminOnly, async (req
         let emailHtml = '';
         
         if (statut === 'accepte') {
-          emailSubject = `✅ Félicitations ! Vous êtes accepté(e) - ${talentDay.titre}`;
+          emailSubject = ` Félicitations ! Vous êtes accepté(e) - ${talentDay.titre}`;
           emailHtml = talentDayAcceptationTemplate(inscription, talentDay);
         } else if (statut === 'refuse') {
           emailSubject = `Réponse à votre candidature - ${talentDay.titre}`;
@@ -643,10 +643,10 @@ router.put('/:id/inscriptions/:inscriptionIndex', protect, adminOnly, async (req
           html: emailHtml,
         });
         
-        console.log(`✅ Email de ${statut} envoyé à:`, inscription.email);
+        console.log(` Email de ${statut} envoyé à:`, inscription.email);
         emailEnvoye = true;
       } catch (emailError) {
-        console.error('❌ Erreur envoi email:', emailError);
+        console.error(' Erreur envoi email:', emailError);
         // Ne pas bloquer la mise à jour si l'email échoue
       }
     }
@@ -660,13 +660,13 @@ router.put('/:id/inscriptions/:inscriptionIndex', protect, adminOnly, async (req
     
     let message = '';
     if (statut === 'accepte') {
-      message = `✅ Vous avez accepté ${inscription.nom} pour le Talent Day "${talentDay.titre}" du ${dateEvent}`;
+      message = ` Vous avez accepté ${inscription.nom} pour le Talent Day "${talentDay.titre}" du ${dateEvent}`;
     } else if (statut === 'refuse') {
-      message = `❌ Vous avez refusé ${inscription.nom} pour le Talent Day "${talentDay.titre}"`;
+      message = ` Vous avez refusé ${inscription.nom} pour le Talent Day "${talentDay.titre}"`;
     } else if (statut === 'liste-attente') {
-      message = `📋 ${inscription.nom} a été placé(e) en liste d'attente pour "${talentDay.titre}"`;
+      message = ` ${inscription.nom} a été placé(e) en liste d'attente pour "${talentDay.titre}"`;
     } else {
-      message = `⏳ ${inscription.nom} est maintenant en attente pour "${talentDay.titre}"`;
+      message = ` ${inscription.nom} est maintenant en attente pour "${talentDay.titre}"`;
     }
     
     if (emailEnvoye) {

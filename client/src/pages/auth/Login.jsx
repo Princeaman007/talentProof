@@ -26,32 +26,32 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // ✅ Protection: Empêcher les soumissions multiples
+    //  Protection: Empêcher les soumissions multiples
     if (loading) return;
     
     setError('');
     setLoading(true);
 
     try {
-      console.log('🔐 Tentative de connexion...', formData.email);
+      console.log(' Tentative de connexion...', formData.email);
       const result = await login(formData.email, formData.password);
-      console.log('📥 Résultat login:', result);
+      console.log(' Résultat login:', result);
 
       if (result.success) {
-        console.log('✅ Login réussi, navigation vers /dashboard');
+        console.log(' Login réussi, navigation vers /dashboard');
         // Vérifier que le token est bien dans localStorage
         const savedToken = localStorage.getItem('token');
         const savedUser = localStorage.getItem('user');
-        console.log('💾 Token sauvegardé:', savedToken ? 'OUI' : 'NON');
-        console.log('💾 User sauvegardé:', savedUser ? 'OUI' : 'NON');
+        console.log(' Token sauvegardé:', savedToken ? 'OUI' : 'NON');
+        console.log(' User sauvegardé:', savedUser ? 'OUI' : 'NON');
         
         navigate('/dashboard');
       } else {
-        console.error('❌ Login échoué:', result.message);
+        console.error(' Login échoué:', result.message);
         setError(result.message);
       }
     } catch (err) {
-      console.error('❌ Erreur inattendue:', err);
+      console.error(' Erreur inattendue:', err);
       setError('Une erreur inattendue s\'est produite');
     } finally {
       setLoading(false);

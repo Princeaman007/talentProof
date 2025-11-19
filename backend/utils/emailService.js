@@ -8,7 +8,7 @@ const createTransporter = () => {
   const emailPort = parseInt(process.env.EMAIL_PORT);
   const isSSL = emailPort === 465;
   
-  console.log('📧 Configuration Email:', {
+  console.log(' Configuration Email:', {
     host: process.env.EMAIL_HOST,
     port: emailPort,
     secure: isSSL,
@@ -25,10 +25,10 @@ const createTransporter = () => {
       pass: process.env.EMAIL_PASS,
     },
     tls: {
-      rejectUnauthorized: false, // ✅ Important pour éviter les erreurs de certificat
-      minVersion: 'TLSv1.2', // ✅ Forcer TLS 1.2 minimum
+      rejectUnauthorized: false, //  Important pour éviter les erreurs de certificat
+      minVersion: 'TLSv1.2', //  Forcer TLS 1.2 minimum
     },
-    // ✨ OPTIMISÉ : Timeouts plus longs pour Render
+    //  OPTIMISÉ : Timeouts plus longs pour Render
     connectionTimeout: 60000, // 60 secondes (au lieu de 10s)
     greetingTimeout: 30000, // 30 secondes
     socketTimeout: 60000, // 60 secondes
@@ -53,21 +53,21 @@ const createTransporter = () => {
 export const sendEmail = async ({ to, subject, html, text }) => {
   // Mode développement - skip emails
   if (process.env.SKIP_EMAILS === 'true') {
-    console.log('⚠️ Mode dev: Email non envoyé');
-    console.log('📧 Destinataire:', to);
-    console.log('📝 Sujet:', subject);
+    console.log('️ Mode dev: Email non envoyé');
+    console.log(' Destinataire:', to);
+    console.log(' Sujet:', subject);
     return { success: true, messageId: 'dev-mode-skipped' };
   }
 
   try {
     const transporter = createTransporter();
 
-    // ✅ Vérifier la connexion avant d'envoyer (optionnel mais recommandé)
+    //  Vérifier la connexion avant d'envoyer (optionnel mais recommandé)
     try {
       await transporter.verify();
-      console.log('✅ Serveur email prêt');
+      console.log(' Serveur email prêt');
     } catch (verifyError) {
-      console.warn('⚠️ Vérification du serveur email échouée, tentative d\'envoi quand même...');
+      console.warn('️ Vérification du serveur email échouée, tentative d\'envoi quand même...');
     }
 
     const mailOptions = {
@@ -80,10 +80,10 @@ export const sendEmail = async ({ to, subject, html, text }) => {
 
     const info = await transporter.sendMail(mailOptions);
     
-    console.log('✅ Email envoyé avec succès:', info.messageId);
+    console.log(' Email envoyé avec succès:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('❌ Erreur envoi email:', error);
+    console.error(' Erreur envoi email:', error);
     console.error('Détails:', {
       code: error.code,
       command: error.command,
@@ -177,7 +177,7 @@ const baseTemplate = (content) => `
 <body>
   <div class="container">
     <div class="header">
-      <div class="logo">✓ TalentProof</div>
+      <div class="logo"> TalentProof</div>
     </div>
     <div class="content">
       ${content}
@@ -211,7 +211,7 @@ const baseTemplate = (content) => `
 
 const confirmationEmailTemplateOLD = (companyName, confirmationLink) => {
   const content = `
-    <h1>Bienvenue sur TalentProof, ${companyName} ! 🎉</h1>
+    <h1>Bienvenue sur TalentProof, ${companyName} ! </h1>
     <p>Merci de vous être inscrit sur TalentProof, la plateforme de recrutement des meilleurs talents tech juniors.</p>
     <p>Pour activer votre compte et accéder à notre catalogue de talents, veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous :</p>
     <div style="text-align: center;">
@@ -222,7 +222,7 @@ const confirmationEmailTemplateOLD = (companyName, confirmationLink) => {
       <a href="${confirmationLink}" style="color: #1E3A8A; word-break: break-all;">${confirmationLink}</a>
     </p>
     <div class="highlight">
-      <strong>⏰ Ce lien expire dans 24 heures.</strong><br>
+      <strong> Ce lien expire dans 24 heures.</strong><br>
       Si vous n'avez pas créé de compte sur TalentProof, vous pouvez ignorer cet email.
     </div>
   `;
@@ -245,7 +245,7 @@ const resetPasswordTemplateOLD = (companyName, resetLink) => {
       <a href="${resetLink}" style="color: #1E3A8A; word-break: break-all;">${resetLink}</a>
     </p>
     <div class="highlight">
-      <strong>⏰ Ce lien expire dans 1 heure.</strong><br>
+      <strong> Ce lien expire dans 1 heure.</strong><br>
       Si vous n'avez pas demandé cette réinitialisation, ignorez cet email. Votre mot de passe restera inchangé.
     </div>
     <p style="margin-top: 30px; font-size: 14px; color: #64748B;">
@@ -260,10 +260,10 @@ const resetPasswordTemplateOLD = (companyName, resetLink) => {
  */
 const contactNotificationTemplateOLD = (talentInfo, recruteurInfo) => {
   const content = `
-    <h1>🎯 Nouvelle demande de contact talent</h1>
+    <h1> Nouvelle demande de contact talent</h1>
     <p><strong>Un recruteur souhaite entrer en contact avec un de vos talents validés.</strong></p>
     
-    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;">👤 Informations du talent</h2>
+    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;"> Informations du talent</h2>
     <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
       <tr>
         <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Prénom :</strong></td>
@@ -279,7 +279,7 @@ const contactNotificationTemplateOLD = (talentInfo, recruteurInfo) => {
       </tr>
     </table>
 
-    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;">🏢 Informations du recruteur</h2>
+    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;"> Informations du recruteur</h2>
     <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
       <tr>
         <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Nom :</strong></td>
@@ -306,12 +306,12 @@ const contactNotificationTemplateOLD = (talentInfo, recruteurInfo) => {
     </table>
 
     <div class="highlight" style="margin-top: 30px;">
-      <strong>💬 Message du recruteur :</strong><br><br>
+      <strong> Message du recruteur :</strong><br><br>
       ${recruteurInfo.message.replace(/\n/g, '<br>')}
     </div>
 
     <div style="margin-top: 30px; padding: 20px; background-color: #f1f5f9; border-radius: 8px;">
-      <strong>📋 Actions à faire :</strong>
+      <strong> Actions à faire :</strong>
       <ol style="margin: 10px 0;">
         <li>Contacter le recruteur par email ou téléphone</li>
         <li>Envoyer le CV complet du talent</li>
@@ -327,12 +327,12 @@ const contactNotificationTemplateOLD = (talentInfo, recruteurInfo) => {
  */
 const contactConfirmationTemplateOLD = (recruteurNom, talentPrenom) => {
   const content = `
-    <h1>Demande bien reçue ! ✓</h1>
+    <h1>Demande bien reçue ! </h1>
     <p>Bonjour ${recruteurNom},</p>
     <p>Merci pour votre intérêt pour <strong>${talentPrenom}</strong>, l'un de nos talents validés TalentProof.</p>
     <p>Votre demande a bien été reçue et nous allons la traiter dans les plus brefs délais.</p>
     <div class="highlight">
-      <strong>⏱️ Délai de réponse : 24-48 heures</strong><br>
+      <strong>️ Délai de réponse : 24-48 heures</strong><br>
       Nous vous recontacterons rapidement avec les informations complètes sur ce talent.
     </div>
     <p>Notre équipe va :</p>
@@ -352,10 +352,10 @@ const contactConfirmationTemplateOLD = (recruteurNom, talentPrenom) => {
  */
 const devisNotificationTemplateOLD = (devisInfo) => {
   const content = `
-    <h1>📋 Nouvelle demande de devis</h1>
+    <h1> Nouvelle demande de devis</h1>
     <p><strong>Un client souhaite obtenir un devis pour son projet.</strong></p>
     
-    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;">👤 Informations client</h2>
+    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;"> Informations client</h2>
     <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
       <tr>
         <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Nom :</strong></td>
@@ -381,7 +381,7 @@ const devisNotificationTemplateOLD = (devisInfo) => {
       ` : ''}
     </table>
 
-    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;">🎯 Détails du projet</h2>
+    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;"> Détails du projet</h2>
     <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
       <tr>
         <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Type :</strong></td>
@@ -402,12 +402,12 @@ const devisNotificationTemplateOLD = (devisInfo) => {
     </table>
 
     <div class="highlight" style="margin-top: 30px;">
-      <strong>💬 Description du projet :</strong><br><br>
+      <strong> Description du projet :</strong><br><br>
       ${devisInfo.description.replace(/\n/g, '<br>')}
     </div>
 
     <div style="margin-top: 30px; padding: 20px; background-color: #f1f5f9; border-radius: 8px;">
-      <strong>📋 Actions à faire :</strong>
+      <strong> Actions à faire :</strong>
       <ol style="margin: 10px 0;">
         <li>Contacter le client dans les 24h</li>
         <li>Préparer un devis détaillé</li>
@@ -423,11 +423,11 @@ const devisNotificationTemplateOLD = (devisInfo) => {
  */
 const devisConfirmationTemplateOLD = (clientNom) => {
   const content = `
-    <h1>Demande de devis bien reçue ! ✓</h1>
+    <h1>Demande de devis bien reçue ! </h1>
     <p>Bonjour ${clientNom},</p>
     <p>Merci pour votre demande de devis sur TalentProof. Nous avons bien reçu les détails de votre projet.</p>
     <div class="highlight">
-      <strong>⏱️ Délai de réponse : 24-48 heures</strong><br>
+      <strong>️ Délai de réponse : 24-48 heures</strong><br>
       Notre équipe va analyser votre demande et vous envoyer un devis personnalisé.
     </div>
     <p>Voici ce qui va se passer ensuite :</p>
@@ -442,7 +442,7 @@ const devisConfirmationTemplateOLD = (clientNom) => {
   return baseTemplate(content);
 };
 
-// ✨ Import des templates professionnels avec logo TalentProof
+//  Import des templates professionnels avec logo TalentProof
 export { 
   talentDayConfirmationTemplate, 
   companyTalentDayRegistrationTemplate,

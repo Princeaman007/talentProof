@@ -41,13 +41,13 @@ const DevisForm = () => {
   }
 
   const typesProjet = [
-    { value: 'site-vitrine', label: 'Site Vitrine', icon: '🌐', description: 'Site de présentation' },
-    { value: 'site-e-commerce', label: 'Site E-commerce', icon: '🛒', description: 'Boutique en ligne' },
-    { value: 'application-mobile', label: 'Application Mobile', icon: '📱', description: 'App iOS/Android' },
-    { value: 'application-web', label: 'Application Web', icon: '💻', description: 'Plateforme web' },
-    { value: 'refonte-site', label: 'Refonte de Site', icon: '🔄', description: 'Moderniser un site' },
-    { value: 'maintenance', label: 'Maintenance', icon: '🔧', description: 'Support technique' },
-    { value: 'autre', label: 'Autre', icon: '✨', description: 'Projet spécifique' }
+    { value: 'site-vitrine', label: 'Site Vitrine', icon: '', description: 'Site de présentation' },
+    { value: 'site-e-commerce', label: 'Site E-commerce', icon: '', description: 'Boutique en ligne' },
+    { value: 'application-mobile', label: 'Application Mobile', icon: '', description: 'App iOS/Android' },
+    { value: 'application-web', label: 'Application Web', icon: '', description: 'Plateforme web' },
+    { value: 'refonte-site', label: 'Refonte de Site', icon: '', description: 'Moderniser un site' },
+    { value: 'maintenance', label: 'Maintenance', icon: '', description: 'Support technique' },
+    { value: 'autre', label: 'Autre', icon: '', description: 'Projet spécifique' }
   ];
 
   const fonctionnalitesOptions = [
@@ -75,11 +75,11 @@ const DevisForm = () => {
   ];
 
   const delaiOptions = [
-    { value: 'urgent', label: 'Urgent (< 1 mois)', icon: '🔥' },
-    { value: 'court-terme', label: 'Court terme (1-2 mois)', icon: '⚡' },
-    { value: 'moyen-terme', label: 'Moyen terme (3-6 mois)', icon: '📅' },
-    { value: 'long-terme', label: 'Long terme (> 6 mois)', icon: '🎯' },
-    { value: 'flexible', label: 'Flexible', icon: '🤝' }
+    { value: 'urgent', label: 'Urgent (< 1 mois)', icon: '' },
+    { value: 'court-terme', label: 'Court terme (1-2 mois)', icon: '' },
+    { value: 'moyen-terme', label: 'Moyen terme (3-6 mois)', icon: '' },
+    { value: 'long-terme', label: 'Long terme (> 6 mois)', icon: '' },
+    { value: 'flexible', label: 'Flexible', icon: '' }
   ];
 
   const handleChange = (e) => {
@@ -488,7 +488,7 @@ const DevisForm = () => {
                   disabled={loading}
                   className="bg-secondary text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Envoi en cours...' : 'Envoyer la demande 🚀'}
+                  {loading ? 'Envoi en cours...' : 'Envoyer la demande '}
                 </button>
               </div>
             </div>
@@ -500,10 +500,10 @@ const DevisForm = () => {
           <p className="mb-2">Une question ? Contactez-nous directement :</p>
           <div className="flex justify-center gap-6">
             <a href="mailto:info@princeaman.dev" className="hover:text-primary">
-              📧 info@princeaman.dev
+               info@princeaman.dev
             </a>
             <a href="tel:+32467620878" className="hover:text-primary">
-              📱 +32 467 62 08 78
+               +32 467 62 08 78
             </a>
           </div>
         </div>

@@ -61,7 +61,7 @@ const Sidebar = () => {
     },
   ];
 
-  // ✅ NOUVEAU - Menu entreprise (Phase 4)
+  //  NOUVEAU - Menu entreprise (Phase 4)
   const entrepriseMenuItems = [
     // {
     //   name: 'Mes Favoris',
@@ -83,7 +83,7 @@ const Sidebar = () => {
     // },
   ];
 
-  // ✅ MODIFIÉ - Menu admin avec nouvelles entrées Phase 4
+  //  MODIFIÉ - Menu admin avec nouvelles entrées Phase 4
   const adminMenuItems = [
     {
       name: 'Statistiques',
@@ -212,7 +212,7 @@ const Sidebar = () => {
             ))}
           </div>
 
-          {/* ✅ NOUVEAU - Menu Entreprise (Phase 4) */}
+          {/*  NOUVEAU - Menu Entreprise (Phase 4) */}
           {!isAdmin && (
             <>
               <div className="my-4">

@@ -1,7 +1,7 @@
 /**
  * Configuration Swagger/OpenAPI
- * ✅ Documentation API automatique
- * ✅ À intégrer dans server.js
+ *  Documentation API automatique
+ *  À intégrer dans server.js
  */
 import swaggerJsdoc from 'swagger-jsdoc';
 

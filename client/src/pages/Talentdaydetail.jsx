@@ -76,12 +76,12 @@ const TalentDayDetail = () => {
   // Badge de statut avec styles
   const getStatusBadge = (statut) => {
     const badges = {
-      'inscriptions-ouvertes': { text: '✅ Inscriptions ouvertes', color: 'bg-green-100 text-green-800 border-green-300' },
-      'complet': { text: '🔴 Complet', color: 'bg-red-100 text-red-800 border-red-300' },
-      'a-venir': { text: '⏰ À venir', color: 'bg-blue-100 text-blue-800 border-blue-300' },
-      'en-cours': { text: '🔴 En cours', color: 'bg-orange-100 text-orange-800 border-orange-300' },
-      'termine': { text: '✔️ Terminé', color: 'bg-gray-100 text-gray-800 border-gray-300' },
-      'annule': { text: '❌ Annulé', color: 'bg-red-100 text-red-800 border-red-300' },
+      'inscriptions-ouvertes': { text: ' Inscriptions ouvertes', color: 'bg-green-100 text-green-800 border-green-300' },
+      'complet': { text: ' Complet', color: 'bg-red-100 text-red-800 border-red-300' },
+      'a-venir': { text: ' À venir', color: 'bg-blue-100 text-blue-800 border-blue-300' },
+      'en-cours': { text: ' En cours', color: 'bg-orange-100 text-orange-800 border-orange-300' },
+      'termine': { text: '️ Terminé', color: 'bg-gray-100 text-gray-800 border-gray-300' },
+      'annule': { text: ' Annulé', color: 'bg-red-100 text-red-800 border-red-300' },
     };
     const badge = badges[statut] || badges['a-venir'];
     return <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold border ${badge.color}`}>{badge.text}</span>;
@@ -90,12 +90,12 @@ const TalentDayDetail = () => {
   // Badge de type avec emoji
   const getTypeBadge = (type) => {
     const types = {
-      'hackathon': { emoji: '💻', text: 'Hackathon', color: 'bg-purple-100 text-purple-800' },
-      'workshop': { emoji: '🎓', text: 'Workshop', color: 'bg-blue-100 text-blue-800' },
-      'challenge-code': { emoji: '🏆', text: 'Challenge Code', color: 'bg-yellow-100 text-yellow-800' },
-      'portfolio-day': { emoji: '📂', text: 'Portfolio Day', color: 'bg-indigo-100 text-indigo-800' },
-      'entretien-groupe': { emoji: '👥', text: 'Entretien Groupe', color: 'bg-green-100 text-green-800' },
-      'autre': { emoji: '🎯', text: 'Autre', color: 'bg-gray-100 text-gray-800' },
+      'hackathon': { emoji: '', text: 'Hackathon', color: 'bg-purple-100 text-purple-800' },
+      'workshop': { emoji: '', text: 'Workshop', color: 'bg-blue-100 text-blue-800' },
+      'challenge-code': { emoji: '', text: 'Challenge Code', color: 'bg-yellow-100 text-yellow-800' },
+      'portfolio-day': { emoji: '', text: 'Portfolio Day', color: 'bg-indigo-100 text-indigo-800' },
+      'entretien-groupe': { emoji: '', text: 'Entretien Groupe', color: 'bg-green-100 text-green-800' },
+      'autre': { emoji: '', text: 'Autre', color: 'bg-gray-100 text-gray-800' },
     };
     const typeInfo = types[type] || types['autre'];
     return (
@@ -109,10 +109,10 @@ const TalentDayDetail = () => {
   // Badge de niveau
   const getNiveauBadge = (niveau) => {
     const niveaux = {
-      'debutant': { text: '🟢 Débutant', color: 'bg-green-50 text-green-700' },
-      'intermediaire': { text: '🟡 Intermédiaire', color: 'bg-yellow-50 text-yellow-700' },
-      'avance': { text: '🔴 Avancé', color: 'bg-red-50 text-red-700' },
-      'expert': { text: '⚫ Expert', color: 'bg-purple-50 text-purple-700' },
+      'debutant': { text: ' Débutant', color: 'bg-green-50 text-green-700' },
+      'intermediaire': { text: ' Intermédiaire', color: 'bg-yellow-50 text-yellow-700' },
+      'avance': { text: ' Avancé', color: 'bg-red-50 text-red-700' },
+      'expert': { text: ' Expert', color: 'bg-purple-50 text-purple-700' },
     };
     const niveauInfo = niveaux[niveau] || niveaux['intermediaire'];
     return <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${niveauInfo.color}`}>{niveauInfo.text}</span>;
@@ -238,7 +238,7 @@ const TalentDayDetail = () => {
                           <h4 className="font-semibold text-gray-900 mb-1">{format.nom}</h4>
                           <p className="text-sm text-gray-600 mb-1">{format.description}</p>
                           {format.duree && (
-                            <p className="text-xs text-gray-500">⏱️ Durée : {format.duree}</p>
+                            <p className="text-xs text-gray-500">️ Durée : {format.duree}</p>
                           )}
                         </div>
                       ))}
@@ -250,13 +250,13 @@ const TalentDayDetail = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                   {talentDay.infoEntreprises.tarif && (
                     <div className="bg-white/70 rounded-lg p-4">
-                      <p className="text-sm text-gray-600 mb-1">💰 Tarif</p>
+                      <p className="text-sm text-gray-600 mb-1"> Tarif</p>
                       <p className="text-xl font-bold text-blue-700">{talentDay.infoEntreprises.tarif}</p>
                     </div>
                   )}
                   {talentDay.infoEntreprises.placesEntreprises && (
                     <div className="bg-white/70 rounded-lg p-4">
-                      <p className="text-sm text-gray-600 mb-1">🏢 Places entreprises</p>
+                      <p className="text-sm text-gray-600 mb-1"> Places entreprises</p>
                       <p className="text-xl font-bold text-blue-700">{talentDay.infoEntreprises.placesEntreprises}</p>
                     </div>
                   )}
@@ -265,7 +265,7 @@ const TalentDayDetail = () => {
                 {/* Contact */}
                 {talentDay.infoEntreprises.contact && (
                   <div className="bg-white/70 rounded-lg p-4">
-                    <h3 className="text-lg font-bold text-gray-900 mb-3">📞 Contact dédié entreprises</h3>
+                    <h3 className="text-lg font-bold text-gray-900 mb-3"> Contact dédié entreprises</h3>
                     <div className="space-y-2 text-sm">
                       {talentDay.infoEntreprises.contact.nom && (
                         <p className="flex items-center gap-2">
@@ -299,7 +299,7 @@ const TalentDayDetail = () => {
                     to="/company-registration"
                     className="block w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold py-4 px-6 rounded-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 text-center"
                   >
-                    🏢 Inscrire mon entreprise à cet événement
+                     Inscrire mon entreprise à cet événement
                   </Link>
                 </div>
               </div>
@@ -480,7 +480,7 @@ const TalentDayDetail = () => {
                               rel="noopener noreferrer"
                               className="text-xs text-primary hover:underline"
                             >
-                              🔄 Également en ligne
+                               Également en ligne
                             </a>
                           )}
                         </div>
@@ -622,7 +622,7 @@ const TalentDayDetail = () => {
                 }}
                 className="w-full bg-gradient-to-r from-secondary to-orange-600 text-white font-semibold py-4 px-6 rounded-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-3"
               >
-                <span className="text-2xl">🎓</span>
+                <span className="text-2xl"></span>
                 <span>Je suis un talent</span>
               </button>
 
@@ -634,7 +634,7 @@ const TalentDayDetail = () => {
                 }}
                 className="w-full bg-white border-2 border-primary text-primary font-semibold py-4 px-6 rounded-lg hover:bg-primary hover:text-white transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-3"
               >
-                <span className="text-2xl">🏢</span>
+                <span className="text-2xl"></span>
                 <span>Je représente une entreprise</span>
               </button>
             </div>

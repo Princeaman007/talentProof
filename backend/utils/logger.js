@@ -1,8 +1,8 @@
 /**
  * Logger centralisé avec Winston
- * ✅ Structured logging (JSON)
- * ✅ Levels: error, warn, info, debug
- * ✅ Logs fichier + console
+ *  Structured logging (JSON)
+ *  Levels: error, warn, info, debug
+ *  Logs fichier + console
  */
 import winston from 'winston';
 import path from 'path';

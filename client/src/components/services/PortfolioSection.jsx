@@ -30,17 +30,17 @@ const PortfolioSection = () => {
     setLoading(true);
     const params = categorieActive !== 'tous' ? { categorie: categorieActive } : {};
     
-    console.log('🔍 Paramètres de recherche:', params);
+    console.log(' Paramètres de recherche:', params);
     const response = await api.get('/portfolio', { params });
     
-    console.log('📦 Réponse API:', response.data);
-    console.log('📊 Nombre de projets:', response.data.count);
-    console.log('🎯 Projets reçus:', response.data.data);
+    console.log(' Réponse API:', response.data);
+    console.log(' Nombre de projets:', response.data.count);
+    console.log(' Projets reçus:', response.data.data);
     
     setProjets(response.data.data);
   } catch (error) {
-    console.error('❌ Erreur chargement projets:', error);
-    console.error('📄 Détails:', error.response?.data);
+    console.error(' Erreur chargement projets:', error);
+    console.error(' Détails:', error.response?.data);
   } finally {
     setLoading(false);
   }
@@ -114,7 +114,7 @@ const PortfolioSection = () => {
                   />
                   {projet.featured && (
                     <div className="absolute top-4 right-4 bg-accent text-white px-3 py-1 rounded-full text-sm font-medium">
-                      ⭐ Featured
+                       Featured
                     </div>
                   )}
                 </div>

@@ -30,7 +30,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // ✅ Protection: Empêcher les soumissions multiples
+    //  Protection: Empêcher les soumissions multiples
     if (loading) return;
     
     setError('');

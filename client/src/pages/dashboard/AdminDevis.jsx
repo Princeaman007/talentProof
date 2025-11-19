@@ -459,13 +459,13 @@ const AdminDevis = () => {
                   href={`mailto:${selectedDevis.email}`}
                   className="flex-1 bg-primary text-white text-center py-3 rounded-lg hover:bg-blue-900 transition-colors font-semibold"
                 >
-                  📧 Envoyer un email
+                   Envoyer un email
                 </a>
                 <a
                   href={`tel:${selectedDevis.telephone}`}
                   className="flex-1 bg-accent text-white text-center py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
                 >
-                  📱 Appeler
+                   Appeler
                 </a>
               </div>
             </div>

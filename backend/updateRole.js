@@ -7,7 +7,7 @@ dotenv.config();
 const updateAdminRole = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✅ Connecté à MongoDB');
+    console.log(' Connecté à MongoDB');
 
     // Mettre à jour le compte admin
     const result = await Company.updateOne(
@@ -22,14 +22,14 @@ const updateAdminRole = async () => {
     );
 
     if (result.modifiedCount > 0) {
-      console.log('✅ Compte admin mis à jour avec role="admin"');
+      console.log(' Compte admin mis à jour avec role="admin"');
     } else {
-      console.log('ℹ️ Aucune modification (déjà à jour ou email introuvable)');
+      console.log('️ Aucune modification (déjà à jour ou email introuvable)');
     }
 
     // Vérifier
     const admin = await Company.findOne({ email: 'info@princeaman.dev' });
-    console.log('📊 Compte admin:', {
+    console.log(' Compte admin:', {
       email: admin.email,
       nom: admin.nom,
       role: admin.role,
@@ -38,7 +38,7 @@ const updateAdminRole = async () => {
 
     process.exit(0);
   } catch (error) {
-    console.error('❌ Erreur:', error);
+    console.error(' Erreur:', error);
     process.exit(1);
   }
 };

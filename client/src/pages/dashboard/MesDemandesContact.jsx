@@ -204,7 +204,7 @@ const MesDemandesContact = () => {
                         : 'bg-green-100 text-green-700'
                     }`}
                   >
-                    {demande.statut === 'nouveau' ? '⏳ En attente' : '✅ Traitée'}
+                    {demande.statut === 'nouveau' ? ' En attente' : ' Traitée'}
                   </span>
                 </div>
 
@@ -240,7 +240,7 @@ const MesDemandesContact = () => {
                     <span>{demande.recruteurEmail}</span>
                   </div>
                   <div className="flex items-center space-x-2 text-sm text-neutral-dark">
-                    <span>📞</span>
+                    <span></span>
                     <span>{demande.recruteurTel}</span>
                   </div>
                   <div className="flex items-center space-x-2 text-sm text-neutral-dark">
@@ -261,7 +261,7 @@ const MesDemandesContact = () => {
                 {demande.statut === 'nouveau' && (
                   <div className="mt-3 p-2 bg-yellow-50 rounded-lg">
                     <p className="text-xs text-yellow-800">
-                      ⏳ Votre demande est en cours de traitement. Vous serez contacté prochainement.
+                       Votre demande est en cours de traitement. Vous serez contacté prochainement.
                     </p>
                   </div>
                 )}
@@ -304,7 +304,7 @@ const MesDemandesContact = () => {
       {demandes.length > 0 && (
         <div className="card bg-blue-50 border border-blue-200">
           <div className="flex items-start gap-3">
-            <span className="text-2xl">ℹ️</span>
+            <span className="text-2xl">️</span>
             <div className="flex-1">
               <h3 className="font-semibold text-primary mb-2">
                 À propos du traitement
