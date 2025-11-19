@@ -3,7 +3,7 @@
 ## 🔴 SECRETS COMPROMIS IDENTIFIÉS
 
 ### ✅ Confirmé exposé publiquement sur GitHub :
-- **EMAIL_PASS** : `***MOT_DE_PASSE_SUPPRIME***` (dans 4 fichiers .md)
+- **EMAIL_PASS** : `***CENSURÉ***` (dans 4 fichiers .md - maintenant corrigé)
   - SOLUTION_INFOMANIAK_RENDER.md
   - GUIDE_EMAILS_PROFESSIONNELS.md
   - PROBLEME_EMAIL_RENDER.md
@@ -53,14 +53,14 @@ EMAIL_PASS=VOTRE_NOUVEAU_MOT_DE_PASSE_ICI
 
 ### Étape 2.1 : Supprimer le mot de passe des fichiers markdown
 
-Remplacez `***MOT_DE_PASSE_SUPPRIME***` par `***CENSURÉ***` dans tous les fichiers :
+Remplacez `***ANCIEN_MOT_DE_PASSE***` par `***CENSURÉ***` dans tous les fichiers :
 
 ```powershell
 # PowerShell - Exécutez depuis C:\Users\princ\talentproof
-(Get-Content SOLUTION_INFOMANIAK_RENDER.md) -replace '***MOT_DE_PASSE_SUPPRIME***','***CENSURÉ***' | Set-Content SOLUTION_INFOMANIAK_RENDER.md
-(Get-Content GUIDE_EMAILS_PROFESSIONNELS.md) -replace '***MOT_DE_PASSE_SUPPRIME***','***CENSURÉ***' | Set-Content GUIDE_EMAILS_PROFESSIONNELS.md
-(Get-Content PROBLEME_EMAIL_RENDER.md) -replace '***MOT_DE_PASSE_SUPPRIME***','***CENSURÉ***' | Set-Content PROBLEME_EMAIL_RENDER.md
-(Get-Content RECAP_EMAILS_TRANSFORMATION.md) -replace '***MOT_DE_PASSE_SUPPRIME***','***CENSURÉ***' | Set-Content RECAP_EMAILS_TRANSFORMATION.md
+(Get-Content SOLUTION_INFOMANIAK_RENDER.md) -replace '***ANCIEN_MOT_DE_PASSE***','***CENSURÉ***' | Set-Content SOLUTION_INFOMANIAK_RENDER.md
+(Get-Content GUIDE_EMAILS_PROFESSIONNELS.md) -replace '***ANCIEN_MOT_DE_PASSE***','***CENSURÉ***' | Set-Content GUIDE_EMAILS_PROFESSIONNELS.md
+(Get-Content PROBLEME_EMAIL_RENDER.md) -replace '***ANCIEN_MOT_DE_PASSE***','***CENSURÉ***' | Set-Content PROBLEME_EMAIL_RENDER.md
+(Get-Content RECAP_EMAILS_TRANSFORMATION.md) -replace '***ANCIEN_MOT_DE_PASSE***','***CENSURÉ***' | Set-Content RECAP_EMAILS_TRANSFORMATION.md
 ```
 
 ### Étape 2.2 : Commit et push immédiat
@@ -95,7 +95,7 @@ git clone --mirror https://github.com/Princeaman007/talentProof.git talentProof-
 cd talentProof-mirror
 
 # 2. Créer un fichier avec les secrets à supprimer
-echo "***MOT_DE_PASSE_SUPPRIME***" > ../secrets.txt
+echo "***ANCIEN_MOT_DE_PASSE***" > ../secrets.txt
 
 # 3. Lancer BFG pour supprimer le secret
 bfg --replace-text ../secrets.txt
@@ -116,7 +116,7 @@ pip install git-filter-repo
 
 # Utilisation
 cd C:\Users\princ\talentproof
-git filter-repo --replace-text <(echo '***MOT_DE_PASSE_SUPPRIME***==>***CENSURÉ***')
+git filter-repo --replace-text <(echo '***ANCIEN_MOT_DE_PASSE***==>***CENSURÉ***')
 
 # Force push
 git push --force --all
