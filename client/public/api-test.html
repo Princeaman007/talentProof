@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct API Test - TalentProof</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #2563eb;
+        }
+        .test-section.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .test-section.success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .label {
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+        .value {
+            color: #6b7280;
+            word-break: break-all;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        .warning-box {
+            background: #fffbeb;
+            border: 2px solid #fbbf24;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success-box {
+            background: #f0fdf4;
+            border: 2px solid #10b981;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔬 Test Direct de l'API</h1>
+        <p>Ce test effectue des requêtes directes pour vérifier quelle URL est réellement utilisée.</p>
+
+        <div class="test-section">
+            <h3>📍 URLs de Test</h3>
+            <div class="result">
+                <div class="label">Frontend URL:</div>
+                <div class="value" id="frontend-url"></div>
+            </div>
+            <div class="result">
+                <div class="label">URL Production Attendue:</div>
+                <div class="value">https://talentproof.onrender.com/api</div>
+            </div>
+            <div class="result">
+                <div class="label">URL Locale (par défaut):</div>
+                <div class="value">http://localhost:5000/api</div>
+            </div>
+        </div>
+
+        <button onclick="testWithProduction()">Test URL Production</button>
+        <button onclick="testWithLocalhost()">Test URL Localhost</button>
+        <button onclick="testBoth()">Test Les Deux</button>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        document.getElementById('frontend-url').textContent = window.location.origin;
+
+        async function testAPI(baseUrl, label) {
+            const results = document.getElementById('results');
+            
+            const section = document.createElement('div');
+            section.className = 'test-section';
+            section.innerHTML = `<h3>🧪 Test: ${label}</h3><div class="result">Testing...</div>`;
+            results.appendChild(section);
+
+            const testResults = [];
+
+            // Test 1: Health Check
+            try {
+                console.log(`Testing ${baseUrl}/health`);
+                const response = await fetch(`${baseUrl}/health`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                testResults.push({
+                    name: 'Health Check',
+                    url: `${baseUrl}/health`,
+                    success: response.ok,
+                    status: response.status,
+                    data: data
+                });
+            } catch (error) {
+                testResults.push({
+                    name: 'Health Check',
+                    url: `${baseUrl}/health`,
+                    success: false,
+                    error: error.message
+                });
+            }
+
+            // Test 2: CSRF Token
+            try {
+                const response = await fetch(`${baseUrl}/csrf-token`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                testResults.push({
+                    name: 'CSRF Token',
+                    url: `${baseUrl}/csrf-token`,
+                    success: response.ok,
+                    status: response.status,
+                    data: data
+                });
+            } catch (error) {
+                testResults.push({
+                    name: 'CSRF Token',
+                    url: `${baseUrl}/csrf-token`,
+                    success: false,
+                    error: error.message
+                });
+            }
+
+            // Test 3: Public Route
+            try {
+                const response = await fetch(`${baseUrl}/talent-days`, {
+                    method: 'GET'
+                });
+                
+                const data = await response.json();
+                
+                testResults.push({
+                    name: 'Talent Days (Public)',
+                    url: `${baseUrl}/talent-days`,
+                    success: response.ok,
+                    status: response.status,
+                    count: data.data?.length || 0
+                });
+            } catch (error) {
+                testResults.push({
+                    name: 'Talent Days (Public)',
+                    url: `${baseUrl}/talent-days`,
+                    success: false,
+                    error: error.message
+                });
+            }
+
+            // Display results
+            let html = '';
+            const allSuccess = testResults.every(t => t.success);
+            
+            section.className = `test-section ${allSuccess ? 'success' : 'error'}`;
+            
+            html += `<h3>${allSuccess ? '✅' : '❌'} ${label}</h3>`;
+            
+            testResults.forEach(test => {
+                html += `
+                    <div class="result">
+                        <span class="status ${test.success ? 'success' : 'error'}">
+                            ${test.success ? '✅' : '❌'} ${test.status || 'ERROR'}
+                        </span>
+                        <strong>${test.name}</strong>
+                        <div class="value" style="margin-top: 8px;">
+                            <div>URL: ${test.url}</div>
+                            ${test.error ? `<div style="color: #ef4444;">Erreur: ${test.error}</div>` : ''}
+                            ${test.data ? `<div style="color: #10b981;">Réponse: ${JSON.stringify(test.data).substring(0, 150)}...</div>` : ''}
+                            ${test.count !== undefined ? `<div style="color: #10b981;">Données trouvées: ${test.count}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Conclusion
+            if (allSuccess) {
+                html += `
+                    <div class="success-box" style="margin-top: 20px;">
+                        <h4>🎉 ${label} fonctionne parfaitement!</h4>
+                        <p>Le frontend peut communiquer avec le backend via cette URL.</p>
+                        ${baseUrl.includes('localhost') ? 
+                            '<p><strong>⚠️ ATTENTION:</strong> Ceci est l\'URL locale. En production, vous devez utiliser l\'URL Render.</p>' : 
+                            '<p><strong>✅ PARFAIT:</strong> C\'est l\'URL de production correcte!</p>'
+                        }
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <h4>❌ ${label} ne fonctionne pas</h4>
+                        ${baseUrl.includes('localhost') ? 
+                            '<p>Normal si vous êtes en production (pas de serveur localhost).</p>' :
+                            '<p><strong>PROBLÈME:</strong> Le backend de production ne répond pas. Vérifiez les logs Render.</p>'
+                        }
+                    </div>
+                `;
+            }
+
+            section.innerHTML = html;
+        }
+
+        function testWithProduction() {
+            testAPI('https://talentproof.onrender.com/api', 'URL Production');
+        }
+
+        function testWithLocalhost() {
+            testAPI('http://localhost:5000/api', 'URL Localhost');
+        }
+
+        async function testBoth() {
+            document.getElementById('results').innerHTML = '';
+            await testWithProduction();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await testWithLocalhost();
+            
+            // Add conclusion
+            const conclusion = document.createElement('div');
+            conclusion.innerHTML = `
+                <div class="warning-box" style="margin-top: 30px;">
+                    <h3>🎯 Que faire maintenant?</h3>
+                    
+                    <h4>Si PRODUCTION ✅ et LOCALHOST ❌:</h4>
+                    <p><strong>C'est NORMAL en production!</strong></p>
+                    <p>Votre application utilise la bonne URL. Vérifiez simplement que vous pouvez vous connecter.</p>
+                    
+                    <h4>Si PRODUCTION ❌ et LOCALHOST ✅:</h4>
+                    <p><strong>PROBLÈME:</strong> Les variables d'environnement ne sont PAS compilées dans le build!</p>
+                    <ol>
+                        <li>Render Dashboard → talentproof-client → Settings → Environment</li>
+                        <li>Vérifier que VITE_API_URL et VITE_SERVER_URL existent</li>
+                        <li>Manual Deploy → "Clear build cache & deploy"</li>
+                        <li>Attendre 5-10 minutes</li>
+                        <li>Retester cette page</li>
+                    </ol>
+                    
+                    <h4>Si les deux ❌:</h4>
+                    <p>Vérifiez la console du navigateur (F12) pour plus de détails.</p>
+                </div>
+            `;
+            document.getElementById('results').appendChild(conclusion);
+        }
+
+        // Auto-test on load
+        window.onload = () => {
+            setTimeout(testBoth, 500);
+        };
+    </script>
+</body>
+</html>
