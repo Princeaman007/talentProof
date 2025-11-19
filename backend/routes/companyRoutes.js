@@ -16,11 +16,11 @@ const router = express.Router();
 const validateCompanyRegistration = [
   body('companyName').trim().notEmpty().withMessage('Le nom de l\'entreprise est requis'),
   body('contactPerson').trim().notEmpty().withMessage('Le nom du contact est requis'),
-  body('email').isEmail().normalizeEmail().withMessage('Email invalide'),
+  body('email').trim().isEmail().normalizeEmail().withMessage('Email invalide'),
   body('phone').trim().notEmpty().withMessage('Le téléphone est requis'),
-  body('website').optional().trim().isURL().withMessage('URL invalide'),
-  body('interestedTalentDays').optional().isArray().withMessage('Format invalide pour les TalentDays'),
-  body('notes').optional().trim().isLength({ max: 1000 }).withMessage('Les notes ne peuvent pas dépasser 1000 caractères'),
+  body('website').trim().optional({ checkFalsy: true }).isURL().withMessage('URL invalide'),
+  body('interestedTalentDays').optional({ checkFalsy: true }).isArray().withMessage('Format invalide pour les TalentDays'),
+  body('notes').trim().optional({ checkFalsy: true }).isLength({ max: 1000 }).withMessage('Les notes ne peuvent pas dépasser 1000 caractères'),
 ];
 
 const validateMeetingRequest = [
