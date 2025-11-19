@@ -447,7 +447,9 @@ export {
   talentDayConfirmationTemplate, 
   companyTalentDayRegistrationTemplate,
   contactNotificationTemplate,
-  contactConfirmationTemplate
+  contactConfirmationTemplate,
+  talentDayAcceptationTemplate,
+  talentDayRefusTemplate
 } from './emailTemplates.professional.js';
 
 // ═══════════════════════════════════════════════════════════════════════

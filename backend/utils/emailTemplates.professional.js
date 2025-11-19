@@ -720,6 +720,134 @@ export const companyTalentDayRegistrationTemplate = (companyInfo, talentDays) =>
 };
 
 // ═══════════════════════════════════════════════════════════════════════
+// 9. EMAIL D'ACCEPTATION TALENTDAY (PARTICIPANT)
+// ═══════════════════════════════════════════════════════════════════════
+
+export const talentDayAcceptationTemplate = (inscription, talentDay) => {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
+  
+  const content = `
+    <p style="margin: 0 0 20px 0; font-size: 18px; color: #1F2937;">
+      Bonjour <strong>${inscription.prenom}</strong> ! 🎉
+    </p>
+    
+    <p style="margin: 0 0 20px 0; color: #374151;">
+      Nous avons le plaisir de vous informer que votre candidature au TalentDay <strong>"${talentDay.titre}"</strong> a été <strong style="color: #059669;">acceptée</strong> !
+    </p>
+    
+    ${infoBox('<strong>✅ Félicitations !</strong><br>Vous êtes maintenant officiellement inscrit(e) à cet événement. Préparez-vous à rencontrer des entreprises qui recrutent !', '🎉', '#D1FAE5', '#059669')}
+    
+    <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
+      📅 Informations pratiques
+    </h3>
+    
+    ${dataTable([
+      ['📅 Date', formatDate(talentDay.date)],
+      ['📍 Lieu', talentDay.lieu],
+      ['⏰ Horaires', talentDay.horaires || 'À confirmer'],
+      ['👥 Participants', `${talentDay.inscriptions?.length || 0} / ${talentDay.maxParticipants}`]
+    ])}
+    
+    <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
+      ✅ Comment bien se préparer ?
+    </h3>
+    
+    ${styledList([
+      '<strong>Préparez votre pitch</strong> - Présentez-vous en 2 minutes maximum',
+      '<strong>CV à jour</strong> - Apportez plusieurs copies imprimées',
+      '<strong>Renseignez-vous</strong> - Informez-vous sur les entreprises participantes',
+      '<strong>Questions préparées</strong> - Ayez des questions pertinentes sur les postes',
+      '<strong>Tenue professionnelle</strong> - Adoptez une tenue adaptée à un entretien',
+      '<strong>Portfolio/GitHub</strong> - Préparez des exemples de vos projets'
+    ])}
+    
+    ${infoBox('<strong>⏰ Arrivez 15 minutes en avance</strong><br>Pour vous enregistrer et prendre vos repères avant le début de l\'événement.', '⏱️', '#FEF3C7', '#F59E0B')}
+    
+    <p style="margin: 25px 0; text-align: center;">
+      <a href="https://talentproof-client.onrender.com/talent-days/${talentDay._id}" style="display: inline-block; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #FFFFFF; text-decoration: none; padding: 14px 30px; border-radius: 8px; font-weight: 600; font-size: 15px;">
+        📋 Voir tous les détails
+      </a>
+    </p>
+    
+    <p style="margin: 25px 0 0 0; color: #6B7280; font-size: 15px;">
+      Des questions ? Contactez-nous à 
+      <a href="mailto:info@princeaman.dev" style="color: #2E4A9E; text-decoration: none;">info@princeaman.dev</a>.
+    </p>
+  `;
+  
+  return baseTemplate('Candidature acceptée ! 🎉', content, '#059669');
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// 10. EMAIL DE REFUS TALENTDAY (PARTICIPANT)
+// ═══════════════════════════════════════════════════════════════════════
+
+export const talentDayRefusTemplate = (inscription, talentDay, raison = null) => {
+  const content = `
+    <p style="margin: 0 0 20px 0; font-size: 18px; color: #1F2937;">
+      Bonjour <strong>${inscription.prenom}</strong>,
+    </p>
+    
+    <p style="margin: 0 0 20px 0; color: #374151;">
+      Merci pour votre intérêt et votre candidature au TalentDay <strong>"${talentDay.titre}"</strong>.
+    </p>
+    
+    ${infoBox('<strong>Candidature non retenue</strong><br>Après examen de votre profil, nous ne pouvons malheureusement pas retenir votre candidature pour cet événement.', '📋', '#FEE2E2', '#DC2626')}
+    
+    ${raison ? `
+      <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
+        📋 Raison
+      </h3>
+      <div style="background-color: #F9FAFB; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <p style="margin: 0; color: #374151; line-height: 1.6;">${raison}</p>
+      </div>
+    ` : ''}
+    
+    <p style="margin: 20px 0; color: #374151;">
+      Cette décision ne remet pas en cause vos compétences, mais reflète simplement les critères spécifiques de cet événement ou le nombre limité de places disponibles.
+    </p>
+    
+    <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
+      🚀 Ne vous découragez pas !
+    </h3>
+    
+    ${styledList([
+      '<strong>D\'autres TalentDays arrivent bientôt</strong> - Consultez régulièrement nos prochains événements',
+      '<strong>Améliorez votre profil</strong> - Continuez à développer vos compétences techniques',
+      '<strong>Réessayez</strong> - Nous serions ravis de recevoir une nouvelle candidature',
+      '<strong>Restez motivé(e)</strong> - Chaque refus est une opportunité d\'apprendre'
+    ])}
+    
+    ${infoBox('<strong>💡 Conseil</strong><br>Continuez à postuler à nos futurs événements. Votre profil peut évoluer et correspondre parfaitement à nos prochains TalentDays !', '💡', '#DBEAFE', '#2E4A9E')}
+    
+    <p style="margin: 25px 0; text-align: center;">
+      <a href="https://talentproof-client.onrender.com/talent-days" style="display: inline-block; background: linear-gradient(135deg, #2E4A9E 0%, #1E3A8A 100%); color: #FFFFFF; text-decoration: none; padding: 14px 30px; border-radius: 8px; font-weight: 600; font-size: 15px;">
+        🔍 Voir nos prochains événements
+      </a>
+    </p>
+    
+    <p style="margin: 25px 0 0 0; color: #6B7280; font-size: 15px;">
+      Des questions ? Notre équipe reste à votre disposition : 
+      <a href="mailto:info@princeaman.dev" style="color: #2E4A9E; text-decoration: none;">info@princeaman.dev</a>
+    </p>
+    
+    <p style="margin: 25px 0 0 0; text-align: center; color: #6B7280; font-size: 14px;">
+      Nous vous souhaitons beaucoup de succès dans vos projets professionnels ! 🚀
+    </p>
+  `;
+  
+  return baseTemplate('Votre candidature au TalentDay', content, '#6B7280');
+};
+
+// ═══════════════════════════════════════════════════════════════════════
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════
 
