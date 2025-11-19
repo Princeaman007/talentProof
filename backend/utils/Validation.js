@@ -6,8 +6,10 @@ import { body, validationResult } from 'express-validator';
 export const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.error('❌ Erreurs de validation:', errors.array());
     return res.status(400).json({ 
       success: false,
+      message: 'Erreur de validation',
       errors: errors.array() 
     });
   }
@@ -219,16 +221,16 @@ export const teamMemberValidation = [
     .notEmpty().withMessage('La biographie est requise')
     .isLength({ min: 20 }).withMessage('La biographie doit contenir au moins 20 caractères'),
   
-  // ✅ CORRECTION : Utiliser optional({ values: 'falsy' }) pour permettre les chaînes vides
+  // ✅ CORRECTION : trim() AVANT optional() pour gérer correctement les chaînes vides
   body('email')
-    .optional({ values: 'falsy' })
     .trim()
+    .optional({ checkFalsy: true })
     .isEmail().withMessage('Email invalide')
     .normalizeEmail(),
   
   body('linkedin')
-    .optional({ values: 'falsy' })
     .trim()
+    .optional({ checkFalsy: true })
     .isURL().withMessage('URL LinkedIn invalide'),
   
   validate,
