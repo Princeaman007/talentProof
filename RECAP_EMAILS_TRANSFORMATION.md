@@ -316,7 +316,7 @@ git push origin master
 EMAIL_HOST=mail.infomaniak.com
 EMAIL_PORT=587
 EMAIL_USER=info@princeaman.dev
-EMAIL_PASS=***MOT_DE_PASSE_SUPPRIME***
+EMAIL_PASS=***VOTRE_MOT_DE_PASSE***
 EMAIL_FROM=TalentProof <info@princeaman.dev>
 CLIENT_URL=https://talentproof-client.onrender.com
 ```

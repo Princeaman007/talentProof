@@ -118,7 +118,7 @@ Dashboard → talentproof (backend) → Environment
 EMAIL_HOST=mail.infomaniak.com
 EMAIL_PORT=465
 EMAIL_USER=info@princeaman.dev
-EMAIL_PASS=***MOT_DE_PASSE_SUPPRIME***
+EMAIL_PASS=***VOTRE_MOT_DE_PASSE***
 EMAIL_SECURE=true
 EMAIL_FROM=TalentProof <info@princeaman.dev>
 ```

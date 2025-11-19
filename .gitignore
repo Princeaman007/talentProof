@@ -1,0 +1,72 @@
+# ========================
+# SECRETS & CREDENTIALS
+# ========================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.txt
+credentials.json
+
+# ========================
+# NODE
+# ========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# ========================
+# LOGS
+# ========================
+logs/
+*.log
+
+# ========================
+# UPLOADS & TEMP
+# ========================
+uploads/
+!uploads/.gitkeep
+*.tmp
+*.bak
+
+# ========================
+# OS
+# ========================
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ========================
+# IDE
+# ========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ========================
+# BUILD & CACHE
+# ========================
+dist/
+build/
+.cache/
+.parcel-cache/
+.next/
+out/
+
+# ========================
+# TESTING
+# ========================
+coverage/
+.nyc_output/
