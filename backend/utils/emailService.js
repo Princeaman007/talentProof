@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import { createTransport } from 'nodemailer';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -16,7 +16,7 @@ const createTransporter = () => {
     passLength: process.env.EMAIL_PASS?.length || 0,
   });
 
-  return nodemailer.createTransporter({
+  return createTransport({
     host: process.env.EMAIL_HOST,
     port: emailPort,
     secure: isSSL, // true pour 465 (SSL), false pour 587 (TLS)
