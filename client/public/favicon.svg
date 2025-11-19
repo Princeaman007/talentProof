@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Fond bleu foncé -->
+  <rect width="64" height="64" fill="#2E4A9E" rx="12"/>
+  
+  <!-- Checkmark blanc épais et centré -->
+  <path d="M 18 32 L 28 42 L 46 22" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
