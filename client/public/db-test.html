@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Test - TalentProof</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #2563eb;
+        }
+        .test-section.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        .test-section.success {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+        }
+        .label {
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+        .value {
+            color: #6b7280;
+            word-break: break-all;
+            font-family: monospace;
+        }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            max-height: 400px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th {
+            background: #f3f4f6;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗄️ Test Base de Données</h1>
+        <p>Vérifie la connexion MongoDB et compte les documents dans chaque collection.</p>
+
+        <button onclick="testDatabase()">Tester la Base de Données</button>
+        <button onclick="testCollections()">Lister les Collections</button>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        async function testDatabase() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="test-section"><p>Test en cours...</p></div>';
+
+            try {
+                // Test 1: Health check avec DB status
+                const healthResponse = await fetch('https://talentproof.onrender.com/api/health');
+                const healthData = await healthResponse.json();
+
+                let html = '<div class="test-section ' + 
+                    (healthData.database === 'Connected' ? 'success' : 'error') + '">';
+                html += '<h3>' + (healthData.database === 'Connected' ? '✅' : '❌') + 
+                    ' Connexion MongoDB</h3>';
+                html += '<div class="result">';
+                html += '<div class="label">Status:</div>';
+                html += '<div class="value">' + healthData.database + '</div>';
+                html += '<div class="label" style="margin-top: 10px;">Environnement:</div>';
+                html += '<div class="value">' + healthData.environment + '</div>';
+                html += '</div>';
+                html += '</div>';
+
+                // Test 2: Compter les documents dans différentes collections
+                const collections = [
+                    { name: 'Companies', endpoint: '/auth/profile' }, // Nécessite auth
+                    { name: 'Talent Days', endpoint: '/talent-days' },
+                    { name: 'Portfolios', endpoint: '/portfolios' }
+                ];
+
+                html += '<div class="test-section">';
+                html += '<h3>📊 Données dans les Collections</h3>';
+                html += '<table>';
+                html += '<tr><th>Collection</th><th>Endpoint</th><th>Documents</th><th>Status</th></tr>';
+
+                for (const col of collections) {
+                    try {
+                        const response = await fetch('https://talentproof.onrender.com/api' + col.endpoint);
+                        const data = await response.json();
+                        
+                        let count = 'N/A';
+                        let status = response.status;
+                        
+                        if (response.ok && data.data) {
+                            count = Array.isArray(data.data) ? data.data.length : 'Object';
+                        } else if (response.status === 401) {
+                            count = 'Auth Required';
+                        }
+
+                        html += '<tr>';
+                        html += '<td>' + col.name + '</td>';
+                        html += '<td>' + col.endpoint + '</td>';
+                        html += '<td><strong>' + count + '</strong></td>';
+                        html += '<td>' + status + '</td>';
+                        html += '</tr>';
+                    } catch (error) {
+                        html += '<tr>';
+                        html += '<td>' + col.name + '</td>';
+                        html += '<td>' + col.endpoint + '</td>';
+                        html += '<td colspan="2" style="color: #ef4444;">Erreur: ' + error.message + '</td>';
+                        html += '</tr>';
+                    }
+                }
+
+                html += '</table>';
+                html += '</div>';
+
+                // Diagnostic
+                html += '<div class="test-section">';
+                html += '<h3>🎯 Diagnostic</h3>';
+                
+                if (healthData.database === 'Connected') {
+                    html += '<p style="color: #10b981; font-weight: bold;">✅ MongoDB est connecté</p>';
+                    html += '<p><strong>Vérifications:</strong></p>';
+                    html += '<ul>';
+                    html += '<li>Si les compteurs montrent 0 → Les données ne sont PAS dans cette base</li>';
+                    html += '<li>Vérifiez le nom de la base dans MONGODB_URI</li>';
+                    html += '<li>Vérifiez que vous regardez la bonne base dans MongoDB Atlas</li>';
+                    html += '</ul>';
+                } else {
+                    html += '<p style="color: #ef4444; font-weight: bold;">❌ MongoDB N\'EST PAS connecté</p>';
+                    html += '<p><strong>Actions:</strong></p>';
+                    html += '<ul>';
+                    html += '<li>Vérifier MONGODB_URI dans Settings → Environment</li>';
+                    html += '<li>Vérifier IP Whitelist dans MongoDB Atlas</li>';
+                    html += '<li>Vérifier username/password</li>';
+                    html += '<li>Voir les logs Render pour l\'erreur exacte</li>';
+                    html += '</ul>';
+                }
+
+                html += '</div>';
+
+                resultsDiv.innerHTML = html;
+
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="test-section error">
+                        <h3>❌ Erreur</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testCollections() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="test-section"><p>Récupération des données...</p></div>';
+
+            try {
+                // Test des routes publiques
+                const endpoints = [
+                    { name: 'Talent Days', url: 'https://talentproof.onrender.com/api/talent-days' },
+                    { name: 'Portfolios', url: 'https://talentproof.onrender.com/api/portfolios' }
+                ];
+
+                let html = '';
+
+                for (const endpoint of endpoints) {
+                    const response = await fetch(endpoint.url);
+                    const data = await response.json();
+
+                    const section = document.createElement('div');
+                    section.className = 'test-section ' + (response.ok ? 'success' : 'error');
+
+                    let sectionHtml = '<h3>' + (response.ok ? '✅' : '❌') + ' ' + endpoint.name + '</h3>';
+                    sectionHtml += '<div class="result">';
+                    sectionHtml += '<div class="label">Status: ' + response.status + '</div>';
+                    
+                    if (response.ok) {
+                        const count = Array.isArray(data.data) ? data.data.length : 'N/A';
+                        sectionHtml += '<div class="label" style="margin-top: 10px;">Nombre de documents:</div>';
+                        sectionHtml += '<div class="value" style="font-size: 24px; font-weight: bold; color: #10b981;">' + count + '</div>';
+                        
+                        if (count === 0) {
+                            sectionHtml += '<p style="margin-top: 15px; color: #f59e0b; font-weight: bold;">⚠️ Aucune donnée trouvée</p>';
+                            sectionHtml += '<p>Causes possibles:</p>';
+                            sectionHtml += '<ul>';
+                            sectionHtml += '<li>La collection est vide dans cette base de données</li>';
+                            sectionHtml += '<li>Le backend se connecte à une autre base de données</li>';
+                            sectionHtml += '<li>Le nom de la base dans MONGODB_URI est incorrect</li>';
+                            sectionHtml += '</ul>';
+                        } else {
+                            sectionHtml += '<div class="label" style="margin-top: 15px;">Données:</div>';
+                            sectionHtml += '<pre>' + JSON.stringify(data.data, null, 2) + '</pre>';
+                        }
+                    } else {
+                        sectionHtml += '<div class="label" style="margin-top: 10px;">Erreur:</div>';
+                        sectionHtml += '<div class="value">' + (data.message || 'Erreur inconnue') + '</div>';
+                    }
+
+                    sectionHtml += '</div>';
+                    section.innerHTML = sectionHtml;
+                    html += section.outerHTML;
+                }
+
+                resultsDiv.innerHTML = html;
+
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="test-section error">
+                        <h3>❌ Erreur</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-test on load
+        window.onload = () => {
+            setTimeout(testDatabase, 500);
+        };
+    </script>
+</body>
+</html>
