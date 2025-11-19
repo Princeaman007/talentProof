@@ -177,20 +177,42 @@ router.post('/:id/register', async (req, res) => {
   try {
     const { nom, email, telephone, motivation } = req.body;
     
-    // Validation
-    if (!nom || !email || !motivation) {
+    // Validation des champs requis
+    if (!nom || nom.trim().length === 0) {
       return res.status(400).json({
         success: false,
-        message: 'Nom, email et motivation sont requis',
+        message: 'Le nom complet est requis',
       });
     }
     
-    // Validation email
+    if (!email || email.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'L\'email est requis',
+      });
+    }
+    
+    // Validation format email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
         message: 'Format d\'email invalide',
+      });
+    }
+    
+    // Validation motivation
+    if (!motivation || motivation.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'La motivation est requise',
+      });
+    }
+    
+    if (motivation.trim().length < 50) {
+      return res.status(400).json({
+        success: false,
+        message: 'La motivation doit contenir au moins 50 caractères',
       });
     }
     
