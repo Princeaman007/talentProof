@@ -1,6 +1,6 @@
 import Talent from '../models/Talent.js';
 import ContactRequest from '../models/ContactRequest.js';
-import { sendEmail } from '../utils/Email.js';
+import { sendEmail } from '../utils/emailService.js'; // ✅ CORRIGÉ : utiliser emailService.js
 import { contactNotificationTemplate, contactConfirmationTemplate } from '../utils/emailTemplates.js';
 
 /**
