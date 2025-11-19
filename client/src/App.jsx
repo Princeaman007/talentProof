@@ -24,6 +24,7 @@ import DevisForm from './pages/services/DevisForm';
 import Register from './pages/auth/Register';
 import Login from './pages/auth/Login';
 import EmailConfirmation from './pages/auth/EmailConfirmation';
+import ConfirmEmail from './pages/auth/ConfirmEmail';
 
 // Pages protégées
 import Dashboard from './pages/DashboardEntreprise';
@@ -68,6 +69,7 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
               <Route path="/email-confirmation" element={<EmailConfirmation />} />
+              <Route path="/confirm-email/:token" element={<ConfirmEmail />} />
 
               {/* Routes protégées */}
               <Route
