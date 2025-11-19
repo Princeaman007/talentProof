@@ -17,8 +17,8 @@ const COLORS = {
 const log = {
   success: (msg) => console.log(`${COLORS.GREEN} ${msg}${COLORS.RESET}`),
   error: (msg) => console.log(`${COLORS.RED} ${msg}${COLORS.RESET}`),
-  warn: (msg) => console.log(`${COLORS.YELLOW}️  ${msg}${COLORS.RESET}`),
-  info: (msg) => console.log(`${COLORS.BLUE}️  ${msg}${COLORS.RESET}`),
+  warn: (msg) => console.log(`${COLORS.YELLOW}  ${msg}${COLORS.RESET}`),
+  info: (msg) => console.log(`${COLORS.BLUE}  ${msg}${COLORS.RESET}`),
 };
 
 // Configuration des ports à tester

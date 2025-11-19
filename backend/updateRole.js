@@ -24,7 +24,7 @@ const updateAdminRole = async () => {
     if (result.modifiedCount > 0) {
       console.log(' Compte admin mis à jour avec role="admin"');
     } else {
-      console.log('️ Aucune modification (déjà à jour ou email introuvable)');
+      console.log(' Aucune modification (déjà à jour ou email introuvable)');
     }
 
     // Vérifier

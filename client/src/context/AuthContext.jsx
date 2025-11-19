@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
     // MÉTHODE 2 (FALLBACK) - Vérifier l'email (ancienne méthode)
     const adminEmails = ['info@princeaman.dev', 'tobin0031@gmail.com'];
     if (adminEmails.includes(userData.email)) {
-      console.warn('️ Admin détecté via email (ancienne méthode). Le backend devrait utiliser le champ "role".');
+      console.warn(' Admin détecté via email (ancienne méthode). Le backend devrait utiliser le champ "role".');
       setIsAdmin(true);
       return;
     }

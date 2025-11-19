@@ -272,7 +272,7 @@ export const generalContactConfirmationTemplate = (nom) => {
     <p>Merci de nous avoir contactés. Nous avons bien reçu votre message et nous vous en remercions.</p>
     
     <div class="highlight">
-      <strong>️ Délai de réponse : 24-48 heures</strong><br>
+      <strong> Délai de réponse : 24-48 heures</strong><br>
       Notre équipe va analyser votre demande et vous recontacter dans les plus brefs délais.
     </div>
 

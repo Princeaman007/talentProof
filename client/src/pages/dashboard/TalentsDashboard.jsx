@@ -296,7 +296,7 @@ const TalentsDashboard = () => {
       {/* Message d'erreur */}
       {error && (
         <div className="card bg-red-50 border border-red-200">
-          <p className="text-red-700">️ {error}</p>
+          <p className="text-red-700"> {error}</p>
         </div>
       )}
 

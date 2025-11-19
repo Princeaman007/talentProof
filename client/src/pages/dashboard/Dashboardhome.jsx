@@ -319,7 +319,7 @@ const DashboardHome = () => {
       {!loading && stats?.talentsCount === 0 && isAdmin && (
         <div className="card bg-yellow-50 border border-yellow-200">
           <div className="flex items-start gap-3">
-            <span className="text-2xl">️</span>
+            <span className="text-2xl"></span>
             <div className="flex-1">
               <h3 className="font-semibold text-yellow-700 mb-2">
                 Base de données vide

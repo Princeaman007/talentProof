@@ -22,7 +22,7 @@ export const adminOnly = (req, res, next) => {
       return next();
     }
 
-    // ️ MÉTHODE 2 (FALLBACK) - Support de l'ancienne méthode (email hardcodé)
+    //  MÉTHODE 2 (FALLBACK) - Support de l'ancienne méthode (email hardcodé)
     // Utile pendant la transition, peut être supprimé après migration complète
     const adminEmails = [
       process.env.ADMIN_EMAIL || 'info@princeaman.dev',
@@ -30,7 +30,7 @@ export const adminOnly = (req, res, next) => {
     ];
     
     if (adminEmails.includes(req.company.email)) {
-      console.warn('️ Admin détecté via email (ancienne méthode). Pensez à mettre à jour le champ "role" en BDD !');
+      console.warn(' Admin détecté via email (ancienne méthode). Pensez à mettre à jour le champ "role" en BDD !');
       return next();
     }
 
@@ -51,7 +51,7 @@ export const adminOnly = (req, res, next) => {
 
 /**
  * Alternative : Middleware admin avec vérification directe du mot de passe
- * ️ DÉPRÉCIÉ - À éviter, utiliser protect + adminOnly à la place
+ *  DÉPRÉCIÉ - À éviter, utiliser protect + adminOnly à la place
  * Conservé pour compatibilité avec anciennes routes
  */
 export const adminAuth = async (req, res, next) => {

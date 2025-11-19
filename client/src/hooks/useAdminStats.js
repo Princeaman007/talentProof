@@ -3,7 +3,7 @@ import api from '../utils/api';
 
 /**
  * Hook personnalisé pour récupérer les statistiques admin
- * ️ À utiliser UNIQUEMENT dans les composants admin
+ *  À utiliser UNIQUEMENT dans les composants admin
  */
 export const useAdminStats = () => {
   const [stats, setStats] = useState(null);

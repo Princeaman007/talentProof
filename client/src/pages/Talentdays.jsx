@@ -196,7 +196,7 @@ const TalentDays = () => {
                     : 'bg-white text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                ️ Tous les événements
+                 Tous les événements
               </button>
               <button
                 onClick={() => setActiveTab('past')}

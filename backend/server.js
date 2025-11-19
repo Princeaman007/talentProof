@@ -199,7 +199,7 @@ try {
   const redisUrl = process.env.REDIS_URL;
   const isDev = process.env.NODE_ENV !== 'production';
   
-  // ️ TEMPORAIRE: Limite plus élevée en production pour les tests
+  //  TEMPORAIRE: Limite plus élevée en production pour les tests
   const maxAttempts = isDev ? 100 : 50; // 100 en dev, 50 en production (au lieu de 5)
   
   if (redisUrl) {

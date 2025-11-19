@@ -65,7 +65,7 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
     //  Validation en temps réel pour les compétences
     if (name === 'competences') {
       if (value.trim().length > 0 && value.trim().length < 10) {
-        setCompetencesWarning('️ Les compétences doivent contenir au moins 10 caractères');
+        setCompetencesWarning(' Les compétences doivent contenir au moins 10 caractères');
       } else {
         setCompetencesWarning('');
       }
@@ -89,7 +89,7 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
     const options = Array.from(e.target.selectedOptions);
     const selected = options.map(option => option.value);
     
-    console.log('️ Langues sélectionnées:', selected);
+    console.log(' Langues sélectionnées:', selected);
     
     setFormData(prevData => {
       const newData = { ...prevData, langues: selected };

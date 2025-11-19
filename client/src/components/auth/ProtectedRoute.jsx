@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 export default function ProtectedRoute({ children, adminOnly = false }) {
   const { isAuthenticated, isAdmin, loading } = useAuth();
 
-  console.log('️ ProtectedRoute check:', {
+  console.log(' ProtectedRoute check:', {
     isAuthenticated,
     isAdmin,
     loading,
@@ -27,7 +27,7 @@ export default function ProtectedRoute({ children, adminOnly = false }) {
   }
 
   if (adminOnly && !isAdmin) {
-    console.warn('️ Not admin, redirecting to /dashboard');
+    console.warn(' Not admin, redirecting to /dashboard');
     return <Navigate to="/dashboard" replace />;
   }
 

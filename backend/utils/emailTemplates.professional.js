@@ -322,7 +322,7 @@ export const resetPasswordTemplate = (companyName, resetLink) => {
     ${infoBox('<strong> Ce lien expire dans 1 heure.</strong><br>Si vous n\'avez pas demandé cette réinitialisation, ignorez cet email. Votre mot de passe actuel restera inchangé.', '', '#FEE2E2', '#DC2626')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      ️ Conseils de sécurité :
+       Conseils de sécurité :
     </h3>
     
     ${styledList([
@@ -361,7 +361,7 @@ export const contactNotificationTemplate = (talentInfo, recruteurInfo) => {
     </h3>
     
     ${dataTable([
-      ['‍ Prénom', talentInfo.prenom],
+      [' Prénom', talentInfo.prenom],
       [' Technologies', talentInfo.technologies.join(', ')],
       [' Score', `${talentInfo.scoreTest}/100 (${talentInfo.plateforme})`],
       [' Niveau', talentInfo.niveau || 'Non spécifié']
@@ -423,7 +423,7 @@ export const contactConfirmationTemplate = (recruteurNom, talentPrenom) => {
     ${infoBox('<strong> Demande bien reçue !</strong><br>Votre demande a été transmise à notre équipe et nous allons la traiter dans les plus brefs délais.', '', '#D1FAE5', '#059669')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      ️ Prochaines étapes
+       Prochaines étapes
     </h3>
     
     ${styledList([
@@ -433,7 +433,7 @@ export const contactConfirmationTemplate = (recruteurNom, talentPrenom) => {
       '<strong>Mise en relation</strong> - Organisation d\'un premier échange si les deux parties sont intéressées'
     ])}
     
-    ${infoBox('<strong> Délai de réponse : 24-48 heures maximum</strong><br>Nous vous recontacterons rapidement avec les informations complètes sur ce talent.', '️', '#FEF3C7', '#F59E0B')}
+    ${infoBox('<strong> Délai de réponse : 24-48 heures maximum</strong><br>Nous vous recontacterons rapidement avec les informations complètes sur ce talent.', '', '#FEF3C7', '#F59E0B')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
        Pourquoi TalentProof ?
@@ -513,7 +513,7 @@ export const generalContactConfirmationTemplate = (nom) => {
     ${infoBox('<strong> Message bien reçu !</strong><br>Nous avons bien reçu votre message et nous vous répondrons dans les plus brefs délais.', '', '#D1FAE5', '#059669')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
-      ️ Que se passe-t-il maintenant ?
+       Que se passe-t-il maintenant ?
     </h3>
     
     ${styledList([
@@ -523,7 +523,7 @@ export const generalContactConfirmationTemplate = (nom) => {
       '<strong>Suivi</strong> - Nous restons disponibles pour toute question complémentaire'
     ])}
     
-    ${infoBox('<strong> Délai de réponse : 24-48 heures maximum</strong><br>Notre équipe vous recontactera rapidement pour répondre à votre demande.', '️', '#FEF3C7', '#F59E0B')}
+    ${infoBox('<strong> Délai de réponse : 24-48 heures maximum</strong><br>Notre équipe vous recontactera rapidement pour répondre à votre demande.', '', '#FEF3C7', '#F59E0B')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
        Découvrez TalentProof
@@ -611,7 +611,7 @@ export const talentDayConfirmationTemplate = (inscription, talentDay) => {
       '<strong>Tenue professionnelle</strong> - Adoptez une tenue adaptée à un entretien'
     ])}
     
-    ${infoBox('<strong> Arrivez 15 minutes en avance</strong><br>Pour vous enregistrer et prendre vos repères avant le début de l\'événement.', '️', '#FEF3C7', '#F59E0B')}
+    ${infoBox('<strong> Arrivez 15 minutes en avance</strong><br>Pour vous enregistrer et prendre vos repères avant le début de l\'événement.', '', '#FEF3C7', '#F59E0B')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
        Vos informations d'inscription
@@ -664,7 +664,7 @@ export const companyTalentDayRegistrationTemplate = (companyInfo, talentDays) =>
       Nous avons bien reçu votre inscription pour participer aux <strong>TalentDays</strong> en tant qu'entreprise.
     </p>
     
-    ${infoBox('<strong> Demande en attente de validation</strong><br>Votre inscription est actuellement en cours d\'analyse par notre équipe. Vous recevrez une confirmation sous 24-48 heures.', '️', '#FEF3C7', '#F59E0B')}
+    ${infoBox('<strong> Demande en attente de validation</strong><br>Votre inscription est actuellement en cours d\'analyse par notre équipe. Vous recevrez une confirmation sous 24-48 heures.', '', '#FEF3C7', '#F59E0B')}
     
     <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
        Récapitulatif de votre inscription
@@ -769,7 +769,7 @@ export const talentDayAcceptationTemplate = (inscription, talentDay) => {
       '<strong>Portfolio/GitHub</strong> - Préparez des exemples de vos projets'
     ])}
     
-    ${infoBox('<strong> Arrivez 15 minutes en avance</strong><br>Pour vous enregistrer et prendre vos repères avant le début de l\'événement.', '️', '#FEF3C7', '#F59E0B')}
+    ${infoBox('<strong> Arrivez 15 minutes en avance</strong><br>Pour vous enregistrer et prendre vos repères avant le début de l\'événement.', '', '#FEF3C7', '#F59E0B')}
     
     <p style="margin: 25px 0; text-align: center;">
       <a href="https://talentproof-client.onrender.com/talent-days/${talentDay._id}" style="display: inline-block; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #FFFFFF; text-decoration: none; padding: 14px 30px; border-radius: 8px; font-weight: 600; font-size: 15px;">

@@ -53,7 +53,7 @@ const createTransporter = () => {
 export const sendEmail = async ({ to, subject, html, text }) => {
   // Mode développement - skip emails
   if (process.env.SKIP_EMAILS === 'true') {
-    console.log('️ Mode dev: Email non envoyé');
+    console.log(' Mode dev: Email non envoyé');
     console.log(' Destinataire:', to);
     console.log(' Sujet:', subject);
     return { success: true, messageId: 'dev-mode-skipped' };
@@ -67,7 +67,7 @@ export const sendEmail = async ({ to, subject, html, text }) => {
       await transporter.verify();
       console.log(' Serveur email prêt');
     } catch (verifyError) {
-      console.warn('️ Vérification du serveur email échouée, tentative d\'envoi quand même...');
+      console.warn(' Vérification du serveur email échouée, tentative d\'envoi quand même...');
     }
 
     const mailOptions = {
@@ -332,7 +332,7 @@ const contactConfirmationTemplateOLD = (recruteurNom, talentPrenom) => {
     <p>Merci pour votre intérêt pour <strong>${talentPrenom}</strong>, l'un de nos talents validés TalentProof.</p>
     <p>Votre demande a bien été reçue et nous allons la traiter dans les plus brefs délais.</p>
     <div class="highlight">
-      <strong>️ Délai de réponse : 24-48 heures</strong><br>
+      <strong> Délai de réponse : 24-48 heures</strong><br>
       Nous vous recontacterons rapidement avec les informations complètes sur ce talent.
     </div>
     <p>Notre équipe va :</p>
@@ -427,7 +427,7 @@ const devisConfirmationTemplateOLD = (clientNom) => {
     <p>Bonjour ${clientNom},</p>
     <p>Merci pour votre demande de devis sur TalentProof. Nous avons bien reçu les détails de votre projet.</p>
     <div class="highlight">
-      <strong>️ Délai de réponse : 24-48 heures</strong><br>
+      <strong> Délai de réponse : 24-48 heures</strong><br>
       Notre équipe va analyser votre demande et vous envoyer un devis personnalisé.
     </div>
     <p>Voici ce qui va se passer ensuite :</p>

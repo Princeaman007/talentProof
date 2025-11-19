@@ -463,7 +463,7 @@ export const updateCompanyStatus = async (req, res) => {
             `).join('')}
 
             <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #f59e0b;">
-              <h4 style="margin-top: 0; color: #92400e;">️ Raisons possibles</h4>
+              <h4 style="margin-top: 0; color: #92400e;"> Raisons possibles</h4>
               <ul style="color: #78350f; line-height: 1.8; margin: 10px 0;">
                 <li>Nombre limité de places entreprises disponibles</li>
                 <li>Événements déjà complets au moment du traitement</li>

@@ -36,7 +36,7 @@ const TalentDayCard = ({ talentDay }) => {
         color: 'bg-orange-100 text-orange-800 border-orange-300',
       },
       'termine': {
-        text: '️ Terminé',
+        text: ' Terminé',
         color: 'bg-gray-100 text-gray-800 border-gray-300',
       },
       'annule': {

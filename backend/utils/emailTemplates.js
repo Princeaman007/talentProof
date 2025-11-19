@@ -224,7 +224,7 @@ export const contactConfirmationTemplate = (recruteurNom, talentPrenom) => {
     <p>Merci pour votre intérêt pour <strong>${talentPrenom}</strong>, l'un de nos talents validés TalentProof.</p>
     <p>Votre demande a bien été reçue et nous allons la traiter dans les plus brefs délais.</p>
     <div class="highlight">
-      <strong>️ Délai de réponse : 24-48 heures</strong><br>
+      <strong> Délai de réponse : 24-48 heures</strong><br>
       Nous vous recontacterons rapidement avec les informations complètes sur ce talent.
     </div>
     <p>Notre équipe va :</p>

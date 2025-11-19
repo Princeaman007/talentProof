@@ -165,7 +165,7 @@ const ServicesPricing = () => {
                       {service.prix}
                     </p>
                     <p className="text-sm text-slate-500">
-                      ️ {service.duree}
+                       {service.duree}
                     </p>
                   </div>
 

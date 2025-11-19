@@ -16,7 +16,7 @@ const testEmail = {
 };
 
 console.log(` Envoi email de test vers ${testEmail.to}...`);
-console.log(`️  Port configuré : ${process.env.EMAIL_PORT}`);
+console.log(`  Port configuré : ${process.env.EMAIL_PORT}`);
 
 try {
   const result = await sendEmail(testEmail);

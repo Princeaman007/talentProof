@@ -80,7 +80,7 @@ const TalentDayDetail = () => {
       'complet': { text: ' Complet', color: 'bg-red-100 text-red-800 border-red-300' },
       'a-venir': { text: ' À venir', color: 'bg-blue-100 text-blue-800 border-blue-300' },
       'en-cours': { text: ' En cours', color: 'bg-orange-100 text-orange-800 border-orange-300' },
-      'termine': { text: '️ Terminé', color: 'bg-gray-100 text-gray-800 border-gray-300' },
+      'termine': { text: ' Terminé', color: 'bg-gray-100 text-gray-800 border-gray-300' },
       'annule': { text: ' Annulé', color: 'bg-red-100 text-red-800 border-red-300' },
     };
     const badge = badges[statut] || badges['a-venir'];
@@ -238,7 +238,7 @@ const TalentDayDetail = () => {
                           <h4 className="font-semibold text-gray-900 mb-1">{format.nom}</h4>
                           <p className="text-sm text-gray-600 mb-1">{format.description}</p>
                           {format.duree && (
-                            <p className="text-xs text-gray-500">️ Durée : {format.duree}</p>
+                            <p className="text-xs text-gray-500"> Durée : {format.duree}</p>
                           )}
                         </div>
                       ))}

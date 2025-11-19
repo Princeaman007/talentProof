@@ -26,7 +26,7 @@ const createTestTalentDay = async () => {
     console.log(` TalentDays existants: ${existingCount}`);
 
     if (existingCount > 0) {
-      console.log('️ Des TalentDays existent déjà. Voulez-vous continuer ?');
+      console.log(' Des TalentDays existent déjà. Voulez-vous continuer ?');
       // Continue anyway for testing
     }
 

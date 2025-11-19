@@ -15,7 +15,7 @@ const createAdminUser = async () => {
     const existingAdmin = await Company.findOne({ email: 'info@princeaman.dev' });
 
     if (existingAdmin) {
-      console.log('️  Un compte avec cet email existe déjà');
+      console.log('  Un compte avec cet email existe déjà');
       
       // Mettre à jour en admin si ce n'est pas le cas
       if (existingAdmin.role !== 'admin') {
@@ -44,7 +44,7 @@ const createAdminUser = async () => {
       console.log(' Compte admin créé avec succès');
       console.log(' Email:', admin.email);
       console.log(' Mot de passe: Admin2025!');
-      console.log('️  IMPORTANT: Changez ce mot de passe après la première connexion !');
+      console.log('  IMPORTANT: Changez ce mot de passe après la première connexion !');
     }
 
     process.exit(0);

@@ -60,7 +60,7 @@ export const createTransporter = async () => {
  */
 export const sendMailImmediate = async ({ to, subject, html, text }) => {
   if (process.env.SKIP_EMAILS === 'true') {
-    console.log('️ Mode dev: Email non envoyé');
+    console.log(' Mode dev: Email non envoyé');
     console.log(' Destinataire:', to);
     console.log(' Sujet:', subject);
     return { success: true, messageId: 'dev-mode-skipped' };
@@ -89,7 +89,7 @@ export const sendMailImmediate = async ({ to, subject, html, text }) => {
 export const sendEmail = async ({ to, subject, html, text }) => {
   // If explicitly skipping emails, short-circuit
   if (process.env.SKIP_EMAILS === 'true' || process.env.EMAIL_TEST_MODE === 'noop') {
-    console.log('️ Mode dev/CI: Email non envoyé');
+    console.log(' Mode dev/CI: Email non envoyé');
     return { success: true, messageId: 'dev-mode-skipped' };
   }
 
