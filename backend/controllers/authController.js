@@ -51,10 +51,45 @@ export const register = async (req, res) => {
     console.log('🔗 Lien de confirmation:', confirmationLink);
     
     try {
+      // ✨ Version simplifiée du template pour éviter le filtre anti-spam
+      const simpleHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head><meta charset="UTF-8"></head>
+        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #2E4A9E;">Bienvenue sur TalentProof</h2>
+          <p>Bonjour <strong>${nom}</strong>,</p>
+          <p>Merci de vous être inscrit sur TalentProof, la plateforme de recrutement qui connecte les entreprises avec des talents tech validés.</p>
+          <p>Pour activer votre compte, veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous :</p>
+          <p><a href="${confirmationLink}" style="background: #2E4A9E; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">Confirmer mon email</a></p>
+          <p>Ou copiez ce lien dans votre navigateur :<br><a href="${confirmationLink}">${confirmationLink}</a></p>
+          <p style="color: #666; font-size: 14px;">Ce lien expire dans 24 heures.</p>
+          <p>Cordialement,<br><strong>L'équipe TalentProof</strong></p>
+        </body>
+        </html>
+      `;
+      
+      const simpleText = `
+Bienvenue sur TalentProof
+
+Bonjour ${nom},
+
+Merci de vous être inscrit sur TalentProof.
+
+Pour activer votre compte, veuillez confirmer votre adresse email en cliquant sur ce lien :
+${confirmationLink}
+
+Ce lien expire dans 24 heures.
+
+Cordialement,
+L'équipe TalentProof
+      `;
+      
       const emailResult = await sendEmail({
         to: email,
         subject: 'Confirmez votre inscription sur TalentProof',
-        html: confirmationEmailTemplate(nom, confirmationLink),
+        html: simpleHtml,
+        text: simpleText, // ✅ IMPORTANT : version texte pour éviter spam
       });
       console.log('✅ Email de confirmation envoyé avec succès:', emailResult.messageId);
     } catch (emailError) {
