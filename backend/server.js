@@ -317,10 +317,59 @@ app.use('/uploads', (req, res, next) => {
 app.use('/api-docs', swaggerUi.serve);
 app.get('/api-docs', swaggerUi.setup(swaggerSpec, { customCss: '.swagger-ui { max-width: 1200px; }' }));
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => logger.info('MongoDB connecté'))
-  .catch((err) => logger.error('MongoDB connection error', { error: err.message }));
+// MongoDB Connection with detailed logging and error handling
+console.log('[MONGODB] Attempting to connect...');
+console.log('[MONGODB] URI:', process.env.MONGODB_URI ? 'Set (hidden for security)' : 'NOT SET');
+console.log('[MONGODB] Connection timeout:', process.env.MONGO_TIMEOUT || '30000ms (default)');
+
+mongoose.connect(process.env.MONGODB_URI, {
+  serverSelectionTimeoutMS: parseInt(process.env.MONGO_TIMEOUT) || 30000,
+  socketTimeoutMS: 45000,
+  maxPoolSize: 10,
+  minPoolSize: 2,
+})
+  .then(() => {
+    console.log('[MONGODB] Connected successfully');
+    logger.info('MongoDB connecté', {
+      host: mongoose.connection.host,
+      name: mongoose.connection.name,
+      readyState: mongoose.connection.readyState
+    });
+  })
+  .catch((err) => {
+    console.error('[MONGODB] Connection FAILED:', {
+      message: err.message,
+      code: err.code,
+      name: err.name
+    });
+    logger.error('MongoDB connection error', { 
+      error: err.message,
+      code: err.code,
+      stack: err.stack
+    });
+    
+    // Exit process if MongoDB connection fails in production
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[MONGODB] CRITICAL: Cannot start server without database connection');
+      process.exit(1);
+    }
+  });
+
+// Monitor MongoDB connection events
+mongoose.connection.on('disconnected', () => {
+  console.warn('[MONGODB] Disconnected from database');
+  logger.warn('MongoDB disconnected');
+});
+
+mongoose.connection.on('reconnected', () => {
+  console.log('[MONGODB] Reconnected to database');
+  logger.info('MongoDB reconnected');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('[MONGODB] Connection error:', err.message);
+  logger.error('MongoDB error', { error: err.message });
+});
 
 // Routes de base
 app.get('/', (req, res) => {

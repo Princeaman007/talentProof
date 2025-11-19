@@ -12,27 +12,39 @@ import { validationResult } from 'express-validator';
  * @access  Public
  */
 export const createCompanyRegistration = async (req, res) => {
+  console.log('[COMPANY REGISTRATION] Starting registration process');
+  console.log('[COMPANY REGISTRATION] Request body:', JSON.stringify(req.body, null, 2));
+  
   try {
     // Vérifier les erreurs de validation
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.error('[COMPANY REGISTRATION] Validation failed:', errors.array());
       return res.status(400).json({
         success: false,
-        message: 'Erreur de validation',
-        errors: errors.array()
+        message: 'Erreur de validation des données',
+        errors: errors.array().map(err => ({
+          field: err.path || err.param,
+          message: err.msg
+        }))
       });
     }
 
     const { companyName, contactPerson, email, phone, website, interestedTalentDays, notes } = req.body;
+    
+    console.log('[COMPANY REGISTRATION] Validation passed. Checking for existing email...');
 
     // Vérifier si l'email existe déjà
     const existingCompany = await CompanyRegistration.findOne({ email });
     if (existingCompany) {
+      console.warn('[COMPANY REGISTRATION] Email already exists:', email);
       return res.status(400).json({
         success: false,
         message: 'Une inscription avec cet email existe déjà',
       });
     }
+    
+    console.log('[COMPANY REGISTRATION] Email check passed. Creating company registration...');
 
     // Créer l'inscription
     const company = await CompanyRegistration.create({
@@ -45,12 +57,16 @@ export const createCompanyRegistration = async (req, res) => {
       notes,
       user: req.user?._id,
     });
+    console.log('[COMPANY REGISTRATION] Company created successfully. ID:', company._id);
 
     // Populer les TalentDays avec tous les détails
+    console.log('[COMPANY REGISTRATION] Populating TalentDays...');
     await company.populate({
       path: 'interestedTalentDays',
       select: 'titre description date heureDebut heureFin lieu technologies placesDisponibles typeEvenement niveauRequis organisateur'
     });
+    
+    console.log('[COMPANY REGISTRATION] TalentDays populated. Count:', company.interestedTalentDays.length);
 
     // Fonction helper pour formater les détails d'un TalentDay
     const formatTalentDayDetails = (td) => {
@@ -119,6 +135,7 @@ export const createCompanyRegistration = async (req, res) => {
     };
 
     //  NOUVEAU : Envoyer email professionnel avec logo TalentProof
+    console.log('[COMPANY REGISTRATION] Sending confirmation email to company...');
     try {
       const companyInfo = {
         companyName,
@@ -133,11 +150,18 @@ export const createCompanyRegistration = async (req, res) => {
         subject: ' Inscription TalentDay confirmée - TalentProof',
         html: companyTalentDayRegistrationTemplate(companyInfo, company.interestedTalentDays),
       });
+      console.log('[COMPANY REGISTRATION] Confirmation email sent successfully to:', email);
     } catch (emailError) {
-      console.error('Erreur envoi email entreprise:', emailError);
+      console.error('[COMPANY REGISTRATION] Error sending confirmation email:', {
+        error: emailError.message,
+        stack: emailError.stack,
+        recipient: email
+      });
+      // Continue even if email fails
     }
 
     // Envoyer notification à l'admin
+    console.log('[COMPANY REGISTRATION] Sending notification email to admin...');
     try {
       await sendEmail({
         to: process.env.ADMIN_EMAIL || 'admin@talentproof.com',
@@ -169,20 +193,55 @@ export const createCompanyRegistration = async (req, res) => {
           </div>
         `,
       });
+      console.log('[COMPANY REGISTRATION] Admin notification email sent successfully');
     } catch (emailError) {
-      console.error('Erreur envoi email admin:', emailError);
+      console.error('[COMPANY REGISTRATION] Error sending admin notification:', {
+        error: emailError.message,
+        stack: emailError.stack
+      });
+      // Continue even if email fails
     }
 
+    console.log('[COMPANY REGISTRATION] Registration process completed successfully');
     res.status(201).json({
       success: true,
       message: 'Inscription enregistrée avec succès. Vous recevrez un email de confirmation.',
       data: company,
     });
   } catch (error) {
-    console.error('Erreur création inscription entreprise:', error);
-    res.status(500).json({
+    console.error('[COMPANY REGISTRATION] CRITICAL ERROR:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      code: error.code
+    });
+    
+    // Déterminer le type d'erreur et le code HTTP approprié
+    let statusCode = 500;
+    let errorMessage = 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.';
+    
+    // Erreurs MongoDB
+    if (error.name === 'MongoNetworkError' || error.name === 'MongoTimeoutError') {
+      statusCode = 503;
+      errorMessage = 'Erreur de connexion à la base de données. Veuillez réessayer dans quelques instants.';
+      console.error('[COMPANY REGISTRATION] DATABASE CONNECTION ERROR - Check MongoDB URI and network');
+    } else if (error.name === 'ValidationError') {
+      statusCode = 400;
+      errorMessage = 'Données invalides. Veuillez vérifier les informations saisies.';
+      console.error('[COMPANY REGISTRATION] VALIDATION ERROR:', error.errors);
+    } else if (error.code === 11000) {
+      statusCode = 409;
+      errorMessage = 'Cette entreprise est déjà inscrite.';
+      console.error('[COMPANY REGISTRATION] DUPLICATE KEY ERROR');
+    }
+    
+    res.status(statusCode).json({
       success: false,
-      message: error.message || 'Erreur lors de l\'inscription',
+      message: errorMessage,
+      ...(process.env.NODE_ENV === 'development' && { 
+        error: error.message,
+        stack: error.stack 
+      })
     });
   }
 };

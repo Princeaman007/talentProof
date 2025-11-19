@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { Building2, User, Mail, Phone, Globe, FileText, Calendar, CheckCircle } from 'lucide-react';
+import { Building2, User, Mail, Phone, Globe, FileText, Calendar, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
 
 const CompanyRegistration = () => {
   const navigate = useNavigate();
@@ -18,6 +18,8 @@ const CompanyRegistration = () => {
     notes: '',
   });
   const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState('');
+  const [apiErrorDetails, setApiErrorDetails] = useState([]);
 
   useEffect(() => {
     fetchTalentDays();
@@ -25,12 +27,15 @@ const CompanyRegistration = () => {
 
   const fetchTalentDays = async () => {
     try {
+      console.log('[COMPANY REGISTRATION] Fetching TalentDays...');
       const response = await api.get('/talent-days?statut=inscriptions-ouvertes');
       if (response.data.success) {
+        console.log('[COMPANY REGISTRATION] TalentDays loaded:', response.data.data.length);
         setTalentDays(response.data.data);
       }
     } catch (error) {
-      console.error('Erreur chargement TalentDays:', error);
+      console.error('[COMPANY REGISTRATION] Error fetching TalentDays:', error);
+      setApiError('Impossible de charger les événements. Veuillez réessayer.');
     }
   };
 
@@ -97,11 +102,21 @@ const CompanyRegistration = () => {
       return;
     }
 
+    // Reset error states
+    setApiError('');
+    setApiErrorDetails([]);
+    setErrors({});
+
+    console.log('[COMPANY REGISTRATION] Submitting form...', formData);
+
     try {
       setLoading(true);
       const response = await api.post('/companies', formData);
 
+      console.log('[COMPANY REGISTRATION] Response:', response.data);
+
       if (response.data.success) {
+        console.log('[COMPANY REGISTRATION] Registration successful!');
         setSuccess(true);
         // Rediriger après 3 secondes
         setTimeout(() => {
@@ -109,9 +124,44 @@ const CompanyRegistration = () => {
         }, 3000);
       }
     } catch (error) {
-      const errorMsg = error.response?.data?.message || 'Erreur lors de l\'inscription';
-      setErrors({ submit: errorMsg });
-      console.error('Erreur inscription:', error);
+      console.error('[COMPANY REGISTRATION] Registration error:', error);
+      
+      // Gestion détaillée des erreurs
+      if (error.response) {
+        // Erreur HTTP avec réponse du serveur
+        const { status, data } = error.response;
+        console.error('[COMPANY REGISTRATION] Server error:', { status, data });
+        
+        if (status === 400) {
+          // Erreur de validation
+          if (data.errors && Array.isArray(data.errors)) {
+            // Erreurs de validation avec détails
+            setApiErrorDetails(data.errors);
+            setApiError(data.message || 'Erreur de validation');
+          } else {
+            setApiError(data.message || 'Données invalides. Veuillez vérifier les informations saisies.');
+          }
+        } else if (status === 409) {
+          setApiError('Cette entreprise est déjà inscrite avec cet email.');
+        } else if (status === 503) {
+          setApiError('Service temporairement indisponible. Veuillez réessayer dans quelques instants.');
+        } else if (status >= 500) {
+          setApiError('Erreur serveur. Notre équipe technique a été notifiée. Veuillez réessayer plus tard.');
+        } else {
+          setApiError(data.message || 'Une erreur est survenue lors de l\'inscription.');
+        }
+      } else if (error.request) {
+        // Pas de réponse du serveur (problème réseau)
+        console.error('[COMPANY REGISTRATION] Network error - no response:', error.request);
+        setApiError('Impossible de contacter le serveur. Vérifiez votre connexion internet et réessayez.');
+      } else {
+        // Autre erreur
+        console.error('[COMPANY REGISTRATION] Unexpected error:', error.message);
+        setApiError('Une erreur inattendue est survenue. Veuillez réessayer.');
+      }
+      
+      // Scroll to top to show error
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setLoading(false);
     }
@@ -162,6 +212,28 @@ const CompanyRegistration = () => {
             Participez aux TalentDays et rencontrez les meilleurs talents
           </p>
         </div>
+
+        {/* Error Alert */}
+        {apiError && (
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="flex items-start">
+              <XCircle className="w-5 h-5 text-red-600 mr-3 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="text-red-900 font-semibold mb-1">Erreur d'inscription</h3>
+                <p className="text-red-700 text-sm">{apiError}</p>
+                {apiErrorDetails.length > 0 && (
+                  <ul className="mt-2 space-y-1">
+                    {apiErrorDetails.map((error, index) => (
+                      <li key={index} className="text-red-600 text-sm">
+                        <strong>{error.field}:</strong> {error.message}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Form */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
