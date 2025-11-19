@@ -47,15 +47,25 @@ export const register = async (req, res) => {
     const confirmationLink = `${process.env.CLIENT_URL}/confirm-email/${confirmationToken}`;
 
     // Envoyer l'email de confirmation
+    console.log('📧 Tentative d\'envoi email de confirmation à:', email);
+    console.log('🔗 Lien de confirmation:', confirmationLink);
+    
     try {
-      await sendEmail({
+      const emailResult = await sendEmail({
         to: email,
         subject: 'Confirmez votre inscription sur TalentProof',
         html: confirmationEmailTemplate(nom, confirmationLink),
       });
+      console.log('✅ Email de confirmation envoyé avec succès:', emailResult.messageId);
     } catch (emailError) {
-      console.error('Erreur envoi email:', emailError);
+      console.error('❌ ERREUR CRITIQUE - Envoi email échoué:', {
+        error: emailError.message,
+        code: emailError.code,
+        stack: emailError.stack,
+        recipient: email,
+      });
       // Ne pas bloquer l'inscription si l'email échoue
+      // mais l'utilisateur devra peut-être réessayer via "Renvoyer l'email"
     }
 
     res.status(201).json({
