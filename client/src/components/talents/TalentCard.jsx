@@ -3,6 +3,12 @@ import { FaCheckCircle, FaStar, FaBriefcase, FaMapMarkerAlt, FaClock, FaGlobe } 
 import { TECH_COLORS } from '../../utils/constants';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import { 
+  getUserDisplayName, 
+  formatNumber, 
+  safeValue, 
+  formatLocation 
+} from '../../utils/formatters';
 
 const TalentCard = ({ talent, onContact }) => {
   const { isAuthenticated } = useAuth();
@@ -106,7 +112,7 @@ const TalentCard = ({ talent, onContact }) => {
         </div>
         <div className="flex items-center space-x-1 bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
           <FaStar className="text-xs" />
-          <span className="text-sm font-bold">{talent.scoreTest}/100</span>
+          <span className="text-sm font-bold">{formatNumber(talent.scoreTest)}/100</span>
         </div>
       </div>
 
@@ -124,9 +130,9 @@ const TalentCard = ({ talent, onContact }) => {
           </div>
         )}
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-primary">{talent.prenom}</h3>
+          <h3 className="text-xl font-bold text-primary">{getUserDisplayName(talent)}</h3>
           <p className="text-sm font-medium text-secondary">
-            {talent.typeProfil} {talent.niveau}
+            {safeValue(talent.typeProfil)} {safeValue(talent.niveau)}
           </p>
         </div>
       </div>
@@ -134,10 +140,10 @@ const TalentCard = ({ talent, onContact }) => {
       {/* Badges: Niveau + Type de contrat */}
       <div className="flex flex-wrap gap-2 mb-4">
         <span className={`text-xs px-3 py-1 rounded-full font-medium ${getNiveauBadge()}`}>
-          {talent.niveau}
+          {safeValue(talent.niveau, 'Non défini')}
         </span>
         <span className="text-xs px-3 py-1 rounded-full font-medium bg-blue-100 text-blue-700">
-          {talent.typeContrat}
+          {safeValue(talent.typeContrat, 'Non défini')}
         </span>
       </div>
 
@@ -153,7 +159,7 @@ const TalentCard = ({ talent, onContact }) => {
         {talent.localisation && (
           <div className="flex items-center space-x-2">
             <FaMapMarkerAlt className="text-primary flex-shrink-0" />
-            <span className="truncate">{talent.localisation}</span>
+            <span className="truncate">{formatLocation(talent)}</span>
           </div>
         )}
 
@@ -162,7 +168,7 @@ const TalentCard = ({ talent, onContact }) => {
           <div className="flex items-center space-x-2">
             <FaClock className="text-primary flex-shrink-0" />
             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getDisponibiliteBadge()}`}>
-              {talent.disponibilite}
+              {safeValue(talent.disponibilite, 'Non précisé')}
             </span>
           </div>
         )}
@@ -209,7 +215,7 @@ const TalentCard = ({ talent, onContact }) => {
       {/* Plateforme de test */}
       {talent.plateforme && (
         <div className="mb-4 text-xs text-neutral-dark">
-          <span className="font-medium">Test validé sur:</span> {talent.plateforme}
+          <span className="font-medium">Test validé sur:</span> {safeValue(talent.plateforme, 'Plateforme inconnue')}
         </div>
       )}
 

@@ -6,6 +6,7 @@ import {
   Globe, Building2, Phone, Mail, User, Target, Award, TrendingUp, Briefcase 
 } from 'lucide-react';
 import { getImageUrl } from '../utils/api';
+import { formatDate, formatTime, safeValue, formatNumber, formatAvailablePlaces } from '../utils/formatters';
 
 const TalentDayDetail = () => {
   const { id } = useParams();
@@ -148,7 +149,7 @@ const TalentDayDetail = () => {
         <div className="absolute bottom-8 left-8 right-8">
           <div className="container mx-auto">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              {talentDay.titre}
+              {safeValue(talentDay.titre, 'TalentDay')}
             </h1>
             <div className="flex flex-wrap gap-3">
               {getTypeBadge(talentDay.typeEvenement)}
@@ -170,7 +171,7 @@ const TalentDayDetail = () => {
                 À propos de l'événement
               </h2>
               <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                {talentDay.description}
+                {safeValue(talentDay.description, 'Aucune description disponible.')}
               </p>
             </div>
 
@@ -411,7 +412,7 @@ const TalentDayDetail = () => {
                     <div>
                       <p className="text-sm text-gray-500">Horaires</p>
                       <p className="font-semibold text-gray-900">
-                        {talentDay.heureDebut} - {talentDay.heureFin}
+                        {formatTime(talentDay.heureDebut)} - {formatTime(talentDay.heureFin)}
                       </p>
                     </div>
                   </div>
@@ -434,7 +435,7 @@ const TalentDayDetail = () => {
                       <div>
                         <p className="text-sm text-gray-500">Niveau requis</p>
                         <p className="font-semibold text-gray-900 capitalize">
-                          {talentDay.niveauRequis}
+                          {safeValue(talentDay.niveauRequis, 'Tous niveaux')}
                         </p>
                       </div>
                     </div>
@@ -494,7 +495,7 @@ const TalentDayDetail = () => {
                     <div className="flex-1">
                       <p className="text-sm text-gray-500">Places disponibles</p>
                       <p className="font-semibold text-gray-900">
-                        {talentDay.placesRestantes}/{talentDay.placesDisponibles}
+                        {formatAvailablePlaces(talentDay)}
                       </p>
                       {/* Barre de progression */}
                       <div className="w-full bg-gray-200 rounded-full h-2 mt-2">

@@ -1,240 +1,532 @@
-// Template de base pour tous les emails
-const baseTemplate = (content) => `
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TalentProof</title>
-  <style>
-    body {
-      font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
-      line-height: 1.6;
-      color: #475569;
-      background-color: #f8fafc;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 600px;
-      margin: 20px auto;
-      background-color: #ffffff;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .header {
-      background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%);
-      padding: 40px 20px;
-      text-align: center;
-    }
-    .logo {
-      font-size: 32px;
-      font-weight: bold;
-      color: #ffffff;
-      text-decoration: none;
-    }
+/**
+ * Templates d'emails HTML professionnels pour TalentProof
+ * Thème: Bleu (#1e3a8a, #3b82f6) - Responsive (600px)
+ * Contact: info@princeaman.dev | +32 467 62 08 78
+ */
+
+const baseStyles = `
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f3f4f6;
+  }
+  .email-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #ffffff;
+  }
+  .header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    padding: 40px 20px;
+    text-align: center;
+  }
+  .logo {
+    font-size: 32px;
+    font-weight: bold;
+    color: #ffffff;
+    text-decoration: none;
+  }
+  .content {
+    padding: 40px 30px;
+    color: #374151;
+    line-height: 1.6;
+  }
+  .button {
+    display: inline-block;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    color: #ffffff !important;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    margin: 20px 0;
+    transition: transform 0.2s;
+  }
+  .button:hover {
+    transform: translateY(-2px);
+  }
+  .footer {
+    background-color: #f9fafb;
+    padding: 30px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 14px;
+    border-top: 1px solid #e5e7eb;
+  }
+  .footer a {
+    color: #3b82f6;
+    text-decoration: none;
+  }
+  .highlight-box {
+    background-color: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    padding: 16px;
+    margin: 20px 0;
+    border-radius: 4px;
+  }
+  .info-row {
+    margin: 12px 0;
+  }
+  .info-label {
+    font-weight: 600;
+    color: #1e3a8a;
+  }
+  @media only screen and (max-width: 600px) {
     .content {
-      padding: 40px 30px;
+      padding: 30px 20px !important;
     }
     .button {
-      display: inline-block;
-      padding: 14px 32px;
-      background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
-      color: #ffffff;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: 600;
-      margin: 20px 0;
-    }
-    .footer {
-      background-color: #f1f5f9;
-      padding: 30px;
+      display: block;
       text-align: center;
-      font-size: 14px;
-      color: #64748B;
     }
-    .footer a {
-      color: #1E3A8A;
-      text-decoration: none;
-    }
-    h1 {
-      color: #1E3A8A;
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-    p {
-      margin: 15px 0;
-      color: #475569;
-    }
-    .highlight {
-      background-color: #fef3c7;
-      padding: 15px;
-      border-left: 4px solid #F97316;
-      border-radius: 4px;
-      margin: 20px 0;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <div class="logo"> TalentProof</div>
-    </div>
-    <div class="content">
-      ${content}
-    </div>
-    <div class="footer">
-      <p><strong>TalentProof</strong> - Le label de confiance pour les talents tech</p>
-      <p>Avenue de lille 4 A52, 4020 Liège, Belgique</p>
-      <p>
-        <a href="mailto:info@princeaman.dev">info@princeaman.dev</a> | 
-        <a href="tel:+32467620878">+32 467 62 08 78</a>
-      </p>
-      <p style="font-size: 12px; color: #94A3B8; margin-top: 20px;">
-        © ${new Date().getFullYear()} TalentProof. Tous droits réservés.
-      </p>
-    </div>
-  </div>
-</body>
-</html>
+  }
 `;
 
 /**
- * Email de confirmation d'inscription
+ * 1. Email de bienvenue pour les entreprises
  */
+const welcomeCompanyEmail = (companyData) => {
+  const { companyName, contactPerson, email } = companyData;
+  
+  return `
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Bienvenue sur TalentProof</title>
+      <style>${baseStyles}</style>
+    </head>
+    <body>
+      <div class="email-container">
+        <div class="header">
+          <a href="https://talentproof.com" class="logo">🚀 TalentProof</a>
+          <p style="color: #e0e7ff; margin-top: 10px; font-size: 16px;">
+            La plateforme qui connecte les talents tech aux meilleures opportunités
+          </p>
+        </div>
+
+        <div class="content">
+          <h1 style="color: #1e3a8a; margin-bottom: 20px;">
+            Bienvenue ${contactPerson || companyName} ! 🎉
+          </h1>
+          
+          <p>
+            Nous sommes ravis de vous accueillir sur <strong>TalentProof</strong>, la plateforme qui révolutionne 
+            le recrutement tech en Belgique.
+          </p>
+
+          <div class="highlight-box">
+            <h3 style="margin-top: 0; color: #1e3a8a;">✨ Votre compte est maintenant actif</h3>
+            <div class="info-row">
+              <span class="info-label">Entreprise:</span> ${companyName}
+            </div>
+            <div class="info-row">
+              <span class="info-label">Email:</span> ${email}
+            </div>
+          </div>
+
+          <h3 style="color: #1e3a8a;">🎯 Prochaines étapes:</h3>
+          <ol style="padding-left: 20px;">
+            <li style="margin: 10px 0;">Complétez votre profil pour attirer les meilleurs talents</li>
+            <li style="margin: 10px 0;">Explorez nos TalentDays - événements de recrutement exclusifs</li>
+            <li style="margin: 10px 0;">Consultez notre base de talents validés et certifiés</li>
+          </ol>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="https://talentproof.com/dashboard" class="button">
+              Accéder à mon tableau de bord →
+            </a>
+          </div>
+
+          <p style="margin-top: 30px;">
+            À très bientôt,<br>
+            <strong>L'équipe TalentProof</strong>
+          </p>
+        </div>
+
+        <div class="footer">
+          <p style="margin: 0 0 10px 0;">
+            <strong>TalentProof</strong> - Recrutement Tech Simplifié
+          </p>
+          <p style="margin: 10px 0;">
+            📧 <a href="mailto:info@princeaman.dev">info@princeaman.dev</a> | 
+            📱 <a href="tel:+32467620878">+32 467 62 08 78</a>
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
+
+/**
+ * 2. Email de bienvenue pour les talents
+ */
+const welcomeTalentEmail = (talentData) => {
+  const { prenom, email, typeProfil, scoreTest } = talentData;
+  
+  return `
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Bienvenue sur TalentProof</title>
+      <style>${baseStyles}</style>
+    </head>
+    <body>
+      <div class="email-container">
+        <div class="header">
+          <a href="https://talentproof.com" class="logo">🚀 TalentProof</a>
+          <p style="color: #e0e7ff; margin-top: 10px; font-size: 16px;">
+            Votre carrière tech commence ici
+          </p>
+        </div>
+
+        <div class="content">
+          <h1 style="color: #1e3a8a; margin-bottom: 20px;">
+            Bienvenue ${prenom} ! 🎉
+          </h1>
+          
+          <p>
+            Félicitations pour avoir rejoint <strong>TalentProof</strong> ! Votre profil 
+            ${typeProfil || 'développeur'} est maintenant visible par les meilleures entreprises tech de Belgique.
+          </p>
+
+          ${scoreTest ? `
+            <div class="highlight-box" style="background-color: #ecfdf5; border-color: #10b981;">
+              <h3 style="margin-top: 0; color: #059669;">🏆 Votre score TalentProof</h3>
+              <p style="font-size: 36px; font-weight: bold; color: #059669; margin: 10px 0;">
+                ${scoreTest}/100
+              </p>
+            </div>
+          ` : ''}
+
+          <h3 style="color: #1e3a8a;">🚀 Comment maximiser vos opportunités:</h3>
+          <ol style="padding-left: 20px;">
+            <li style="margin: 10px 0;">Complétez votre profil à 100%</li>
+            <li style="margin: 10px 0;">Participez aux TalentDays</li>
+            <li style="margin: 10px 0;">Tenez votre profil à jour</li>
+          </ol>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="https://talentproof.com/dashboard" class="button">
+              Compléter mon profil →
+            </a>
+          </div>
+
+          <p style="margin-top: 20px;">
+            Bonne chance,<br>
+            <strong>L'équipe TalentProof</strong>
+          </p>
+        </div>
+
+        <div class="footer">
+          <p style="margin: 0 0 10px 0;">
+            <strong>TalentProof</strong> - Votre Carrière Tech
+          </p>
+          <p style="margin: 10px 0;">
+            📧 <a href="mailto:info@princeaman.dev">info@princeaman.dev</a> | 
+            📱 <a href="tel:+32467620878">+32 467 62 08 78</a>
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
+
+/**
+ * 3. Email de confirmation d'inscription à un TalentDay
+ */
+const talentDayRegistrationEmail = (registrationData) => {
+  const { 
+    userName, 
+    userEmail, 
+    eventTitle, 
+    eventDate, 
+    eventTime, 
+    eventLocation, 
+    eventType,
+    isOnline,
+    meetingLink 
+  } = registrationData;
+  
+  return `
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Confirmation TalentDay</title>
+      <style>${baseStyles}</style>
+    </head>
+    <body>
+      <div class="email-container">
+        <div class="header">
+          <a href="https://talentproof.com" class="logo">🚀 TalentProof</a>
+        </div>
+
+        <div class="content">
+          <h1 style="color: #1e3a8a;">
+            ✅ Inscription confirmée !
+          </h1>
+          
+          <p>Bonjour <strong>${userName}</strong>,</p>
+
+          <div class="highlight-box" style="background-color: #ecfdf5; border-color: #10b981;">
+            <h2 style="color: #059669; margin-top: 0;">${eventTitle}</h2>
+            <div class="info-row">
+              <span class="info-label">📅 Date:</span> ${eventDate}
+            </div>
+            <div class="info-row">
+              <span class="info-label">🕐 Heure:</span> ${eventTime}
+            </div>
+            <div class="info-row">
+              <span class="info-label">📍 Lieu:</span> ${eventLocation}
+            </div>
+          </div>
+
+          ${isOnline && meetingLink ? `
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${meetingLink}" class="button">
+                Rejoindre l'événement →
+              </a>
+            </div>
+          ` : ''}
+
+          <p style="margin-top: 20px;">
+            À très bientôt,<br>
+            <strong>L'équipe TalentProof</strong>
+          </p>
+        </div>
+
+        <div class="footer">
+          <p style="margin: 0 0 10px 0;">
+            <strong>TalentProof</strong>
+          </p>
+          <p style="margin: 10px 0;">
+            📧 <a href="mailto:info@princeaman.dev">info@princeaman.dev</a>
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
+
+/**
+ * 4. Email de réinitialisation de mot de passe
+ */
+const resetPasswordEmail = (resetData) => {
+  const { userName, email, resetToken, resetUrl } = resetData;
+  
+  return `
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Réinitialisation mot de passe</title>
+      <style>${baseStyles}</style>
+    </head>
+    <body>
+      <div class="email-container">
+        <div class="header">
+          <a href="https://talentproof.com" class="logo">🚀 TalentProof</a>
+        </div>
+
+        <div class="content">
+          <h1 style="color: #1e3a8a;">
+            🔐 Réinitialisation de mot de passe
+          </h1>
+          
+          <p>Bonjour${userName ? ` <strong>${userName}</strong>` : ''},</p>
+
+          <p>
+            Vous avez demandé la réinitialisation de votre mot de passe.
+          </p>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetUrl}" class="button">
+              Réinitialiser mon mot de passe →
+            </a>
+          </div>
+
+          <div class="highlight-box" style="background-color: #fef2f2; border-color: #ef4444;">
+            <h3 style="margin-top: 0; color: #dc2626;">⚠️ Important</h3>
+            <p style="margin: 0;">
+              Ce lien expire dans <strong>1 heure</strong> et ne peut être utilisé qu'une seule fois.
+            </p>
+          </div>
+
+          <p style="margin-top: 20px;">
+            Cordialement,<br>
+            <strong>L'équipe TalentProof</strong>
+          </p>
+        </div>
+
+        <div class="footer">
+          <p style="margin: 0 0 10px 0;">
+            <strong>TalentProof</strong>
+          </p>
+          <p style="margin: 10px 0;">
+            📧 <a href="mailto:info@princeaman.dev">info@princeaman.dev</a>
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
+
+/**
+ * 5. Email de demande de contact entreprise → talent
+ */
+const companyContactTalentEmail = (contactData) => {
+  const { 
+    talentName, 
+    talentEmail,
+    companyName, 
+    companyContact,
+    companyEmail,
+    companyPhone,
+    message,
+    position
+  } = contactData;
+  
+  return `
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Nouvelle opportunité</title>
+      <style>${baseStyles}</style>
+    </head>
+    <body>
+      <div class="email-container">
+        <div class="header">
+          <a href="https://talentproof.com" class="logo">🚀 TalentProof</a>
+        </div>
+
+        <div class="content">
+          <h1 style="color: #1e3a8a;">
+            🎯 Nouvelle opportunité !
+          </h1>
+          
+          <p>Bonjour <strong>${talentName}</strong>,</p>
+
+          <p>
+            L'entreprise <strong>${companyName}</strong> est intéressée par votre profil.
+          </p>
+
+          <div class="highlight-box" style="background-color: #ecfdf5; border-color: #10b981;">
+            <h3 style="margin-top: 0; color: #059669;">🏢 Informations de l'entreprise</h3>
+            <div class="info-row">
+              <span class="info-label">Entreprise:</span> ${companyName}
+            </div>
+            <div class="info-row">
+              <span class="info-label">Contact:</span> ${companyContact}
+            </div>
+            <div class="info-row">
+              <span class="info-label">Email:</span> 
+              <a href="mailto:${companyEmail}">${companyEmail}</a>
+            </div>
+            ${companyPhone ? `
+              <div class="info-row">
+                <span class="info-label">Téléphone:</span> 
+                <a href="tel:${companyPhone}">${companyPhone}</a>
+              </div>
+            ` : ''}
+          </div>
+
+          ${message ? `
+            <h3 style="color: #1e3a8a;">💬 Message:</h3>
+            <div style="background-color: #f9fafb; padding: 20px; border-radius: 8px; border-left: 4px solid #3b82f6;">
+              <p style="margin: 0; white-space: pre-line;">${message}</p>
+            </div>
+          ` : ''}
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="https://talentproof.com/dashboard/opportunities" class="button">
+              Voir mes opportunités →
+            </a>
+          </div>
+
+          <p style="margin-top: 20px;">
+            Bonne chance,<br>
+            <strong>L'équipe TalentProof</strong>
+          </p>
+        </div>
+
+        <div class="footer">
+          <p style="margin: 0 0 10px 0;">
+            <strong>TalentProof</strong>
+          </p>
+          <p style="margin: 10px 0;">
+            📧 <a href="mailto:info@princeaman.dev">info@princeaman.dev</a>
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
+
+/**
+ * EXPORTS - Templates compatibles avec l'ancien système
+ */
+
+// Alias pour la compatibilité avec l'ancien code
 export const confirmationEmailTemplate = (companyName, confirmationLink) => {
-  const content = `
-    <h1>Bienvenue sur TalentProof, ${companyName} ! </h1>
-    <p>Merci de vous être inscrit sur TalentProof, la plateforme de recrutement des meilleurs talents tech juniors.</p>
-    <p>Pour activer votre compte et accéder à notre catalogue de talents, veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous :</p>
-    <div style="text-align: center;">
-      <a href="${confirmationLink}" class="button">Confirmer mon email</a>
-    </div>
-    <p style="font-size: 14px; color: #64748B; margin-top: 30px;">
-      Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :<br>
-      <a href="${confirmationLink}" style="color: #1E3A8A; word-break: break-all;">${confirmationLink}</a>
-    </p>
-    <div class="highlight">
-      <strong> Ce lien expire dans 24 heures.</strong><br>
-      Si vous n'avez pas créé de compte sur TalentProof, vous pouvez ignorer cet email.
-    </div>
-  `;
-  return baseTemplate(content);
+  return welcomeCompanyEmail({
+    companyName,
+    email: 'email@example.com',
+    contactPerson: companyName
+  });
 };
 
-/**
- * Email de réinitialisation de mot de passe
- */
-export const resetPasswordTemplate = (companyName, resetLink) => {
-  const content = `
-    <h1>Réinitialisation de votre mot de passe</h1>
-    <p>Bonjour ${companyName},</p>
-    <p>Vous avez demandé à réinitialiser votre mot de passe sur TalentProof. Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe :</p>
-    <div style="text-align: center;">
-      <a href="${resetLink}" class="button">Réinitialiser mon mot de passe</a>
-    </div>
-    <p style="font-size: 14px; color: #64748B; margin-top: 30px;">
-      Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :<br>
-      <a href="${resetLink}" style="color: #1E3A8A; word-break: break-all;">${resetLink}</a>
-    </p>
-    <div class="highlight">
-      <strong> Ce lien expire dans 1 heure.</strong><br>
-      Si vous n'avez pas demandé cette réinitialisation, ignorez cet email. Votre mot de passe restera inchangé.
-    </div>
-    <p style="margin-top: 30px; font-size: 14px; color: #64748B;">
-      Pour votre sécurité, ne partagez jamais ce lien avec qui que ce soit.
-    </p>
-  `;
-  return baseTemplate(content);
+export const resetPasswordTemplate = (userName, resetLink) => {
+  return resetPasswordEmail({
+    userName,
+    email: 'email@example.com',
+    resetUrl: resetLink
+  });
 };
 
-/**
- * Email de notification à Prince (demande de contact pour un talent)
- */
 export const contactNotificationTemplate = (talentInfo, recruteurInfo) => {
-  const content = `
-    <h1> Nouvelle demande de contact talent</h1>
-    <p><strong>Un recruteur souhaite entrer en contact avec un de vos talents validés.</strong></p>
-    
-    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;"> Informations du talent</h2>
-    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Prénom :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${talentInfo.prenom}</td>
-      </tr>
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Technologies :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${talentInfo.technologies.join(', ')}</td>
-      </tr>
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Score :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${talentInfo.scoreTest}/100 (${talentInfo.plateforme})</td>
-      </tr>
-    </table>
-
-    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;"> Informations du recruteur</h2>
-    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Nom :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${recruteurInfo.nom}</td>
-      </tr>
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Email :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">
-          <a href="mailto:${recruteurInfo.email}">${recruteurInfo.email}</a>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Téléphone :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">
-          <a href="tel:${recruteurInfo.tel}">${recruteurInfo.tel}</a>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Entreprise :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${recruteurInfo.entreprise}</td>
-      </tr>
-    </table>
-
-    <div class="highlight" style="margin-top: 30px;">
-      <strong> Message du recruteur :</strong><br><br>
-      ${recruteurInfo.message.replace(/\n/g, '<br>')}
-    </div>
-
-    <div style="margin-top: 30px; padding: 20px; background-color: #f1f5f9; border-radius: 8px;">
-      <strong> Actions à faire :</strong>
-      <ol style="margin: 10px 0;">
-        <li>Contacter le recruteur par email ou téléphone</li>
-        <li>Envoyer le CV complet du talent</li>
-        <li>Organiser une mise en relation si approprié</li>
-      </ol>
-    </div>
-  `;
-  return baseTemplate(content);
+  return companyContactTalentEmail({
+    talentName: talentInfo.prenom,
+    talentEmail: 'talent@example.com',
+    companyName: recruteurInfo.entreprise,
+    companyContact: recruteurInfo.nom,
+    companyEmail: recruteurInfo.email,
+    companyPhone: recruteurInfo.tel,
+    message: recruteurInfo.message
+  });
 };
 
-/**
- * Email de confirmation de demande de contact (envoyé au recruteur)
- */
 export const contactConfirmationTemplate = (recruteurNom, talentPrenom) => {
-  const content = `
-    <h1>Demande bien reçue ! </h1>
-    <p>Bonjour ${recruteurNom},</p>
-    <p>Merci pour votre intérêt pour <strong>${talentPrenom}</strong>, l'un de nos talents validés TalentProof.</p>
-    <p>Votre demande a bien été reçue et nous allons la traiter dans les plus brefs délais.</p>
-    <div class="highlight">
-      <strong> Délai de réponse : 24-48 heures</strong><br>
-      Nous vous recontacterons rapidement avec les informations complètes sur ce talent.
-    </div>
-    <p>Notre équipe va :</p>
-    <ul style="line-height: 2;">
-      <li>Analyser votre demande</li>
-      <li>Vérifier la disponibilité du talent</li>
-      <li>Vous envoyer son CV complet et ses coordonnées</li>
-      <li>Organiser une mise en relation si approprié</li>
-    </ul>
-    <p style="margin-top: 30px;">Si vous avez des questions en attendant, n'hésitez pas à nous contacter.</p>
-  `;
-  return baseTemplate(content);
+  return companyContactTalentEmail({
+    talentName: talentPrenom,
+    talentEmail: 'talent@example.com',
+    companyName: 'Entreprise',
+    companyContact: recruteurNom,
+    companyEmail: 'contact@example.com',
+    message: 'Votre demande a été reçue.'
+  });
 };
+
+// Exports ES6 pour les nouveaux templates
+export {
+  welcomeCompanyEmail,
+  welcomeTalentEmail,
+  talentDayRegistrationEmail,
+  resetPasswordEmail,
+  companyContactTalentEmail,
+};
+
+// Les anciens templates sont déjà exportés individuellement plus haut

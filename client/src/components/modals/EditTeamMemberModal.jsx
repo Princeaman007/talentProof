@@ -42,7 +42,7 @@ const EditTeamMemberModal = ({ member, onClose, onSuccess }) => {
     onSuccess('Membre modifié avec succès !');
   } catch (error) {
     console.error('Erreur modification:', error);
-    setError(error.response?.data?.message || 'Erreur lors de la modification');
+    setError(error?.error?.message || error?.message || 'Erreur lors de la modification');
   } finally {
     setLoading(false);
   }

@@ -3,6 +3,7 @@ import api from '../../utils/api';
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import AddTalentModal from '../../components/modals/AddTalentModal';
 import EditTalentModal from '../../components/modals/EditTalentModal';
+import { getUserDisplayName, formatNumber, safeValue } from '../../utils/formatters';
 
 const AdminTalents = () => {
   const [talents, setTalents] = useState([]);
@@ -191,11 +192,11 @@ const AdminTalents = () => {
                         </div>
                       )}
                       <div>
-                        <p className="font-semibold">{talent.prenom}</p>
+                        <p className="font-semibold">{getUserDisplayName(talent)}</p>
                         <p className="text-xs text-neutral">
                           {talent.anneesExperience === 0
                             ? 'Débutant'
-                            : `${talent.anneesExperience} an${talent.anneesExperience > 1 ? 's' : ''}`
+                            : `${formatNumber(talent.anneesExperience)} an${talent.anneesExperience > 1 ? 's' : ''}`
                           }
                         </p>
                       </div>
@@ -203,16 +204,16 @@ const AdminTalents = () => {
                   </td>
                   <td className="p-4">
                     <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">
-                      {talent.typeProfil}
+                      {safeValue(talent.typeProfil, 'Non défini')}
                     </span>
                   </td>
                   <td className="p-4">
                     <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
-                      {talent.niveau}
+                      {safeValue(talent.niveau, 'Non défini')}
                     </span>
                   </td>
                   <td className="p-4">
-                    <span className="text-sm text-neutral">{talent.typeContrat}</span>
+                    <span className="text-sm text-neutral">{safeValue(talent.typeContrat, 'Non défini')}</span>
                   </td>
                   <td className="p-4">
                     <div className="flex flex-wrap gap-1">
@@ -230,7 +231,7 @@ const AdminTalents = () => {
                   </td>
                   <td className="p-4">
                     <div className="flex items-center gap-1">
-                      <span className="font-semibold text-secondary">{talent.scoreTest}</span>
+                      <span className="font-semibold text-secondary">{formatNumber(talent.scoreTest)}</span>
                       <span className="text-xs text-neutral">/100</span>
                     </div>
                   </td>

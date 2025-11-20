@@ -9,6 +9,7 @@ import {
   FaEnvelope,
   FaCheckCircle,
 } from 'react-icons/fa';
+import { getUserDisplayName, formatNumber, safeValue } from '../../utils/formatters';
 import { TECH_COLORS } from '../../utils/constants';
 
 const MesFavoris = () => {
@@ -181,10 +182,10 @@ const MesFavoris = () => {
                     )}
                     <div>
                       <h3 className="text-lg font-bold text-primary">
-                        {talent.prenom}
+                        {getUserDisplayName(talent)}
                       </h3>
                       <p className="text-sm text-neutral">
-                        {talent.typeProfil} {talent.niveau}
+                        {safeValue(talent.typeProfil)} {safeValue(talent.niveau)}
                       </p>
                     </div>
                   </div>
@@ -204,14 +205,14 @@ const MesFavoris = () => {
                 {/* Badges */}
                 <div className="flex flex-wrap gap-2 mb-3">
                   <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">
-                    {talent.typeContrat}
+                    {safeValue(talent.typeContrat, 'Non défini')}
                   </span>
                   <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">
-                    {talent.disponibilite}
+                    {safeValue(talent.disponibilite, 'Non précisé')}
                   </span>
                   <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700 font-medium flex items-center">
                     <FaCheckCircle className="mr-1" />
-                    Score: {talent.scoreTest}/100
+                    Score: {formatNumber(talent.scoreTest)}/100
                   </span>
                 </div>
 

@@ -25,6 +25,7 @@ import {
   Pie,
   Cell,
 } from 'recharts';
+import { getUserDisplayName, formatNumber, safeValue } from '../../utils/formatters';
 
 const COLORS = ['#1E3A8A', '#F97316', '#10B981', '#8B5CF6', '#EF4444'];
 
@@ -249,21 +250,21 @@ const AdminStats = () => {
                     #{index + 1}
                   </div>
                   <div>
-                    <p className="font-semibold text-primary">{talent.prenom}</p>
+                    <p className="font-semibold text-primary">{getUserDisplayName(talent)}</p>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {talent.technologies?.slice(0, 3).map((tech, i) => (
                         <span
                           key={i}
                           className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded"
                         >
-                          {tech}
+                          {safeValue(tech, 'N/A')}
                         </span>
                       ))}
                     </div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-secondary">{talent.count}</p>
+                  <p className="text-2xl font-bold text-secondary">{formatNumber(talent.count)}</p>
                   <p className="text-xs text-neutral">demandes</p>
                 </div>
               </div>

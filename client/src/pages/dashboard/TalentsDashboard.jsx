@@ -88,7 +88,7 @@ const TalentsDashboard = () => {
       }
     } catch (error) {
       console.error('Erreur lors du chargement des talents:', error);
-      setError(error.response?.data?.message || 'Erreur lors du chargement des talents');
+      setError(error?.error?.message || error?.message || 'Erreur lors du chargement des talents');
       setTalents([]);
     } finally {
       setLoading(false);

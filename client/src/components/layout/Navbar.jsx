@@ -32,6 +32,17 @@ const Navbar = () => {
     }
   };
 
+  // Récupérer le nombre de notifications non lues
+  useEffect(() => {
+    if (user && !isAdmin) {
+      fetchUnreadCount();
+
+      // Actualiser toutes les 30 secondes
+      const interval = setInterval(fetchUnreadCount, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user, isAdmin, fetchUnreadCount]);
+
   // Navigation links - conditionnels selon l'état de connexion
   const navLinks = user ? [
     { name: 'Accueil', path: '/' },

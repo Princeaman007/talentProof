@@ -9,6 +9,7 @@ import {
   FaUser,
   FaCalendar,
 } from 'react-icons/fa';
+import { getUserDisplayName, formatNumber, safeValue } from '../../utils/formatters';
 import { TECH_COLORS } from '../../utils/constants';
 
 const MesDemandesContact = () => {
@@ -186,11 +187,11 @@ const MesDemandesContact = () => {
                     )}
                     <div>
                       <h3 className="text-lg font-bold text-primary">
-                        {talent?.prenom || 'Talent supprimé'}
+                        {talent ? getUserDisplayName(talent) : 'Talent supprimé'}
                       </h3>
                       {talent && (
                         <p className="text-sm text-neutral">
-                          {talent.typeProfil} {talent.niveau} • Score: {talent.scoreTest}/100
+                          {safeValue(talent.typeProfil)} {safeValue(talent.niveau)} • Score: {formatNumber(talent.scoreTest)}/100
                         </p>
                       )}
                     </div>

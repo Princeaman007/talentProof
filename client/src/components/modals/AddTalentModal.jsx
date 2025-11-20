@@ -155,7 +155,7 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
         const errorMessages = error.response.data.errors.map(err => err.msg).join(', ');
         setError(errorMessages);
       } else {
-        setError(error.response?.data?.message || 'Erreur lors de l\'ajout du talent');
+        setError(error?.error?.message || error?.message || 'Erreur lors de l\'ajout du talent');
       }
     } finally {
       setLoading(false);

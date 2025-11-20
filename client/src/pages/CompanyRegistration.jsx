@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../utils/api';
-import { Building2, User, Mail, Phone, Globe, FileText, Calendar, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+import { Building2, User, Mail, Phone, Globe, FileText, Calendar, CheckCircle } from 'lucide-react';
+import apiService from '../services/api';
+import ErrorMessage, { SuccessMessage, FieldError } from '../components/ErrorMessage';
+import { formatDate } from '../utils/formatters';
+import { validateEmail, validatePhone, validateName } from '../utils/validators';
 
 const CompanyRegistration = () => {
   const navigate = useNavigate();
@@ -18,8 +21,8 @@ const CompanyRegistration = () => {
     notes: '',
   });
   const [errors, setErrors] = useState({});
-  const [apiError, setApiError] = useState('');
-  const [apiErrorDetails, setApiErrorDetails] = useState([]);
+  const [apiError, setApiError] = useState(null);
+  const [apiErrorDetails, setApiErrorDetails] = useState(null);
 
   useEffect(() => {
     fetchTalentDays();
@@ -27,29 +30,44 @@ const CompanyRegistration = () => {
 
   const fetchTalentDays = async () => {
     try {
-      console.log('[COMPANY REGISTRATION] Fetching TalentDays...');
-      const response = await api.get('/talent-days?statut=inscriptions-ouvertes');
-      if (response.data.success) {
-        console.log('[COMPANY REGISTRATION] TalentDays loaded:', response.data.data.length);
-        setTalentDays(response.data.data);
+      const response = await apiService.talentDays.getAll({ statut: 'inscriptions-ouvertes' });
+      if (response.success) {
+        setTalentDays(response.data);
       }
     } catch (error) {
-      console.error('[COMPANY REGISTRATION] Error fetching TalentDays:', error);
-      setApiError('Impossible de charger les événements. Veuillez réessayer.');
+      const message = error?.error?.message || error?.message || 'Erreur de chargement';
+      setApiError(message);
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.companyName.trim()) newErrors.companyName = 'Le nom de l\'entreprise est requis';
-    if (!formData.contactPerson.trim()) newErrors.contactPerson = 'Le nom du contact est requis';
-    if (!formData.email.trim()) {
-      newErrors.email = 'L\'email est requis';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Format d\'email invalide';
+    // Validation nom entreprise
+    const companyNameValidation = validateName(formData.companyName, 'nom de l\'entreprise');
+    if (!companyNameValidation.valid) {
+      newErrors.companyName = companyNameValidation.error;
     }
-    if (!formData.phone.trim()) newErrors.phone = 'Le téléphone est requis';
+
+    // Validation contact
+    const contactValidation = validateName(formData.contactPerson, 'nom du contact');
+    if (!contactValidation.valid) {
+      newErrors.contactPerson = contactValidation.error;
+    }
+
+    // Validation email
+    const emailValidation = validateEmail(formData.email);
+    if (!emailValidation.valid) {
+      newErrors.email = emailValidation.error;
+    }
+
+    // Validation téléphone
+    const phoneValidation = validatePhone(formData.phone);
+    if (!phoneValidation.valid) {
+      newErrors.phone = phoneValidation.error;
+    }
+
+    // Validation TalentDays
     if (formData.interestedTalentDays.length === 0) {
       newErrors.interestedTalentDays = 'Sélectionnez au moins un TalentDay';
     }
@@ -103,64 +121,30 @@ const CompanyRegistration = () => {
     }
 
     // Reset error states
-    setApiError('');
-    setApiErrorDetails([]);
+    setApiError(null);
+    setApiErrorDetails(null);
     setErrors({});
-
-    console.log('[COMPANY REGISTRATION] Submitting form...', formData);
 
     try {
       setLoading(true);
-      const response = await api.post('/companies', formData);
-
-      console.log('[COMPANY REGISTRATION] Response:', response.data);
-
-      if (response.data.success) {
-        console.log('[COMPANY REGISTRATION] Registration successful!');
+      const response = await apiService.companies.register(formData);
+      // L'interceptor retourne déjà response.data
+      if (response.success) {
         setSuccess(true);
-        // Rediriger après 3 secondes
         setTimeout(() => {
           navigate('/talent-days');
         }, 3000);
+      } else {
+        setApiError(response.message || 'Erreur lors de l\'inscription');
+        setApiErrorDetails(response.details);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } catch (error) {
-      console.error('[COMPANY REGISTRATION] Registration error:', error);
-      
-      // Gestion détaillée des erreurs
-      if (error.response) {
-        // Erreur HTTP avec réponse du serveur
-        const { status, data } = error.response;
-        console.error('[COMPANY REGISTRATION] Server error:', { status, data });
-        
-        if (status === 400) {
-          // Erreur de validation
-          if (data.errors && Array.isArray(data.errors)) {
-            // Erreurs de validation avec détails
-            setApiErrorDetails(data.errors);
-            setApiError(data.message || 'Erreur de validation');
-          } else {
-            setApiError(data.message || 'Données invalides. Veuillez vérifier les informations saisies.');
-          }
-        } else if (status === 409) {
-          setApiError('Cette entreprise est déjà inscrite avec cet email.');
-        } else if (status === 503) {
-          setApiError('Service temporairement indisponible. Veuillez réessayer dans quelques instants.');
-        } else if (status >= 500) {
-          setApiError('Erreur serveur. Notre équipe technique a été notifiée. Veuillez réessayer plus tard.');
-        } else {
-          setApiError(data.message || 'Une erreur est survenue lors de l\'inscription.');
-        }
-      } else if (error.request) {
-        // Pas de réponse du serveur (problème réseau)
-        console.error('[COMPANY REGISTRATION] Network error - no response:', error.request);
-        setApiError('Impossible de contacter le serveur. Vérifiez votre connexion internet et réessayez.');
-      } else {
-        // Autre erreur
-        console.error('[COMPANY REGISTRATION] Unexpected error:', error.message);
-        setApiError('Une erreur inattendue est survenue. Veuillez réessayer.');
-      }
-      
-      // Scroll to top to show error
+      // L'interceptor formate déjà l'erreur
+      const message = error?.error?.message || error?.message || 'Erreur de connexion. Veuillez réessayer.';
+      const details = error?.error?.details || null;
+      setApiError(message);
+      setApiErrorDetails(details);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setLoading(false);
@@ -215,24 +199,14 @@ const CompanyRegistration = () => {
 
         {/* Error Alert */}
         {apiError && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-            <div className="flex items-start">
-              <XCircle className="w-5 h-5 text-red-600 mr-3 flex-shrink-0 mt-0.5" />
-              <div className="flex-1">
-                <h3 className="text-red-900 font-semibold mb-1">Erreur d'inscription</h3>
-                <p className="text-red-700 text-sm">{apiError}</p>
-                {apiErrorDetails.length > 0 && (
-                  <ul className="mt-2 space-y-1">
-                    {apiErrorDetails.map((error, index) => (
-                      <li key={index} className="text-red-600 text-sm">
-                        <strong>{error.field}:</strong> {error.message}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          </div>
+          <ErrorMessage 
+            message={apiError} 
+            details={apiErrorDetails}
+            onClose={() => {
+              setApiError(null);
+              setApiErrorDetails(null);
+            }}
+          />
         )}
 
         {/* Form */}
@@ -249,14 +223,17 @@ const CompanyRegistration = () => {
                 name="companyName"
                 value={formData.companyName}
                 onChange={handleChange}
+                required
+                minLength={2}
+                maxLength={100}
                 className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
                   errors.companyName ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-primary/30'
                 }`}
                 placeholder="Ex: TechCorp SAS"
+                aria-label="Nom de l'entreprise"
+                aria-invalid={errors.companyName ? 'true' : 'false'}
               />
-              {errors.companyName && (
-                <p className="text-red-500 text-sm mt-1">{errors.companyName}</p>
-              )}
+              <FieldError error={errors.companyName} />
             </div>
 
             {/* Contact Person */}
@@ -270,14 +247,17 @@ const CompanyRegistration = () => {
                 name="contactPerson"
                 value={formData.contactPerson}
                 onChange={handleChange}
+                required
+                minLength={2}
+                maxLength={100}
                 className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
                   errors.contactPerson ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-primary/30'
                 }`}
                 placeholder="Nom et prénom"
+                aria-label="Personne de contact"
+                aria-invalid={errors.contactPerson ? 'true' : 'false'}
               />
-              {errors.contactPerson && (
-                <p className="text-red-500 text-sm mt-1">{errors.contactPerson}</p>
-              )}
+              <FieldError error={errors.contactPerson} />
             </div>
 
             {/* Email & Phone */}
@@ -292,14 +272,16 @@ const CompanyRegistration = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
+                  required
+                  pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
                     errors.email ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-primary/30'
                   }`}
                   placeholder="contact@entreprise.com"
+                  aria-label="Email"
+                  aria-invalid={errors.email ? 'true' : 'false'}
                 />
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                )}
+                  <FieldError error={errors.email} />
               </div>
 
               <div>
@@ -312,14 +294,16 @@ const CompanyRegistration = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
+                  required
+                  pattern="[\d\s+()-]{9,20}"
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
                     errors.phone ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-primary/30'
                   }`}
                   placeholder="+32 XXX XX XX XX"
+                  aria-label="Téléphone"
+                  aria-invalid={errors.phone ? 'true' : 'false'}
                 />
-                {errors.phone && (
-                  <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-                )}
+                  <FieldError error={errors.phone} />
               </div>
             </div>
 
@@ -358,9 +342,7 @@ const CompanyRegistration = () => {
                   </option>
                 ))}
               </select>
-              {errors.interestedTalentDays && (
-                <p className="text-red-500 text-sm mt-1">{errors.interestedTalentDays}</p>
-              )}
+              <FieldError error={errors.interestedTalentDays} />
               <p className="text-xs text-gray-500 mt-1">
                 {formData.interestedTalentDays.length} événement(s) sélectionné(s)
               </p>

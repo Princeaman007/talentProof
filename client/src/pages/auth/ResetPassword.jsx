@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FaCheckCircle, FaEye, FaEyeSlash } from 'react-icons/fa';
+import ErrorMessage from '../../components/ErrorMessage';
 import api from '../../utils/api';
 
 const ResetPassword = () => {
@@ -47,18 +48,20 @@ const ResetPassword = () => {
       const response = await api.post(`/auth/reset-password/${token}`, {
         password: formData.password,
       });
-
-      if (response.data.success) {
+      // L'interceptor retourne déjà response.data
+      if (response.success) {
         setSuccess(true);
         setTimeout(() => {
           navigate('/login');
         }, 3000);
+      } else {
+        setError(response.message || 'Erreur lors de la réinitialisation du mot de passe');
       }
     } catch (err) {
-      setError(
-        err.response?.data?.message || 
-        'Le lien est invalide ou a expiré. Veuillez faire une nouvelle demande.'
-      );
+      // L'interceptor formate déjà l'erreur
+      const message = err?.error?.message || err?.message || 
+        'Le lien est invalide ou a expiré. Veuillez faire une nouvelle demande.';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -126,9 +129,7 @@ const ResetPassword = () => {
         {/* Formulaire */}
         <div className="bg-white rounded-xl shadow-2xl p-8">
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-              {error}
-            </div>
+            <ErrorMessage message={error} onClose={() => setError('')} />
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">

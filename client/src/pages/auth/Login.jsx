@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FaCheckCircle, FaEye, FaEyeSlash } from 'react-icons/fa';
+import ErrorMessage, { FieldError } from '../../components/ErrorMessage';
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     email: '',
@@ -16,43 +18,58 @@ const Login = () => {
   });
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    setError('');
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+    setError(null);
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.email.trim()) {
+      newErrors.email = 'L\'email est requis';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Format d\'email invalide';
+    }
+    if (!formData.password) {
+      newErrors.password = 'Le mot de passe est requis';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    //  Protection: Empêcher les soumissions multiples
     if (loading) return;
     
-    setError('');
+    if (!validateForm()) return;
+    
+    setError(null);
     setLoading(true);
 
     try {
-      console.log(' Tentative de connexion...', formData.email);
       const result = await login(formData.email, formData.password);
-      console.log(' Résultat login:', result);
 
       if (result.success) {
-        console.log(' Login réussi, navigation vers /dashboard');
-        // Vérifier que le token est bien dans localStorage
-        const savedToken = localStorage.getItem('token');
-        const savedUser = localStorage.getItem('user');
-        console.log(' Token sauvegardé:', savedToken ? 'OUI' : 'NON');
-        console.log(' User sauvegardé:', savedUser ? 'OUI' : 'NON');
-        
         navigate('/dashboard');
       } else {
-        console.error(' Login échoué:', result.message);
-        setError(result.message);
+        // Afficher l'erreur retournée par le backend
+        setError(result.message || 'Erreur de connexion');
       }
     } catch (err) {
-      console.error(' Erreur inattendue:', err);
-      setError('Une erreur inattendue s\'est produite');
+      // Erreur réseau ou autre problème inattendu
+      const message = err?.message || 'Erreur de connexion. Veuillez réessayer.';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -76,9 +93,7 @@ const Login = () => {
         {/* Formulaire */}
         <div className="bg-white rounded-xl shadow-2xl p-8">
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-              {error}
-            </div>
+            <ErrorMessage message={error} onClose={() => setError(null)} />
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -93,9 +108,12 @@ const Login = () => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                  errors.email ? 'border-red-500' : 'border-gray-300'
+                }`}
                 placeholder="contact@exemple.com"
               />
+              <FieldError error={errors.email} />
             </div>
 
             {/* Mot de passe */}
@@ -110,7 +128,9 @@ const Login = () => {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent pr-10"
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent pr-10 ${
+                    errors.password ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   placeholder="••••••••"
                 />
                 <button
@@ -121,6 +141,7 @@ const Login = () => {
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
+              <FieldError error={errors.password} />
             </div>
 
             {/* Mot de passe oublié */}

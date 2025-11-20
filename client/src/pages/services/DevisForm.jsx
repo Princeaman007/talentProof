@@ -152,7 +152,7 @@ const DevisForm = () => {
       console.error('Erreur envoi devis:', error);
       setMessage({ 
         type: 'error', 
-        text: error.response?.data?.message || 'Une erreur est survenue. Veuillez réessayer.' 
+        text: error?.error?.message || error?.message || 'Une erreur est survenue. Veuillez réessayer.' 
       });
     } finally {
       setLoading(false);

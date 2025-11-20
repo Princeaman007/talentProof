@@ -3,13 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FaCheckCircle, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { COMPANY_SIZES } from '../../utils/constants';
+import ErrorMessage, { FieldError } from '../../components/ErrorMessage';
 
 const Register = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     nom: '',
@@ -20,32 +22,49 @@ const Register = () => {
   });
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    setError('');
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+    setError(null);
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.nom.trim()) newErrors.nom = 'Le nom de l\'entreprise est requis';
+    if (!formData.email.trim()) {
+      newErrors.email = 'L\'email est requis';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Format d\'email invalide';
+    }
+    if (!formData.password) {
+      newErrors.password = 'Le mot de passe est requis';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
+    }
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    //  Protection: Empêcher les soumissions multiples
     if (loading) return;
     
-    setError('');
-
-    // Validation
-    if (formData.password !== formData.confirmPassword) {
-      setError('Les mots de passe ne correspondent pas');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères');
-      return;
-    }
-
+    if (!validateForm()) return;
+    
+    setError(null);
     setLoading(true);
 
     try {
@@ -59,10 +78,13 @@ const Register = () => {
       if (result.success) {
         navigate('/email-confirmation');
       } else {
-        setError(result.message);
+        // Afficher l'erreur retournée par le backend
+        setError(result.message || 'Erreur lors de l\'inscription');
       }
     } catch (err) {
-      setError('Une erreur inattendue s\'est produite');
+      // Erreur réseau ou autre problème inattendu
+      const message = err?.message || 'Erreur de connexion. Veuillez réessayer.';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -86,9 +108,7 @@ const Register = () => {
         {/* Formulaire */}
         <div className="bg-white rounded-xl shadow-2xl p-8">
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-              {error}
-            </div>
+            <ErrorMessage message={error} onClose={() => setError(null)} />
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">

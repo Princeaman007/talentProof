@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FaTimes, FaCheckCircle, FaPaperPlane } from 'react-icons/fa';
 import api from '../../utils/api';
+import { getUserDisplayName, formatNumber, safeValue } from '../../utils/formatters';
 
 const ContactTalentModal = ({ talent, onClose }) => {
   const [loading, setLoading] = useState(false);
@@ -68,7 +69,7 @@ const ContactTalentModal = ({ talent, onClose }) => {
         <div className="flex items-center justify-between p-6 border-b">
           <div>
             <h2 className="text-2xl font-bold text-primary">
-              Demande de contact - {talent.prenom}
+              Demande de contact - {getUserDisplayName(talent)}
             </h2>
             <p className="text-sm text-neutral mt-1">
               Remplissez le formulaire pour recevoir les informations complètes
@@ -95,13 +96,13 @@ const ContactTalentModal = ({ talent, onClose }) => {
             <h3 className="font-semibold text-primary mb-2">À propos de ce talent</h3>
             <div className="space-y-1 text-sm text-neutral">
               <p>
-                <strong>Score :</strong> {talent.scoreTest}/100 ({talent.plateforme})
+                <strong>Score :</strong> {formatNumber(talent.scoreTest)}/100 ({safeValue(talent.plateforme, 'Non précisé')})
               </p>
               <p>
-                <strong>Technologies :</strong> {talent.technologies?.join(', ')}
+                <strong>Technologies :</strong> {talent.technologies?.join(', ') || 'Non spécifiées'}
               </p>
               <p>
-                <strong>Expérience :</strong> {talent.anneeExperience}
+                <strong>Expérience :</strong> {safeValue(talent.anneeExperience, '0')} {talent.anneeExperience > 1 ? 'ans' : 'an'}
               </p>
             </div>
           </div>

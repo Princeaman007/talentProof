@@ -35,7 +35,7 @@ import entrepriseRoutes from './routes/entreprise.js';
 //  Documentation Swagger
 import { swaggerSpec } from './utils/swagger.js';
 import { logger } from './utils/logger.js';
-import { errorHandler } from './utils/errorHandler.js';
+import { errorHandler, notFoundHandler } from './utils/errorHandler.js';
 
 dotenv.config();
 
@@ -418,20 +418,10 @@ app.use('/api/admin', adminRoutes);
 //  Routes entreprise dashboard (Phase 4)
 app.use('/api/entreprise', entrepriseRoutes);
 
-// Route 404
-app.use((req, res) => {
-  logger.warn('Route not found', { method: req.method, path: req.path });
-  res.status(404).json({ 
-    success: false,
-    error: {
-      code: 'NOT_FOUND',
-      message: 'Route non trouvée',
-    },
-    path: req.originalUrl,
-  });
-});
+// Routes non trouvées (404)
+app.use(notFoundHandler);
 
-//  Gestion d'erreurs centralisée
+// Gestion d'erreurs centralisée (doit être en dernier)
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;

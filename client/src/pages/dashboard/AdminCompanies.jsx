@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Building2, Mail, Phone, Globe, Calendar, CheckCircle, XCircle, Clock, Eye } from 'lucide-react';
 import api from '../../utils/api';
+import { getCompanyDisplayName, formatDate, formatEmail, formatPhone, safeValue } from '../../utils/formatters';
 
 const AdminCompanies = () => {
   const [companies, setCompanies] = useState([]);
@@ -161,27 +162,27 @@ const AdminCompanies = () => {
             companies.map((company) => (
               <div key={company._id} className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition">
                 <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Building2 className="w-5 h-5 text-primary" />
-                      <h3 className="text-xl font-bold text-gray-900">{company.companyName}</h3>
-                      {getStatusBadge(company.status)}
-                    </div>
-                    <p className="text-gray-600">Contact: {company.contactPerson}</p>
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Building2 className="w-5 h-5 text-primary" />
+                    <h3 className="text-xl font-bold text-gray-900">{getCompanyDisplayName(company)}</h3>
+                    {getStatusBadge(company.status)}
                   </div>
+                  <p className="text-gray-600">Contact: {safeValue(company.contactPerson, 'Non spécifié')}</p>
+                </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Mail className="w-4 h-4 text-primary" />
                     <a href={`mailto:${company.email}`} className="hover:underline">
-                      {company.email}
+                      {formatEmail(company.email)}
                     </a>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Phone className="w-4 h-4 text-primary" />
                     <a href={`tel:${company.phone}`} className="hover:underline">
-                      {company.phone}
+                      {formatPhone(company.phone)}
                     </a>
                   </div>
                   {company.website && (
@@ -205,7 +206,7 @@ const AdminCompanies = () => {
                         key={td._id}
                         className="text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-full"
                       >
-                        {td.titre} - {new Date(td.date).toLocaleDateString('fr-FR')}
+                        {safeValue(td.titre, 'Sans titre')} - {formatDate(td.date)}
                       </span>
                     ))}
                   </div>
@@ -285,22 +286,22 @@ const AdminCompanies = () => {
               <div className="p-6 space-y-4">
                 <div>
                   <p className="text-sm font-semibold text-gray-500">Entreprise</p>
-                  <p className="text-lg font-bold text-gray-900">{selectedCompany.companyName}</p>
+                  <p className="text-lg font-bold text-gray-900">{getCompanyDisplayName(selectedCompany)}</p>
                 </div>
 
                 <div>
                   <p className="text-sm font-semibold text-gray-500">Contact</p>
-                  <p className="text-gray-900">{selectedCompany.contactPerson}</p>
+                  <p className="text-gray-900">{safeValue(selectedCompany.contactPerson, 'Non spécifié')}</p>
                 </div>
 
                 <div>
                   <p className="text-sm font-semibold text-gray-500">Email</p>
-                  <p className="text-gray-900">{selectedCompany.email}</p>
+                  <p className="text-gray-900">{formatEmail(selectedCompany.email)}</p>
                 </div>
 
                 <div>
                   <p className="text-sm font-semibold text-gray-500">Téléphone</p>
-                  <p className="text-gray-900">{selectedCompany.phone}</p>
+                  <p className="text-gray-900">{formatPhone(selectedCompany.phone)}</p>
                 </div>
 
                 {selectedCompany.website && (
@@ -337,7 +338,7 @@ const AdminCompanies = () => {
                 <div>
                   <p className="text-sm font-semibold text-gray-500">Date d'inscription</p>
                   <p className="text-gray-900">
-                    {new Date(selectedCompany.createdAt).toLocaleString('fr-FR')}
+                    {formatDate(selectedCompany.createdAt)}
                   </p>
                 </div>
               </div>

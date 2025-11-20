@@ -29,7 +29,7 @@ const AddTeamMemberModal = ({ onClose, onSuccess }) => {
     onSuccess('Membre ajouté avec succès !');
   } catch (error) {
     console.error('Erreur ajout:', error);
-    setError(error.response?.data?.message || 'Erreur lors de l\'ajout');
+    setError(error?.error?.message || error?.message || 'Erreur lors de l\'ajout');
   } finally {
     setLoading(false);
   }

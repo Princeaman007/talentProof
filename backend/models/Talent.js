@@ -5,6 +5,8 @@ const talentSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Le prénom est requis'],
     trim: true,
+    minlength: [2, 'Le prénom doit contenir au moins 2 caractères'],
+    maxlength: [50, 'Le prénom ne peut pas dépasser 50 caractères'],
   },
   photo: {
     type: String,
@@ -52,6 +54,8 @@ const talentSchema = new mongoose.Schema({
   competences: {
     type: String,
     required: [true, 'Les compétences sont requises'],
+    minlength: [10, 'Les compétences doivent contenir au moins 10 caractères'],
+    maxlength: [2000, 'Les compétences ne peuvent pas dépasser 2000 caractères'],
   },
   
   scoreTest: {
@@ -79,6 +83,7 @@ const talentSchema = new mongoose.Schema({
     type: String,
     trim: true,
     default: 'Belgique',
+    maxlength: [100, 'La localisation ne peut pas dépasser 100 caractères'],
   },
   
   //  NOUVEAU - Langues parlées
@@ -99,18 +104,54 @@ const talentSchema = new mongoose.Schema({
     type: String,
     trim: true,
     default: null,
+    validate: {
+      validator: function(v) {
+        if (!v) return true; // Optionnel
+        try {
+          new URL(v);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      },
+      message: 'URL de portfolio invalide'
+    }
   },
   
   github: {
     type: String,
     trim: true,
     default: null,
+    validate: {
+      validator: function(v) {
+        if (!v) return true;
+        try {
+          new URL(v);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      },
+      message: 'URL GitHub invalide'
+    }
   },
   
   linkedin: {
     type: String,
     trim: true,
     default: null,
+    validate: {
+      validator: function(v) {
+        if (!v) return true;
+        try {
+          new URL(v);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      },
+      message: 'URL LinkedIn invalide'
+    }
   },
   
   statut: {

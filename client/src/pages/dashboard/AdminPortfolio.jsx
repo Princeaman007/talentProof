@@ -170,7 +170,7 @@ const AdminPortfolio = () => {
       console.error('Erreur:', error);
       setMessage({ 
         type: 'error', 
-        text: error.response?.data?.message || 'Une erreur est survenue' 
+        text: error?.error?.message || error?.message || 'Une erreur est survenue' 
       });
     }
   };

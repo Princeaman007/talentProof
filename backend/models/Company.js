@@ -5,6 +5,8 @@ const companySchema = new mongoose.Schema({
     type: String,
     required: [true, 'Le nom de l\'entreprise est requis'],
     trim: true,
+    minlength: [2, 'Le nom doit contenir au moins 2 caractères'],
+    maxlength: [100, 'Le nom ne peut pas dépasser 100 caractères'],
   },
   email: {
     type: String,
@@ -28,16 +30,25 @@ const companySchema = new mongoose.Schema({
     type: String,
     default: null,
     trim: true,
+    validate: {
+      validator: function(v) {
+        if (!v) return true; // Optionnel
+        return /^[\d\s+()-]{9,20}$/.test(v);
+      },
+      message: 'Format de téléphone invalide'
+    }
   },
   adresse: {
     type: String,
     default: null,
     trim: true,
+    maxlength: [200, 'L\'adresse ne peut pas dépasser 200 caractères'],
   },
   secteurActivite: {
     type: String,
     default: null,
     trim: true,
+    maxlength: [100, 'Le secteur d\'activité ne peut pas dépasser 100 caractères'],
   },
   nombreEmployes: {
     type: String,

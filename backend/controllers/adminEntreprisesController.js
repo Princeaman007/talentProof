@@ -1,12 +1,17 @@
 import Company from '../models/Company.js';
 import ContactRequest from '../models/ContactRequest.js';
 import Devis from '../models/Devis.js';
+import AppError, { 
+  validationError, 
+  notFound,
+  forbidden
+} from '../utils/AppError.js';
+import { asyncHandler } from '../utils/errorHandler.js';
 
 // @desc    Obtenir toutes les entreprises
 // @route   GET /api/admin/entreprises
 // @access  Private/Admin
-export const getAllEntreprises = async (req, res) => {
-  try {
+export const getAllEntreprises = asyncHandler(async (req, res) => {
     const { 
       page = 1, 
       limit = 10, 
@@ -78,38 +83,23 @@ export const getAllEntreprises = async (req, res) => {
         itemsPerPage: parseInt(limit),
       },
     });
-  } catch (error) {
-    console.error('Erreur getAllEntreprises:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la récupération des entreprises',
-      error: error.message,
-    });
-  }
-};
+});
 
 // @desc    Suspendre une entreprise
 // @route   PUT /api/admin/entreprises/:id/suspend
 // @access  Private/Admin
-export const suspendEntreprise = async (req, res) => {
-  try {
+export const suspendEntreprise = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { reason } = req.body;
 
     if (!reason) {
-      return res.status(400).json({
-        success: false,
-        message: 'La raison de suspension est requise',
-      });
+      throw validationError('La raison de suspension est requise');
     }
 
     const entreprise = await Company.findById(id);
 
     if (!entreprise) {
-      return res.status(404).json({
-        success: false,
-        message: 'Entreprise non trouvée',
-      });
+      throw notFound('Entreprise');
     }
 
     if (entreprise.role === 'admin') {
@@ -137,30 +127,18 @@ export const suspendEntreprise = async (req, res) => {
         suspensionReason: entreprise.suspensionReason,
       },
     });
-  } catch (error) {
-    console.error('Erreur suspendEntreprise:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la suspension',
-      error: error.message,
-    });
-  }
-};
+});
 
 // @desc    Réactiver une entreprise
 // @route   PUT /api/admin/entreprises/:id/activate
 // @access  Private/Admin
-export const activateEntreprise = async (req, res) => {
-  try {
+export const activateEntreprise = asyncHandler(async (req, res) => {
     const { id } = req.params;
 
     const entreprise = await Company.findById(id);
 
     if (!entreprise) {
-      return res.status(404).json({
-        success: false,
-        message: 'Entreprise non trouvée',
-      });
+      throw notFound('Entreprise');
     }
 
     entreprise.isActive = true;
@@ -179,30 +157,18 @@ export const activateEntreprise = async (req, res) => {
         isActive: entreprise.isActive,
       },
     });
-  } catch (error) {
-    console.error('Erreur activateEntreprise:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la réactivation',
-      error: error.message,
-    });
-  }
-};
+});
 
 // @desc    Obtenir l'activité d'une entreprise
 // @route   GET /api/admin/entreprises/:id/activity
 // @access  Private/Admin
-export const getEntrepriseActivity = async (req, res) => {
-  try {
+export const getEntrepriseActivity = asyncHandler(async (req, res) => {
     const { id } = req.params;
 
     const entreprise = await Company.findById(id).select('-password');
 
     if (!entreprise) {
-      return res.status(404).json({
-        success: false,
-        message: 'Entreprise non trouvée',
-      });
+      throw notFound('Entreprise');
     }
 
     // Récupérer l'activité récente
@@ -226,12 +192,4 @@ export const getEntrepriseActivity = async (req, res) => {
         },
       },
     });
-  } catch (error) {
-    console.error('Erreur getEntrepriseActivity:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la récupération de l\'activité',
-      error: error.message,
-    });
-  }
-};
+});

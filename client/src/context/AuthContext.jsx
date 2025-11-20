@@ -76,7 +76,8 @@ export const AuthProvider = ({ children }) => {
     
     try {
       const response = await api.post('/auth/login', { email, password });
-      const { token, data } = response.data;
+      // L'interceptor retourne déjà response.data, donc response = { success, message, data, token }
+      const { token, data } = response;
 
       //  Sauvegarder le token ET les données utilisateur
       // Note: Cookies HttpOnly ne fonctionnent pas avec des domaines séparés sur Render
@@ -102,7 +103,8 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true, data };
     } catch (error) {
-      const message = error.response?.data?.message || 'Erreur de connexion';
+      // L'interceptor axios formate déjà l'erreur dans { success: false, error: { message, code } }
+      const message = error?.error?.message || error?.message || 'Erreur de connexion';
       setError(message);
       return { success: false, message };
     } finally {
@@ -114,6 +116,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (formData) => {
     try {
       const response = await api.post('/auth/register', formData);
+      // L'interceptor retourne déjà response.data
       // After register, attempt to fetch CSRF token (if backend set cookies)
       try {
         const csrfRes = await api.get('/csrf-token');
@@ -122,9 +125,10 @@ export const AuthProvider = ({ children }) => {
       } catch (csrfErr) {
         // ignore
       }
-      return { success: true, data: response.data };
+      return { success: true, data: response };
     } catch (error) {
-      const message = error.response?.data?.message || 'Erreur lors de l\'inscription';
+      // L'interceptor axios formate déjà l'erreur
+      const message = error?.error?.message || error?.message || 'Erreur lors de l\'inscription';
       return { success: false, message };
     }
   };
@@ -161,7 +165,7 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true, data: updatedUser };
     } catch (error) {
-      const message = error.response?.data?.message || 'Erreur lors de la mise à jour';
+      const message = error?.error?.message || error?.message || 'Erreur lors de la mise à jour';
       return { success: false, message };
     }
   };
@@ -172,7 +176,7 @@ export const AuthProvider = ({ children }) => {
       await api.put('/auth/change-password', { currentPassword, newPassword });
       return { success: true };
     } catch (error) {
-      const message = error.response?.data?.message || 'Erreur lors du changement de mot de passe';
+      const message = error?.error?.message || error?.message || 'Erreur lors du changement de mot de passe';
       return { success: false, message };
     }
   };

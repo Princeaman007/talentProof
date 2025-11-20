@@ -2,366 +2,299 @@ import CompanyRegistration from '../models/CompanyRegistration.js';
 import TalentDay from '../models/Talentday.js';
 import Talent from '../models/Talent.js';
 import { sendEmail } from '../utils/emailService.js';
-//  Import du template professionnel d'inscription entreprise TalentDay
 import { companyTalentDayRegistrationTemplate } from '../utils/emailTemplates.professional.js';
 import { validationResult } from 'express-validator';
+import AppError, { 
+  validationError, 
+  emailAlreadyExists,
+  notFound,
+  internalError,
+  unauthorized,
+  forbidden
+} from '../utils/AppError.js';
+import { asyncHandler } from '../utils/errorHandler.js';
 
 /**
  * @desc    Créer une inscription entreprise
  * @route   POST /api/companies
  * @access  Public
  */
-export const createCompanyRegistration = async (req, res) => {
+export const createCompanyRegistration = asyncHandler(async (req, res) => {
   console.log('[COMPANY REGISTRATION] Starting registration process');
   console.log('[COMPANY REGISTRATION] Request body:', JSON.stringify(req.body, null, 2));
   
+  // Vérifier les erreurs de validation
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.error('[COMPANY REGISTRATION] Validation failed:', errors.array());
+    throw validationError('Erreur de validation des données', errors.array().map(err => ({
+      field: err.path || err.param,
+      message: err.msg
+    })));
+  }
+
+  const { companyName, contactPerson, email, phone, website, interestedTalentDays, notes } = req.body;
+  
+  console.log('[COMPANY REGISTRATION] Validation passed. Checking for existing email...');
+
+  // Vérifier si l'email existe déjà
+  const existingCompany = await CompanyRegistration.findOne({ email });
+  if (existingCompany) {
+    console.warn('[COMPANY REGISTRATION] Email already exists:', email);
+    throw emailAlreadyExists();
+  }
+  
+  console.log('[COMPANY REGISTRATION] Email check passed. Creating company registration...');
+
+  // Créer l'inscription
+  const company = await CompanyRegistration.create({
+    companyName,
+    contactPerson,
+    email,
+    phone,
+    website,
+    interestedTalentDays,
+    notes,
+    user: req.user?._id,
+  });
+  console.log('[COMPANY REGISTRATION] Company created successfully. ID:', company._id);
+
+  // Populer les TalentDays avec tous les détails
+  console.log('[COMPANY REGISTRATION] Populating TalentDays...');
+  await company.populate({
+    path: 'interestedTalentDays',
+    select: 'titre description date heureDebut heureFin lieu technologies placesDisponibles typeEvenement niveauRequis organisateur'
+  });
+  
+  console.log('[COMPANY REGISTRATION] TalentDays populated. Count:', company.interestedTalentDays.length);
+
+  // Fonction helper pour formater les détails d'un TalentDay
+  const formatTalentDayDetails = (td) => {
+    const dateFormatted = new Date(td.date).toLocaleDateString('fr-FR', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    
+    const lieuText = td.lieu.type === 'physique' 
+      ? `${td.lieu.adresse}, ${td.lieu.ville}` 
+      : td.lieu.type === 'en-ligne'
+      ? `En ligne : ${td.lieu.lienVirtuel}`
+      : `Hybride - ${td.lieu.adresse}, ${td.lieu.ville} + ${td.lieu.lienVirtuel}`;
+
+    return `
+      <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 15px 0;">
+        <h3 style="color: #1e40af; margin-top: 0;">${td.titre}</h3>
+        <p style="color: #4b5563; line-height: 1.6;">${td.description}</p>
+        
+        <div style="display: grid; gap: 10px; margin-top: 15px;">
+          <div style="display: flex; align-items: center;">
+            <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Date :</span>
+            <span>${dateFormatted}</span>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Horaire :</span>
+            <span>${td.heureDebut} - ${td.heureFin}</span>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Lieu :</span>
+            <span>${lieuText}</span>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Type :</span>
+            <span style="text-transform: capitalize;">${td.typeEvenement.replace('-', ' ')}</span>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Niveau :</span>
+            <span style="text-transform: capitalize;">${td.niveauRequis.replace('-', ' ')}</span>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Places :</span>
+            <span>${td.placesDisponibles} participants</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 15px;">
+          <p style="color: #6b7280; font-weight: bold; margin-bottom: 8px;"> Technologies :</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            ${td.technologies.map(tech => 
+              `<span style="background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 12px; font-size: 14px;">${tech}</span>`
+            ).join('')}
+          </div>
+        </div>
+
+        <div style="background: #f9fafb; padding: 12px; border-radius: 6px; margin-top: 15px;">
+          <p style="margin: 0; font-size: 14px; color: #6b7280;">
+            <strong>Organisateur :</strong> ${td.organisateur.nom}<br>
+             ${td.organisateur.email} |  ${td.organisateur.telephone}
+          </p>
+        </div>
+      </div>
+    `;
+  };
+
+  //  NOUVEAU : Envoyer email professionnel avec logo TalentProof
+  console.log('[COMPANY REGISTRATION] Sending confirmation email to company...');
   try {
-    // Vérifier les erreurs de validation
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      console.error('[COMPANY REGISTRATION] Validation failed:', errors.array());
-      return res.status(400).json({
-        success: false,
-        message: 'Erreur de validation des données',
-        errors: errors.array().map(err => ({
-          field: err.path || err.param,
-          message: err.msg
-        }))
-      });
-    }
-
-    const { companyName, contactPerson, email, phone, website, interestedTalentDays, notes } = req.body;
-    
-    console.log('[COMPANY REGISTRATION] Validation passed. Checking for existing email...');
-
-    // Vérifier si l'email existe déjà
-    const existingCompany = await CompanyRegistration.findOne({ email });
-    if (existingCompany) {
-      console.warn('[COMPANY REGISTRATION] Email already exists:', email);
-      return res.status(400).json({
-        success: false,
-        message: 'Une inscription avec cet email existe déjà',
-      });
-    }
-    
-    console.log('[COMPANY REGISTRATION] Email check passed. Creating company registration...');
-
-    // Créer l'inscription
-    const company = await CompanyRegistration.create({
+    const companyInfo = {
       companyName,
       contactPerson,
       email,
       phone,
-      website,
-      interestedTalentDays,
-      notes,
-      user: req.user?._id,
-    });
-    console.log('[COMPANY REGISTRATION] Company created successfully. ID:', company._id);
-
-    // Populer les TalentDays avec tous les détails
-    console.log('[COMPANY REGISTRATION] Populating TalentDays...');
-    await company.populate({
-      path: 'interestedTalentDays',
-      select: 'titre description date heureDebut heureFin lieu technologies placesDisponibles typeEvenement niveauRequis organisateur'
-    });
-    
-    console.log('[COMPANY REGISTRATION] TalentDays populated. Count:', company.interestedTalentDays.length);
-
-    // Fonction helper pour formater les détails d'un TalentDay
-    const formatTalentDayDetails = (td) => {
-      const dateFormatted = new Date(td.date).toLocaleDateString('fr-FR', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      });
-      
-      const lieuText = td.lieu.type === 'physique' 
-        ? `${td.lieu.adresse}, ${td.lieu.ville}` 
-        : td.lieu.type === 'en-ligne'
-        ? `En ligne : ${td.lieu.lienVirtuel}`
-        : `Hybride - ${td.lieu.adresse}, ${td.lieu.ville} + ${td.lieu.lienVirtuel}`;
-
-      return `
-        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin: 15px 0;">
-          <h3 style="color: #1e40af; margin-top: 0;">${td.titre}</h3>
-          <p style="color: #4b5563; line-height: 1.6;">${td.description}</p>
-          
-          <div style="display: grid; gap: 10px; margin-top: 15px;">
-            <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Date :</span>
-              <span>${dateFormatted}</span>
-            </div>
-            <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Horaire :</span>
-              <span>${td.heureDebut} - ${td.heureFin}</span>
-            </div>
-            <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Lieu :</span>
-              <span>${lieuText}</span>
-            </div>
-            <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Type :</span>
-              <span style="text-transform: capitalize;">${td.typeEvenement.replace('-', ' ')}</span>
-            </div>
-            <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Niveau :</span>
-              <span style="text-transform: capitalize;">${td.niveauRequis.replace('-', ' ')}</span>
-            </div>
-            <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Places :</span>
-              <span>${td.placesDisponibles} participants</span>
-            </div>
-          </div>
-
-          <div style="margin-top: 15px;">
-            <p style="color: #6b7280; font-weight: bold; margin-bottom: 8px;"> Technologies :</p>
-            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-              ${td.technologies.map(tech => 
-                `<span style="background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 12px; font-size: 14px;">${tech}</span>`
-              ).join('')}
-            </div>
-          </div>
-
-          <div style="background: #f9fafb; padding: 12px; border-radius: 6px; margin-top: 15px;">
-            <p style="margin: 0; font-size: 14px; color: #6b7280;">
-              <strong>Organisateur :</strong> ${td.organisateur.nom}<br>
-               ${td.organisateur.email} |  ${td.organisateur.telephone}
-            </p>
-          </div>
-        </div>
-      `;
+      website
     };
-
-    //  NOUVEAU : Envoyer email professionnel avec logo TalentProof
-    console.log('[COMPANY REGISTRATION] Sending confirmation email to company...');
-    try {
-      const companyInfo = {
-        companyName,
-        contactPerson,
-        email,
-        phone,
-        website
-      };
-      
-      await sendEmail({
-        to: email,
-        subject: ' Inscription TalentDay confirmée - TalentProof',
-        html: companyTalentDayRegistrationTemplate(companyInfo, company.interestedTalentDays),
-      });
-      console.log('[COMPANY REGISTRATION] Confirmation email sent successfully to:', email);
-    } catch (emailError) {
-      console.error('[COMPANY REGISTRATION] Error sending confirmation email:', {
-        error: emailError.message,
-        stack: emailError.stack,
-        recipient: email
-      });
-      // Continue even if email fails
-    }
-
-    // Envoyer notification à l'admin
-    console.log('[COMPANY REGISTRATION] Sending notification email to admin...');
-    try {
-      await sendEmail({
-        to: process.env.ADMIN_EMAIL || 'admin@talentproof.com',
-        subject: ' Nouvelle inscription entreprise TalentDay',
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #dc2626;">Nouvelle inscription entreprise</h2>
-            
-            <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
-              <h3 style="margin-top: 0;">Détails de l'entreprise :</h3>
-              <p><strong>Entreprise :</strong> ${companyName}</p>
-              <p><strong>Contact :</strong> ${contactPerson}</p>
-              <p><strong>Email :</strong> ${email}</p>
-              <p><strong>Téléphone :</strong> ${phone}</p>
-              <p><strong>Site web :</strong> ${website || 'Non renseigné'}</p>
-              ${notes ? `<p><strong>Notes :</strong> ${notes}</p>` : ''}
-            </div>
-
-            <p><strong>TalentDays d'intérêt :</strong></p>
-            <ul>
-              ${company.interestedTalentDays.map(td => `<li>${td.titre} - ${new Date(td.date).toLocaleDateString('fr-FR')}</li>`).join('')}
-            </ul>
-
-            <p>Connectez-vous au backoffice pour valider cette inscription.</p>
-            <a href="${process.env.FRONTEND_URL || 'http://localhost:5174'}/admin/companies" 
-               style="display: inline-block; background: #1e40af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 10px;">
-              Voir dans le backoffice
-            </a>
-          </div>
-        `,
-      });
-      console.log('[COMPANY REGISTRATION] Admin notification email sent successfully');
-    } catch (emailError) {
-      console.error('[COMPANY REGISTRATION] Error sending admin notification:', {
-        error: emailError.message,
-        stack: emailError.stack
-      });
-      // Continue even if email fails
-    }
-
-    console.log('[COMPANY REGISTRATION] Registration process completed successfully');
-    res.status(201).json({
-      success: true,
-      message: 'Inscription enregistrée avec succès. Vous recevrez un email de confirmation.',
-      data: company,
-    });
-  } catch (error) {
-    console.error('[COMPANY REGISTRATION] CRITICAL ERROR:', {
-      message: error.message,
-      stack: error.stack,
-      name: error.name,
-      code: error.code
-    });
     
-    // Déterminer le type d'erreur et le code HTTP approprié
-    let statusCode = 500;
-    let errorMessage = 'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.';
-    
-    // Erreurs MongoDB
-    if (error.name === 'MongoNetworkError' || error.name === 'MongoTimeoutError') {
-      statusCode = 503;
-      errorMessage = 'Erreur de connexion à la base de données. Veuillez réessayer dans quelques instants.';
-      console.error('[COMPANY REGISTRATION] DATABASE CONNECTION ERROR - Check MongoDB URI and network');
-    } else if (error.name === 'ValidationError') {
-      statusCode = 400;
-      errorMessage = 'Données invalides. Veuillez vérifier les informations saisies.';
-      console.error('[COMPANY REGISTRATION] VALIDATION ERROR:', error.errors);
-    } else if (error.code === 11000) {
-      statusCode = 409;
-      errorMessage = 'Cette entreprise est déjà inscrite.';
-      console.error('[COMPANY REGISTRATION] DUPLICATE KEY ERROR');
-    }
-    
-    res.status(statusCode).json({
-      success: false,
-      message: errorMessage,
-      ...(process.env.NODE_ENV === 'development' && { 
-        error: error.message,
-        stack: error.stack 
-      })
+    await sendEmail({
+      to: email,
+      subject: ' Inscription TalentDay confirmée - TalentProof',
+      html: companyTalentDayRegistrationTemplate(companyInfo, company.interestedTalentDays),
     });
+    console.log('[COMPANY REGISTRATION] Confirmation email sent successfully to:', email);
+  } catch (emailError) {
+    console.error('[COMPANY REGISTRATION] Error sending confirmation email:', {
+      error: emailError.message,
+      stack: emailError.stack,
+      recipient: email
+    });
+    // Continue even if email fails
   }
-};
 
-/**
+  // Envoyer notification à l'admin
+  console.log('[COMPANY REGISTRATION] Sending notification email to admin...');
+  try {
+    await sendEmail({
+      to: process.env.ADMIN_EMAIL || 'admin@talentproof.com',
+      subject: ' Nouvelle inscription entreprise TalentDay',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #dc2626;">Nouvelle inscription entreprise</h2>
+          
+          <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+            <h3 style="margin-top: 0;">Détails de l'entreprise :</h3>
+            <p><strong>Entreprise :</strong> ${companyName}</p>
+            <p><strong>Contact :</strong> ${contactPerson}</p>
+            <p><strong>Email :</strong> ${email}</p>
+            <p><strong>Téléphone :</strong> ${phone}</p>
+            <p><strong>Site web :</strong> ${website || 'Non renseigné'}</p>
+            ${notes ? `<p><strong>Notes :</strong> ${notes}</p>` : ''}
+          </div>
+
+          <p><strong>TalentDays d'intérêt :</strong></p>
+          <ul>
+            ${company.interestedTalentDays.map(td => `<li>${td.titre} - ${new Date(td.date).toLocaleDateString('fr-FR')}</li>`).join('')}
+          </ul>
+
+          <p>Connectez-vous au backoffice pour valider cette inscription.</p>
+          <a href="${process.env.FRONTEND_URL || 'http://localhost:5174'}/admin/companies" 
+             style="display: inline-block; background: #1e40af; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 10px;">
+            Voir dans le backoffice
+          </a>
+        </div>
+      `,
+    });
+    console.log('[COMPANY REGISTRATION] Admin notification email sent successfully');
+  } catch (emailError) {
+    console.error('[COMPANY REGISTRATION] Error sending admin notification:', {
+      error: emailError.message,
+      stack: emailError.stack
+    });
+    // Continue even if email fails
+  }
+
+  console.log('[COMPANY REGISTRATION] Registration process completed successfully');
+  res.status(201).json({
+    success: true,
+    message: 'Inscription enregistrée avec succès. Vous recevrez un email de confirmation.',
+    data: company,
+  });
+});/**
  * @desc    Récupérer toutes les inscriptions entreprises (admin)
  * @route   GET /api/companies
  * @access  Admin
  */
-export const getCompanyRegistrations = async (req, res) => {
-  try {
-    const { status, page = 1, limit = 10 } = req.query;
+export const getCompanyRegistrations = asyncHandler(async (req, res) => {
+  const { status, page = 1, limit = 10 } = req.query;
 
-    const filter = {};
-    if (status) {
-      filter.status = status;
-    }
-
-    const skip = (page - 1) * limit;
-
-    const companies = await CompanyRegistration.find(filter)
-      .populate('interestedTalentDays', 'titre date statut')
-      .populate('user', 'nom email')
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(parseInt(limit));
-
-    const total = await CompanyRegistration.countDocuments(filter);
-
-    res.status(200).json({
-      success: true,
-      data: companies,
-      pagination: {
-        total,
-        page: parseInt(page),
-        pages: Math.ceil(total / limit),
-        limit: parseInt(limit),
-      },
-    });
-  } catch (error) {
-    console.error('Erreur récupération inscriptions:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la récupération des inscriptions',
-    });
+  const filter = {};
+  if (status) {
+    filter.status = status;
   }
-};
+
+  const skip = (page - 1) * limit;
+
+  const companies = await CompanyRegistration.find(filter)
+    .populate('interestedTalentDays', 'titre date statut')
+    .populate('user', 'nom email')
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(parseInt(limit));
+
+  const total = await CompanyRegistration.countDocuments(filter);
+
+  res.status(200).json({
+    success: true,
+    data: companies,
+    pagination: {
+      total,
+      page: parseInt(page),
+      pages: Math.ceil(total / limit),
+      limit: parseInt(limit),
+    },
+  });
+});
 
 /**
  * @desc    Récupérer les détails d'une inscription
  * @route   GET /api/companies/:id
  * @access  Admin ou propriétaire
  */
-export const getCompanyDetails = async (req, res) => {
-  try {
-    const company = await CompanyRegistration.findById(req.params.id)
-      .populate('interestedTalentDays', 'titre date statut lieu')
-      .populate('user', 'nom email')
-      .populate('meetingRequests.talent', 'nom prenom email competences')
-      .populate('meetingRequests.talentDay', 'titre date');
+export const getCompanyDetails = asyncHandler(async (req, res) => {
+  const company = await CompanyRegistration.findById(req.params.id)
+    .populate('interestedTalentDays', 'titre date statut lieu')
+    .populate('user', 'nom email')
+    .populate('meetingRequests.talent', 'nom prenom email competences')
+    .populate('meetingRequests.talentDay', 'titre date');
 
-    if (!company) {
-      return res.status(404).json({
-        success: false,
-        message: 'Inscription non trouvée',
-      });
-    }
-
-    // Vérifier les permissions (admin ou propriétaire)
-    if (req.user.role !== 'admin' && company.user?.toString() !== req.user._id.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: 'Accès non autorisé',
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: company,
-    });
-  } catch (error) {
-    console.error('Erreur récupération détails:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la récupération des détails',
-    });
+  if (!company) {
+    throw notFound('Inscription');
   }
-};
+
+  // Vérifier les permissions (admin ou propriétaire)
+  if (req.user.role !== 'admin' && company.user?.toString() !== req.user._id.toString()) {
+    throw forbidden('Accès non autorisé');
+  }
+
+  res.status(200).json({
+    success: true,
+    data: company,
+  });
+});
 
 /**
  * @desc    Mettre à jour le statut d'une inscription
  * @route   PATCH /api/companies/:id/status
  * @access  Admin
  */
-export const updateCompanyStatus = async (req, res) => {
-  try {
-    const { status } = req.body;
+export const updateCompanyStatus = asyncHandler(async (req, res) => {
+  const { status } = req.body;
 
-    if (!['pending', 'confirmed', 'rejected'].includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Statut invalide',
-      });
-    }
+  if (!['pending', 'confirmed', 'rejected'].includes(status)) {
+    throw validationError('Statut invalide');
+  }
 
-    const company = await CompanyRegistration.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true, runValidators: true }
-    ).populate({
-      path: 'interestedTalentDays',
-      select: 'titre description date heureDebut heureFin lieu technologies placesDisponibles typeEvenement niveauRequis organisateur'
-    });
+  const company = await CompanyRegistration.findByIdAndUpdate(
+    req.params.id,
+    { status },
+    { new: true, runValidators: true }
+  ).populate({
+    path: 'interestedTalentDays',
+    select: 'titre description date heureDebut heureFin lieu technologies placesDisponibles typeEvenement niveauRequis organisateur'
+  });
 
-    if (!company) {
-      return res.status(404).json({
-        success: false,
-        message: 'Inscription non trouvée',
-      });
-    }
+  if (!company) {
+    throw notFound('Inscription');
+  }
 
     // Fonction helper pour formater les détails d'un TalentDay
     const formatTalentDayDetails = (td) => {
@@ -571,71 +504,48 @@ export const updateCompanyStatus = async (req, res) => {
       }
     }
 
-    res.status(200).json({
-      success: true,
-      message: `Statut mis à jour : ${status}`,
-      data: company,
-    });
-  } catch (error) {
-    console.error('Erreur mise à jour statut:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la mise à jour du statut',
-    });
-  }
-};
+  res.status(200).json({
+    success: true,
+    message: `Statut mis à jour : ${status}`,
+    data: company,
+  });
+});
 
 /**
  * @desc    Réserver un meeting avec un talent
  * @route   POST /api/companies/:id/book
  * @access  Entreprise confirmée ou Admin
  */
-export const bookTalentMeeting = async (req, res) => {
-  try {
-    const { talentId, talentDayId, proposedDate, message } = req.body;
+export const bookTalentMeeting = asyncHandler(async (req, res) => {
+  const { talentId, talentDayId, proposedDate, message } = req.body;
 
-    const company = await CompanyRegistration.findById(req.params.id);
+  const company = await CompanyRegistration.findById(req.params.id);
 
-    if (!company) {
-      return res.status(404).json({
-        success: false,
-        message: 'Inscription non trouvée',
-      });
-    }
+  if (!company) {
+    throw notFound('Inscription');
+  }
 
-    // Vérifier que l'entreprise est confirmée
-    if (!company.canBook()) {
-      return res.status(403).json({
-        success: false,
-        message: 'Votre inscription doit être confirmée pour réserver des meetings',
-      });
-    }
+  // Vérifier que l'entreprise est confirmée
+  if (!company.canBook()) {
+    throw forbidden('Votre inscription doit être confirmée pour réserver des meetings');
+  }
 
-    // Vérifier les permissions (admin ou propriétaire)
-    if (req.user.role !== 'admin' && company.user?.toString() !== req.user._id.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: 'Accès non autorisé',
-      });
-    }
+  // Vérifier les permissions (admin ou propriétaire)
+  if (req.user.role !== 'admin' && company.user?.toString() !== req.user._id.toString()) {
+    throw forbidden('Accès non autorisé');
+  }
 
-    // Vérifier que le talent existe
-    const talent = await Talent.findById(talentId);
-    if (!talent) {
-      return res.status(404).json({
-        success: false,
-        message: 'Talent non trouvé',
-      });
-    }
+  // Vérifier que le talent existe
+  const talent = await Talent.findById(talentId);
+  if (!talent) {
+    throw notFound('Talent');
+  }
 
-    // Vérifier que le TalentDay existe
-    const talentDay = await TalentDay.findById(talentDayId);
-    if (!talentDay) {
-      return res.status(404).json({
-        success: false,
-        message: 'TalentDay non trouvé',
-      });
-    }
+  // Vérifier que le TalentDay existe
+  const talentDay = await TalentDay.findById(talentDayId);
+  if (!talentDay) {
+    throw notFound('TalentDay');
+  }
 
     // Ajouter la demande de meeting
     company.meetingRequests.push({
@@ -713,16 +623,9 @@ export const bookTalentMeeting = async (req, res) => {
 
     await company.populate('meetingRequests.talent', 'nom prenom email');
 
-    res.status(201).json({
-      success: true,
-      message: 'Demande de meeting envoyée avec succès',
-      data: company.meetingRequests[company.meetingRequests.length - 1],
-    });
-  } catch (error) {
-    console.error('Erreur réservation meeting:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la réservation du meeting',
-    });
-  }
-};
+  res.status(201).json({
+    success: true,
+    message: 'Demande de meeting envoyée avec succès',
+    data: company.meetingRequests[company.meetingRequests.length - 1],
+  });
+});

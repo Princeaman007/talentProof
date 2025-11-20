@@ -5,7 +5,7 @@ import { FaCheckCircle, FaTimesCircle, FaSpinner } from 'react-icons/fa';
 
 const ConfirmEmail = () => {
   const { token } = useParams();
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const [status, setStatus] = useState('loading'); // loading, success, error
   const [message, setMessage] = useState('');
 
@@ -20,18 +20,18 @@ const ConfirmEmail = () => {
       try {
         const response = await api.get(`/auth/confirm/${token}`);
         
-        if (response.data.success) {
+        if (response.success) {
           setStatus('success');
-          setMessage(response.data.message || 'Email confirmé avec succès !');
+          setMessage(response.message || 'Email confirmé avec succès !');
         } else {
           setStatus('error');
-          setMessage(response.data.message || 'Erreur lors de la confirmation.');
+          setMessage(response.message || 'Erreur lors de la confirmation.');
         }
       } catch (error) {
         console.error('Erreur confirmation:', error);
         setStatus('error');
         setMessage(
-          error.response?.data?.message || 
+          error?.error?.message || error?.message ||
           'Token invalide ou expiré. Veuillez réessayer ou contacter le support.'
         );
       }

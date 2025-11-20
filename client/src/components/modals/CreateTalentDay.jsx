@@ -51,7 +51,7 @@ const CreateTalentDay = ({ talentDay, isEditing, onClose, onSuccess }) => {
         ville: '',
         lienVirtuel: '',
       };
-      const defaultInfoEntreprises = {
+      const _defaultInfoEntreprises = {
         titre: 'Pourquoi participer en tant qu\'entreprise ?',
         description: '',
         avantages: '',

@@ -1,30 +1,49 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaCheckCircle, FaEnvelope } from 'react-icons/fa';
-import api from '../../utils/api';
+import ErrorMessage, { FieldError, SuccessMessage } from '../../components/ErrorMessage';
+import apiService from '../../services/api';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
+  const [emailError, setEmailError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  const validateEmail = () => {
+    if (!email.trim()) {
+      setEmailError('L\'email est requis');
+      return false;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError('Format d\'email invalide');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    
+    if (!validateEmail()) return;
+    
+    setError(null);
     setLoading(true);
 
     try {
-      const response = await api.post('/auth/forgot-password', { email });
-
-      if (response.data.success) {
+      const response = await apiService.auth.forgotPassword(email);
+      // L'interceptor retourne déjà response.data
+      if (response.success) {
         setSuccess(true);
+      } else {
+        setError(response.message || 'Erreur lors de l\'envoi de l\'email');
       }
     } catch (err) {
-      setError(
-        err.response?.data?.message || 
-        'Une erreur est survenue. Veuillez réessayer.'
-      );
+      // L'interceptor formate déjà l'erreur
+      const message = err?.error?.message || err?.message || 'Erreur de connexion. Veuillez réessayer.';
+      setError(message);
     } finally {
       setLoading(false);
     }

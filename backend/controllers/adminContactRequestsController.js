@@ -1,4 +1,13 @@
 import ContactRequest from '../models/ContactRequest.js';
+import AppError, { 
+  validationError, 
+  emailAlreadyExists,
+  notFound,
+  internalError,
+  unauthorized,
+  forbidden
+} from '../utils/AppError.js';
+import { asyncHandler } from '../utils/errorHandler.js';
 
 // @desc    Obtenir toutes les demandes de contact
 // @route   GET /api/admin/contact-requests
