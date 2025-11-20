@@ -55,7 +55,14 @@ const uploadLogo = multer({
 router.post('/register', registerValidation, register);
 router.get('/confirm/:token', confirmEmail);
 router.post('/login', loginValidation, login);
-router.post('/forgot-password', forgotPasswordValidation, forgotPassword);
+router.post('/forgot-password', (req, res, next) => {
+  console.log('🔵 [ROUTE] /forgot-password HIT - Body:', req.body);
+  console.log('🔵 [ROUTE] Email from body:', req.body?.email);
+  next();
+}, forgotPasswordValidation, (req, res, next) => {
+  console.log('🟢 [ROUTE] Validation passed, calling controller...');
+  next();
+}, forgotPassword);
 router.post('/reset-password/:token', resetPasswordValidation, resetPassword);
 
 // Refresh token endpoint

@@ -196,10 +196,26 @@ export const AuthProvider = ({ children }) => {
   // Changer le mot de passe
   const changePassword = async (currentPassword, newPassword) => {
     try {
-      await api.put('/auth/change-password', { currentPassword, newPassword });
-      return { success: true };
+      console.log('🔐 [CHANGE PASSWORD] Starting password change...');
+      const response = await api.put('/auth/change-password', { currentPassword, newPassword });
+      console.log('✅ [CHANGE PASSWORD] Success:', response.data);
+      return { success: true, message: 'Mot de passe modifié avec succès' };
     } catch (error) {
-      const message = extractErrorMessage(error, 'Erreur lors du changement de mot de passe');
+      console.error('❌ [CHANGE PASSWORD] Error:', error);
+      console.error('❌ [CHANGE PASSWORD] Error response:', error.response?.data);
+      
+      // Extraire le message d'erreur du backend
+      let message = 'Erreur lors du changement de mot de passe';
+      
+      if (error.response?.data?.message) {
+        message = error.response.data.message;
+      } else if (error.response?.data?.error) {
+        message = error.response.data.error;
+      } else if (error.message) {
+        message = error.message;
+      }
+      
+      console.error('❌ [CHANGE PASSWORD] Final error message:', message);
       return { success: false, message };
     }
   };

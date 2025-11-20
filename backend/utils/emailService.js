@@ -34,10 +34,8 @@ const createTransporter = () => {
     socketTimeout: 60000, // 60 secondes
     debug: process.env.NODE_ENV === 'development',
     logger: process.env.NODE_ENV === 'development',
-    // Pool de connexions pour meilleure performance
-    pool: true,
-    maxConnections: 5,
-    maxMessages: 100,
+    // ❌ DÉSACTIVÉ: Pool de connexions pour éviter les timeouts
+    pool: false, // Chaque email crée une nouvelle connexion
   });
 };
 

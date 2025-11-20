@@ -159,7 +159,7 @@ const TalentCard = ({ talent, onContact }) => {
         {talent.localisation && (
           <div className="flex items-center space-x-2">
             <FaMapMarkerAlt className="text-primary flex-shrink-0" />
-            <span className="truncate">{formatLocation(talent)}</span>
+            <span className="truncate">{formatLocation(talent.localisation)}</span>
           </div>
         )}
 
