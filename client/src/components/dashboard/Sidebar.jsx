@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -25,14 +25,54 @@ const Sidebar = () => {
   const { user, isAdmin, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
+  
+  // ✅ CORRECTION: Ouvrir automatiquement sur grand écran OU après login
+  const [isOpen, setIsOpen] = useState(() => {
+    const width = window.innerWidth;
+    // Forcer ouvert sur desktop OU si l'utilisateur vient de se connecter
+    const shouldOpen = width >= 1024 || localStorage.getItem('justLoggedIn') === 'true';
+    console.log('🎨 [SIDEBAR] Initial state:', { width, shouldOpen, justLoggedIn: localStorage.getItem('justLoggedIn') });
+    return shouldOpen;
+  });
+
+  // Ajuster isOpen selon la taille de l'écran
+  useEffect(() => {
+    console.log('🎨 [SIDEBAR] Component mounted', {
+      isOpen,
+      width: window.innerWidth,
+      user: user?.email,
+      isAdmin
+    });
+    
+    // Si on vient de se connecter, ouvrir la sidebar et nettoyer le flag
+    if (localStorage.getItem('justLoggedIn') === 'true') {
+      console.log('🎨 [SIDEBAR] Just logged in, opening sidebar');
+      setIsOpen(true);
+      localStorage.removeItem('justLoggedIn');
+    }
+    
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width >= 1024 && !isOpen) {
+        console.log('🎨 [SIDEBAR] Auto-opening on large screen:', width);
+        setIsOpen(true);
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isOpen, user, isAdmin]);
 
   const handleLogout = () => {
+    console.log('🚪 [SIDEBAR] Logging out...');
     logout();
     navigate('/login');
   };
 
-  const toggleSidebar = () => setIsOpen(!isOpen);
+  const toggleSidebar = () => {
+    console.log('🎨 [SIDEBAR] Toggling sidebar:', !isOpen);
+    setIsOpen(!isOpen);
+  };
 
   const menuItems = [
     {

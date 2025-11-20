@@ -25,17 +25,24 @@ const MesNotifications = () => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/entreprise/notifications', {
-        params: {
-          unreadOnly: unreadOnly.toString(),
-          limit: 20,
-        },
+      const params = {
+        unreadOnly: unreadOnly.toString(),
+        limit: 20,
+      };
+      console.log('📤 [NOTIFICATIONS] Fetching with params:', params);
+      const response = await api.get('/entreprise/notifications', { params });
+      console.log('📥 [NOTIFICATIONS] Response:', {
+        status: response.status,
+        data: response.data,
+        notificationsCount: response.data.notifications?.length,
+        unreadCount: response.data.unreadCount
       });
 
       setNotifications(response.data.notifications);
       setUnreadCount(response.data.unreadCount);
+      console.log('✅ [NOTIFICATIONS] Loaded', response.data.notifications?.length, 'notifications');
     } catch (error) {
-      console.error('Erreur récupération notifications:', error);
+      console.error('❌ [NOTIFICATIONS] Error:', error);
     } finally {
       setLoading(false);
     }

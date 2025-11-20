@@ -21,10 +21,17 @@ const AdminTalents = () => {
   const fetchTalents = async () => {
     try {
       setLoading(true);
+      console.log('📤 [ADMIN TALENTS] Fetching all talents...');
       const response = await api.get('/admin/talents');
+      console.log('📥 [ADMIN TALENTS] Response:', {
+        status: response.status,
+        data: response.data,
+        talentsCount: response.data.data?.length
+      });
       setTalents(response.data.data || []);
+      console.log('✅ [ADMIN TALENTS] Loaded', response.data.data?.length || 0, 'talents');
     } catch (error) {
-      console.error('Erreur chargement talents:', error);
+      console.error('❌ [ADMIN TALENTS] Error:', error);
       showMessage('error', 'Erreur lors du chargement des talents');
     } finally {
       setLoading(false);
@@ -60,11 +67,13 @@ const AdminTalents = () => {
     }
 
     try {
+      console.log('📤 [ADMIN TALENTS] Deleting talent:', id);
       await api.delete(`/admin/talents/${id}`);
+      console.log('✅ [ADMIN TALENTS] Talent deleted successfully');
       showMessage('success', 'Talent supprimé avec succès');
       fetchTalents();
     } catch (error) {
-      console.error('Erreur suppression:', error);
+      console.error('❌ [ADMIN TALENTS] Error deleting:', error);
       showMessage('error', 'Erreur lors de la suppression');
     }
   };

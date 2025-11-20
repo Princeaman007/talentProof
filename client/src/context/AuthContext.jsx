@@ -209,9 +209,10 @@ export const AuthProvider = ({ children }) => {
     token,
     loading,
     isAdmin, 
-    isAuthenticated: !!token,
-     error,
-     setError,
+    // ✅ CORRECTION: Vérifier token dans state ET localStorage pour éviter les problèmes de timing
+    isAuthenticated: !!token || !!localStorage.getItem('token'),
+    error,
+    setError,
     login,
     register,
     logout,

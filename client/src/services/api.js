@@ -32,17 +32,29 @@ const api = axios.create({
  */
 api.interceptors.request.use(
   (config) => {
+    // 📤 LOG REQUEST CONFIG
+    console.log('📤 [API REQUEST]', {
+      method: config.method?.toUpperCase(),
+      url: config.url,
+      baseURL: config.baseURL,
+      fullURL: `${config.baseURL}${config.url}`,
+      headers: config.headers,
+      data: config.data,
+      params: config.params
+    });
+    
     // Le token est géré par les cookies (httpOnly)
     // Mais on peut ajouter un token localStorage en fallback
     const token = localStorage.getItem('token');
     if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('🔑 [TOKEN ADDED]', token.substring(0, 20) + '...');
     }
     
     return config;
   },
   (error) => {
-    console.error('[API Request Error]', error);
+    console.error('❌ [API REQUEST ERROR]', error);
     return Promise.reject(error);
   }
 );
@@ -53,14 +65,20 @@ api.interceptors.request.use(
  */
 api.interceptors.response.use(
   (response) => {
-    // DEBUG: Logger les réponses réussies
-    console.log('✅ [API Response Success]', {
+    // 📥 LOG RAW RESPONSE
+    console.log('📥 [API RESPONSE SUCCESS]', {
       url: response.config?.url,
-      data: response.data
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+      data: response.data,
+      dataKeys: response.data ? Object.keys(response.data) : [],
+      dataType: typeof response.data
     });
     
     // ✅ CORRECTION: Retourner response complet (pas response.data)
     // Les composants accèdent à response.data eux-mêmes
+    console.log('✅ [RETURNING]', 'Full response object');
     return response;
   },
   async (error) => {
@@ -145,11 +163,15 @@ api.interceptors.response.use(
       },
     };
 
-    console.error('❌ [API Response Error]', {
+    console.error('❌ [API RESPONSE ERROR]', {
       url: originalRequest?.url,
+      method: originalRequest?.method,
       status,
-      formattedError
+      errorData: data,
+      formattedError,
+      fullError: error
     });
+    console.error('❌ [REJECTING WITH]', formattedError);
     return Promise.reject(formattedError);
   }
 );

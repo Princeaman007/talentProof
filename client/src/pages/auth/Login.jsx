@@ -72,19 +72,15 @@ const Login = () => {
         const userRole = result.data?.role || 'entreprise';
         console.log('✅ Rôle utilisateur:', userRole); // DEBUG
         
-        // Redirection selon le rôle avec rechargement forcé
-        if (userRole === 'admin') {
-          console.log('✅ Redirection vers dashboard admin'); // DEBUG
-          window.location.replace('/admin/dashboard');
-        } else if (userRole === 'talent') {
-          console.log('✅ Redirection vers dashboard talent'); // DEBUG
-          window.location.replace('/talent/dashboard');
-        } else {
-          // Par défaut: entreprise
-          console.log('✅ Redirection vers dashboard entreprise'); // DEBUG
-          window.location.replace('/dashboard');
-        }
-        return; // Empêcher le finally de s'exécuter
+        // ✅ SOLUTION: Marquer que l'utilisateur vient de se connecter (pour ouvrir la sidebar)
+        localStorage.setItem('justLoggedIn', 'true');
+        
+        // ✅ SOLUTION: Attendre 2 cycles de rendu pour que React mette à jour AuthContext
+        await new Promise(resolve => setTimeout(resolve, 50));
+        
+        // ✅ CORRECTION: Tout le monde va sur /dashboard (page d'accueil)
+        console.log('✅ Redirection vers dashboard'); // DEBUG
+        navigate('/dashboard', { replace: true });
       } else {
         // Afficher l'erreur retournée par le backend
         console.error('❌ Échec connexion:', result.message); // DEBUG

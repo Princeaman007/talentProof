@@ -80,15 +80,24 @@ const TalentsDashboard = () => {
         return acc;
       }, {});
 
+      console.log('📤 [TALENTS DASHBOARD] Fetching with params:', params);
       const response = await api.get('/talents/filter', { params });
+      console.log('📥 [TALENTS DASHBOARD] Response:', {
+        status: response.status,
+        data: response.data,
+        success: response.data.success,
+        talentsCount: response.data.data?.length
+      });
 
       if (response.data.success && Array.isArray(response.data.data)) {
         setTalents(response.data.data);
+        console.log('✅ [TALENTS DASHBOARD] Loaded', response.data.data.length, 'talents');
       } else {
         setTalents([]);
+        console.warn('⚠️ [TALENTS DASHBOARD] No talents or invalid response');
       }
     } catch (error) {
-      console.error('Erreur lors du chargement des talents:', error);
+      console.error('❌ [TALENTS DASHBOARD] Error:', error);
       setError(extractErrorMessage(error, 'Erreur lors du chargement des talents'));
       setTalents([]);
     } finally {

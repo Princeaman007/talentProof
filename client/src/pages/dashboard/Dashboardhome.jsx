@@ -14,14 +14,14 @@ const DashboardHome = () => {
   const { stats, loading } = isAdmin ? adminStatsHook : publicStatsHook;
 
   // Debug: Afficher les stats dans la console
-  console.log(' Dashboard Stats:', { stats, loading, isAdmin });
+  console.log('🏠 [DASHBOARD HOME] Rendering:', { stats, loading, isAdmin, user: user?.email });
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-primary">
-          Bienvenue, {user?.nom} ! 
+          Bienvenue, {user?.nom || user?.email} ! 
         </h1>
         <p className="text-neutral mt-2">
           {isAdmin
@@ -30,7 +30,7 @@ const DashboardHome = () => {
         </p>
       </div>
 
-      Stats Cards
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Talents validés - Visible par tous */}
         <div className="card bg-gradient-to-br from-primary to-primary-dark text-white">

@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Sidebar from '../components/dashboard/Sidebar';
 
@@ -27,7 +27,13 @@ import MesDemandesContact from './dashboard/MesDemandesContact';
 import MesNotifications from './dashboard/MesNotifications';
 
 const DashboardEntreprise = () => {
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
+
+  console.log('🏢 [DASHBOARD ENTREPRISE] Rendering:', {
+    isAdmin,
+    userEmail: user?.email,
+    userRole: user?.role
+  });
 
   return (
     <div className="pt-20 min-h-screen bg-gray-50">
@@ -39,8 +45,9 @@ const DashboardEntreprise = () => {
         <div className="flex-1 lg:ml-64">
           <div className="p-6 lg:p-8">
             <Routes>
-              {/* Route principale */}
-              <Route path="/" element={<DashboardHome />} />
+              {/* Route principale - Page d'accueil du dashboard */}
+              <Route index element={<DashboardHome />} />
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
               
               {/* Routes communes */}
               <Route path="/profile" element={<Profile />} />
