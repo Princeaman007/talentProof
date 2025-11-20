@@ -9,16 +9,17 @@ export const protect = async (req, res, next) => {
   try {
     let token;
 
-    //  SÉCURITÉ AMÉLIORÉE - Chercher le token dans les cookies d'abord (HttpOnly)
-    if (req.cookies && req.cookies.token) {
-      token = req.cookies.token;
-    }
-    // Fallback: Token du header Authorization (pour compatibilité avec clients stateless)
-    else if (
+    // ✅ CORRECTION: Vérifier le header Authorization EN PREMIER (token le plus récent)
+    // Le frontend stocke le token rafraîchi dans localStorage et l'envoie via Authorization header
+    if (
       req.headers.authorization &&
       req.headers.authorization.startsWith('Bearer')
     ) {
       token = req.headers.authorization.split(' ')[1];
+    }
+    // Fallback: Token du cookie (peut être expiré si pas rafraîchi)
+    else if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
     }
 
     if (!token) {
