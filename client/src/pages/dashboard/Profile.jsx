@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { extractErrorMessage } from '../../utils/errorHandler';
 import { 
   FaSave, 
   FaBuilding, 
@@ -136,7 +137,7 @@ const Profile = () => {
     } catch (error) {
       setMessage({
         type: 'error',
-        text: 'Erreur lors de la mise à jour du profil',
+        text: extractErrorMessage(error, 'Erreur lors de la mise à jour du profil'),
       });
     } finally {
       setLoading(false);

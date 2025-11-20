@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaCheckCircle, FaEnvelope } from 'react-icons/fa';
 import ErrorMessage, { FieldError, SuccessMessage } from '../../components/ErrorMessage';
 import apiService from '../../services/api';
+import { extractErrorMessage } from '../../utils/errorHandler';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -34,15 +35,15 @@ const ForgotPassword = () => {
 
     try {
       const response = await apiService.auth.forgotPassword(email);
-      // L'interceptor retourne déjà response.data
-      if (response.success) {
+      // ✅ CORRECTION: L'interceptor retourne maintenant response complet
+      if (response.data.success) {
         setSuccess(true);
       } else {
-        setError(response.message || 'Erreur lors de l\'envoi de l\'email');
+        setError(response.data.message || 'Erreur lors de l\'envoi de l\'email');
       }
     } catch (err) {
       // L'interceptor formate déjà l'erreur
-      const message = err?.error?.message || err?.message || 'Erreur de connexion. Veuillez réessayer.';
+      const message = extractErrorMessage(err, 'Erreur de connexion. Veuillez réessayer.');
       setError(message);
     } finally {
       setLoading(false);

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FaFilter, FaStar, FaCheckCircle, FaEnvelope, FaTimes, FaBriefcase, FaMapMarkerAlt, FaGlobe, FaUser, FaBuilding } from 'react-icons/fa';
 import api from '../../utils/api';
+import { extractErrorMessage } from '../../utils/errorHandler';
 
 //  Constantes (gardées identiques)
 const TECHNOLOGIES = [
@@ -88,7 +89,7 @@ const TalentsDashboard = () => {
       }
     } catch (error) {
       console.error('Erreur lors du chargement des talents:', error);
-      setError(error?.error?.message || error?.message || 'Erreur lors du chargement des talents');
+      setError(extractErrorMessage(error, 'Erreur lors du chargement des talents'));
       setTalents([]);
     } finally {
       setLoading(false);
@@ -540,7 +541,7 @@ const ContactTalentModal = ({ talent, onClose }) => {
       }, 2000);
     } catch (err) {
       console.error(' Erreur contact:', err.response?.data || err.message);
-      setError(err.response?.data?.message || 'Erreur lors de l\'envoi de la demande');
+      setError(extractErrorMessage(err, 'Erreur lors de l\'envoi de la demande'));
     } finally {
       setLoading(false);
     }

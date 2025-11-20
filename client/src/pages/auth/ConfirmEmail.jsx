@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
 import { FaCheckCircle, FaTimesCircle, FaSpinner } from 'react-icons/fa';
+import { extractErrorMessage } from '../../utils/errorHandler';
 
 const ConfirmEmail = () => {
   const { token } = useParams();
@@ -31,8 +32,8 @@ const ConfirmEmail = () => {
         console.error('Erreur confirmation:', error);
         setStatus('error');
         setMessage(
-          error?.error?.message || error?.message ||
-          'Token invalide ou expiré. Veuillez réessayer ou contacter le support.'
+          extractErrorMessage(error, 
+            'Token invalide ou expiré. Veuillez réessayer ou contacter le support.')
         );
       }
     };

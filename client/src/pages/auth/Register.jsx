@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { FaCheckCircle, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { COMPANY_SIZES } from '../../utils/constants';
 import ErrorMessage, { FieldError } from '../../components/ErrorMessage';
+import { extractErrorMessage } from '../../utils/errorHandler';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -83,7 +84,7 @@ const Register = () => {
       }
     } catch (err) {
       // Erreur réseau ou autre problème inattendu
-      const message = err?.message || 'Erreur de connexion. Veuillez réessayer.';
+      const message = extractErrorMessage(err, 'Erreur de connexion. Veuillez réessayer.');
       setError(message);
     } finally {
       setLoading(false);

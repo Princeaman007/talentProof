@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FaCheckCircle, FaEye, FaEyeSlash } from 'react-icons/fa';
 import ErrorMessage from '../../components/ErrorMessage';
 import api from '../../utils/api';
+import { extractErrorMessage } from '../../utils/errorHandler';
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -59,8 +60,8 @@ const ResetPassword = () => {
       }
     } catch (err) {
       // L'interceptor formate déjà l'erreur
-      const message = err?.error?.message || err?.message || 
-        'Le lien est invalide ou a expiré. Veuillez faire une nouvelle demande.';
+      const message = extractErrorMessage(err, 
+        'Le lien est invalide ou a expiré. Veuillez faire une nouvelle demande.');
       setError(message);
     } finally {
       setLoading(false);

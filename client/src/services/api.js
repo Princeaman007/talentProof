@@ -53,8 +53,15 @@ api.interceptors.request.use(
  */
 api.interceptors.response.use(
   (response) => {
-    // Retourne directement les data de la réponse
-    return response.data;
+    // DEBUG: Logger les réponses réussies
+    console.log('✅ [API Response Success]', {
+      url: response.config?.url,
+      data: response.data
+    });
+    
+    // ✅ CORRECTION: Retourner response complet (pas response.data)
+    // Les composants accèdent à response.data eux-mêmes
+    return response;
   },
   async (error) => {
     const originalRequest = error.config;
@@ -138,7 +145,11 @@ api.interceptors.response.use(
       },
     };
 
-    console.error('[API Response Error]', formattedError);
+    console.error('❌ [API Response Error]', {
+      url: originalRequest?.url,
+      status,
+      formattedError
+    });
     return Promise.reject(formattedError);
   }
 );

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FaCheckCircle, FaEye, FaEyeSlash } from 'react-icons/fa';
 import ErrorMessage, { FieldError } from '../../components/ErrorMessage';
+import { extractErrorMessage } from '../../utils/errorHandler';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -57,18 +58,42 @@ const Login = () => {
     setError(null);
     setLoading(true);
 
+    console.log('🔵 Début de la connexion...'); // DEBUG
+
     try {
       const result = await login(formData.email, formData.password);
+      
+      console.log('✅ Réponse login:', result); // DEBUG
 
       if (result.success) {
-        navigate('/dashboard');
+        console.log('✅ Connexion réussie, données:', result.data); // DEBUG
+        
+        // Récupérer le rôle depuis result.data
+        const userRole = result.data?.role || 'entreprise';
+        console.log('✅ Rôle utilisateur:', userRole); // DEBUG
+        
+        // Redirection selon le rôle avec rechargement forcé
+        if (userRole === 'admin') {
+          console.log('✅ Redirection vers dashboard admin'); // DEBUG
+          window.location.replace('/admin/dashboard');
+        } else if (userRole === 'talent') {
+          console.log('✅ Redirection vers dashboard talent'); // DEBUG
+          window.location.replace('/talent/dashboard');
+        } else {
+          // Par défaut: entreprise
+          console.log('✅ Redirection vers dashboard entreprise'); // DEBUG
+          window.location.replace('/dashboard');
+        }
+        return; // Empêcher le finally de s'exécuter
       } else {
         // Afficher l'erreur retournée par le backend
+        console.error('❌ Échec connexion:', result.message); // DEBUG
         setError(result.message || 'Erreur de connexion');
       }
     } catch (err) {
       // Erreur réseau ou autre problème inattendu
-      const message = err?.message || 'Erreur de connexion. Veuillez réessayer.';
+      console.error('❌ Erreur inattendue:', err); // DEBUG
+      const message = extractErrorMessage(err, 'Erreur de connexion. Veuillez réessayer.');
       setError(message);
     } finally {
       setLoading(false);

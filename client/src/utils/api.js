@@ -60,6 +60,22 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // Gestion du rate limiting (429)
+    if (error.response?.status === 429) {
+      const formatted429Error = new Error('Trop de tentatives. Veuillez patienter quelques minutes avant de réessayer');
+      formatted429Error.response = {
+        data: {
+          success: false,
+          error: {
+            code: 'TOO_MANY_REQUESTS',
+            message: 'Trop de tentatives. Veuillez patienter quelques minutes avant de réessayer',
+            statusCode: 429
+          }
+        }
+      };
+      return Promise.reject(formatted429Error);
+    }
+
     //  Si erreur CSRF (403), récupérer un nouveau token et réessayer
     if (error.response?.status === 403 && error.response?.data?.code === 'EBADCSRFTOKEN' && !originalRequest._retryCSRF) {
       originalRequest._retryCSRF = true;
@@ -80,8 +96,8 @@ api.interceptors.response.use(
       }
     }
 
-    // Si 401, tenter de refresh le token JWT
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Si 401, tenter de refresh le token JWT SAUF pour /auth/login (credentials incorrects)
+    if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/auth/login')) {
       originalRequest._retry = true;
       return api.post('/auth/refresh')
         .then(() => {

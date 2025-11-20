@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import api from '../utils/api';
+import { extractErrorMessage } from '../utils/errorHandler';
 
 const AuthContext = createContext();
 
@@ -67,17 +68,33 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     //  Protection: Si déjà en train de se connecter, ignorer
     if (isLoggingIn) {
-      console.warn('Login already in progress, ignoring duplicate request');
+      console.warn('⚠️ Login already in progress, ignoring duplicate request');
       return { success: false, message: 'Connexion en cours...' };
     }
+    
+    console.log('🔵 AuthContext.login - Début:', { email }); // DEBUG
     
     setIsLoggingIn(true);
     setError(null); 
     
     try {
+      console.log('🔵 Appel API login...'); // DEBUG
       const response = await api.post('/auth/login', { email, password });
-      // L'interceptor retourne déjà response.data, donc response = { success, message, data, token }
-      const { token, data } = response;
+      // L'API retourne l'objet response complet, donc accéder à response.data
+      
+      console.log('✅ Réponse API complète:', response); // DEBUG
+      console.log('✅ response.data:', response.data); // DEBUG
+      console.log('✅ Clés de response.data:', Object.keys(response.data)); // DEBUG
+      
+      const { token, data } = response.data;
+
+      if (!token) {
+        console.error('❌ Pas de token dans la réponse!'); // DEBUG
+        console.error('❌ Response.data complète:', JSON.stringify(response.data, null, 2)); // DEBUG
+        return { success: false, message: 'Token manquant dans la réponse' };
+      }
+
+      console.log('✅ Token reçu, sauvegarde...'); // DEBUG
 
       //  Sauvegarder le token ET les données utilisateur
       // Note: Cookies HttpOnly ne fonctionnent pas avec des domaines séparés sur Render
@@ -85,10 +102,14 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(data));
 
+      console.log('✅ Token et user sauvegardés dans localStorage'); // DEBUG
+
       // Mettre à jour l'état
       setToken(token);
       setUser(data);
       checkIsAdmin(data);
+
+      console.log('✅ État mis à jour, utilisateur connecté:', data); // DEBUG
 
       // Refresh CSRF token after successful auth (server may rotate cookie)
       try {
@@ -98,17 +119,19 @@ export const AuthProvider = ({ children }) => {
       } catch (csrfErr) {
         // Non-fatal
         // eslint-disable-next-line no-console
-        console.warn('Unable to refresh CSRF token after login', csrfErr?.message || csrfErr);
+        console.warn('⚠️ Unable to refresh CSRF token after login', csrfErr?.message || csrfErr);
       }
 
       return { success: true, data };
     } catch (error) {
-      // L'interceptor axios formate déjà l'erreur dans { success: false, error: { message, code } }
-      const message = error?.error?.message || error?.message || 'Erreur de connexion';
+      console.error('❌ AuthContext.login - Erreur complète:', error);
+      const message = extractErrorMessage(error, 'Erreur de connexion');
+      console.error('❌ Message d\'erreur extrait:', message);
       setError(message);
       return { success: false, message };
     } finally {
       setIsLoggingIn(false);
+      console.log('🔵 AuthContext.login - Fin'); // DEBUG
     }
   };
 
@@ -128,7 +151,7 @@ export const AuthProvider = ({ children }) => {
       return { success: true, data: response };
     } catch (error) {
       // L'interceptor axios formate déjà l'erreur
-      const message = error?.error?.message || error?.message || 'Erreur lors de l\'inscription';
+      const message = extractErrorMessage(error, 'Erreur lors de l\'inscription');
       return { success: false, message };
     }
   };
@@ -165,7 +188,7 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true, data: updatedUser };
     } catch (error) {
-      const message = error?.error?.message || error?.message || 'Erreur lors de la mise à jour';
+      const message = extractErrorMessage(error, 'Erreur lors de la mise à jour');
       return { success: false, message };
     }
   };
@@ -176,7 +199,7 @@ export const AuthProvider = ({ children }) => {
       await api.put('/auth/change-password', { currentPassword, newPassword });
       return { success: true };
     } catch (error) {
-      const message = error?.error?.message || error?.message || 'Erreur lors du changement de mot de passe';
+      const message = extractErrorMessage(error, 'Erreur lors du changement de mot de passe');
       return { success: false, message };
     }
   };

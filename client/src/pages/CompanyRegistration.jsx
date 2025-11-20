@@ -5,6 +5,7 @@ import apiService from '../services/api';
 import ErrorMessage, { SuccessMessage, FieldError } from '../components/ErrorMessage';
 import { formatDate } from '../utils/formatters';
 import { validateEmail, validatePhone, validateName } from '../utils/validators';
+import { extractErrorMessage } from '../utils/errorHandler';
 
 const CompanyRegistration = () => {
   const navigate = useNavigate();
@@ -31,11 +32,11 @@ const CompanyRegistration = () => {
   const fetchTalentDays = async () => {
     try {
       const response = await apiService.talentDays.getAll({ statut: 'inscriptions-ouvertes' });
-      if (response.success) {
-        setTalentDays(response.data);
+      if (response.data.success) {
+        setTalentDays(response.data.data);
       }
     } catch (error) {
-      const message = error?.error?.message || error?.message || 'Erreur de chargement';
+      const message = extractErrorMessage(error, 'Erreur de chargement');
       setApiError(message);
     }
   };
@@ -128,20 +129,20 @@ const CompanyRegistration = () => {
     try {
       setLoading(true);
       const response = await apiService.companies.register(formData);
-      // L'interceptor retourne déjà response.data
-      if (response.success) {
+      // ✅ CORRECTION: L'interceptor retourne maintenant response complet
+      if (response.data.success) {
         setSuccess(true);
         setTimeout(() => {
           navigate('/talent-days');
         }, 3000);
       } else {
-        setApiError(response.message || 'Erreur lors de l\'inscription');
-        setApiErrorDetails(response.details);
+        setApiError(response.data.message || 'Erreur lors de l\'inscription');
+        setApiErrorDetails(response.data.details);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } catch (error) {
       // L'interceptor formate déjà l'erreur
-      const message = error?.error?.message || error?.message || 'Erreur de connexion. Veuillez réessayer.';
+      const message = extractErrorMessage(error, 'Erreur de connexion. Veuillez réessayer.');
       const details = error?.error?.details || null;
       setApiError(message);
       setApiErrorDetails(details);
