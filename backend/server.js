@@ -123,7 +123,7 @@ if (isProd) {
 }
 
 //  SÉCURITÉ: CORS restrictif (au lieu de cors() ouvert)
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:5174,http://localhost:3000').split(',');
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000').split(',');
 console.log(' CORS allowedOrigins:', allowedOrigins);
 
 // CORS configuration with dynamic origin validation

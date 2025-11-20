@@ -216,15 +216,22 @@ export const login = asyncHandler(async (req, res) => {
     lastLogin: company.lastLogin,
   };
 
-  // Optionnel: inclure le token dans le body pour compatibilité (deprecated)
-  const includeTokenInBody = process.env.DEPRECATE_TOKEN_IN_BODY === 'true' ? false : true;
-
+  // TOUJOURS inclure le token dans la réponse pour compatibilité avec le frontend
   const responsePayload = {
     success: true,
     message: 'Connexion réussie.',
+    token: token, // OBLIGATOIRE pour le frontend
     data: companyData,
   };
-  if (includeTokenInBody) responsePayload.token = token;
+
+  console.log('🔵 [BACKEND] Envoi réponse login:', {
+    hasToken: !!token,
+    tokenLength: token?.length,
+    success: responsePayload.success,
+    userId: companyData._id,
+    email: companyData.email,
+    role: companyData.role
+  });
 
   res.status(200).json(responsePayload);
 });
