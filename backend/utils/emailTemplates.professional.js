@@ -20,19 +20,10 @@
 // LOGO TALENTPROOF EN SVG (Base64 embarqué)
 // ═══════════════════════════════════════════════════════════════════════
 
-const LOGO_SVG = `
-<svg width="180" height="50" viewBox="0 0 180 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Badge circulaire bleu avec coche -->
-  <circle cx="25" cy="25" r="20" fill="#2E4A9E"/>
-  <path d="M18 25L22 29L32 19" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-  
-  <!-- Texte TalentProof -->
-  <text x="52" y="30" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="#2E4A9E">
-    TalentProof
-  </text>
-</svg>
-`;
+// SVG optimisé pour les emails - Compatible avec tous les clients
+const LOGO_SVG = `<svg width="180" height="50" viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg"><circle cx="25" cy="25" r="20" fill="#2E4A9E"/><path d="M18 25L22 29L32 19" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><text x="52" y="32" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#2E4A9E">TalentProof</text></svg>`;
 
+// Encodage base64 du SVG
 const LOGO_BASE64 = `data:image/svg+xml;base64,${Buffer.from(LOGO_SVG).toString('base64')}`;
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -72,7 +63,24 @@ const baseTemplate = (heroTitle, content, heroColor = '#2E4A9E') => `
           <!-- HEADER : Logo TalentProof -->
           <tr>
             <td style="padding: 30px 40px; text-align: center; background-color: #FFFFFF;">
-              <img src="${LOGO_BASE64}" alt="TalentProof - Validez vos talents" width="180" height="50" style="display: block; margin: 0 auto; max-width: 100%; height: auto;" />
+              <!-- Logo texte stylisé compatible tous clients email -->
+              <div style="display: inline-block; text-align: left;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                  <tr>
+                    <td style="vertical-align: middle; padding-right: 10px;">
+                      <!-- Badge circulaire avec coche -->
+                      <div style="width: 40px; height: 40px; background-color: #2E4A9E; border-radius: 50%; display: inline-block; position: relative; vertical-align: middle;">
+                        <span style="color: white; font-size: 24px; font-weight: bold; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">✓</span>
+                      </div>
+                    </td>
+                    <td style="vertical-align: middle;">
+                      <!-- Texte TalentProof -->
+                      <span style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 24px; font-weight: bold; color: #2E4A9E; letter-spacing: -0.5px;">TalentProof</span><br>
+                      <span style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 12px; color: #6B7280; font-style: italic;">Validez vos talents</span>
+                    </td>
+                  </tr>
+                </table>
+              </div>
             </td>
           </tr>
           
@@ -100,7 +108,10 @@ const baseTemplate = (heroTitle, content, heroColor = '#2E4A9E') => `
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
                   <td style="text-align: center; padding-bottom: 20px;">
-                    <img src="${LOGO_BASE64}" alt="TalentProof" width="120" height="33" style="display: block; margin: 0 auto; opacity: 0.7;" />
+                    <!-- Logo texte stylisé pour footer -->
+                    <span style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 18px; font-weight: bold; color: #2E4A9E; opacity: 0.7;">
+                      ✓ TalentProof
+                    </span>
                   </td>
                 </tr>
               </table>
@@ -640,20 +651,118 @@ export const talentDayConfirmationTemplate = (inscription, talentDay) => {
 };
 
 // ═══════════════════════════════════════════════════════════════════════
-// 8. EMAIL INSCRIPTION ENTREPRISE TALENTDAY
+// 8. EMAIL NOUVELLE CANDIDATURE TALENTDAY (À L'ENTREPRISE)
+// ═══════════════════════════════════════════════════════════════════════
+
+export const companyNewCandidatureTemplate = (talentInfo, talentDay) => {
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
+  
+  const content = `
+    <p style="margin: 0 0 20px 0; font-size: 18px; color: #1F2937;">
+      📋 <strong>Nouvelle candidature pour votre TalentDay !</strong>
+    </p>
+    
+    <p style="margin: 0 0 20px 0; color: #374151;">
+      Un talent a manifesté son intérêt pour participer à votre événement <strong>"${talentDay.titre}"</strong>.
+    </p>
+    
+    ${infoBox('<strong>✅ Candidature reçue</strong><br>Vous pouvez maintenant consulter le profil complet de ce candidat dans votre espace entreprise.', '✅', '#D1FAE5', '#059669')}
+    
+    <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
+      👤 Profil du talent
+    </h3>
+    
+    ${dataTable([
+      ['👤 Nom complet', `<strong>${talentInfo.prenom} ${talentInfo.nom || ''}</strong>`],
+      ['📧 Email', `<a href="mailto:${talentInfo.email}" style="color: #2E4A9E; text-decoration: none;">${talentInfo.email}</a>`],
+      ['📱 Téléphone', talentInfo.telephone ? `<a href="tel:${talentInfo.telephone}" style="color: #2E4A9E; text-decoration: none;">${talentInfo.telephone}</a>` : 'Non renseigné'],
+      ['💻 Technologies', (talentInfo.technologies || []).join(', ') || 'Non spécifiées'],
+      ['📊 Score', talentInfo.scoreTest ? `${talentInfo.scoreTest}/100` : 'Non évalué']
+    ])}
+    
+    ${talentInfo.motivation ? `
+      <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
+        💬 Message de motivation
+      </h3>
+      <div style="background-color: #F9FAFB; border-left: 4px solid #2E4A9E; padding: 20px; border-radius: 6px; margin: 20px 0;">
+        <p style="margin: 0; color: #374151; line-height: 1.6; white-space: pre-wrap;">${talentInfo.motivation}</p>
+      </div>
+    ` : ''}
+    
+    <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
+      📅 Détails de l'événement
+    </h3>
+    
+    ${dataTable([
+      ['📌 Événement', talentDay.titre],
+      ['📆 Date', formatDate(talentDay.date)],
+      ['📍 Lieu', talentDay.lieu],
+      ['👥 Inscriptions', `${talentDay.inscriptions?.length || 0} / ${talentDay.maxParticipants || 0}`]
+    ])}
+    
+    <h3 style="margin: 30px 0 15px 0; color: #2E4A9E; font-size: 18px;">
+      🎯 Prochaines étapes
+    </h3>
+    
+    ${styledList([
+      '<strong>Consulter le profil complet</strong> - Accédez à tous les détails du candidat',
+      '<strong>Examiner le portfolio</strong> - Vérifiez les projets et réalisations',
+      '<strong>Préparer vos questions</strong> - Notez les points à clarifier lors de l\'événement',
+      '<strong>Planifier l\'entretien</strong> - Organisez votre temps le jour J'
+    ])}
+    
+    <p style="margin: 25px 0; text-align: center;">
+      <a href="https://talentproof-client.onrender.com/dashboard/entreprise/talent-days/${talentDay._id}" style="display: inline-block; background: linear-gradient(135deg, #2E4A9E 0%, #1E3A8A 100%); color: #FFFFFF; text-decoration: none; padding: 14px 30px; border-radius: 8px; font-weight: 600; font-size: 15px;">
+        📋 Voir toutes les candidatures
+      </a>
+    </p>
+    
+    <p style="margin: 25px 0 0 0; color: #6B7280; font-size: 15px;">
+      Des questions ? Contactez-nous à 
+      <a href="mailto:info@princeaman.dev" style="color: #2E4A9E; text-decoration: none;">info@princeaman.dev</a>.
+    </p>
+  `;
+  
+  return baseTemplate('📋 Nouvelle candidature TalentDay', content, '#059669');
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// 9. EMAIL INSCRIPTION ENTREPRISE TALENTDAY
 // ═══════════════════════════════════════════════════════════════════════
 
 export const companyTalentDayRegistrationTemplate = (companyInfo, talentDays) => {
-  const talentDaysHtml = talentDays.map(td => `
-    <div style="background-color: #F9FAFB; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #2E4A9E;">
-      <p style="margin: 0; color: #1F2937;">
-        <strong style="color: #2E4A9E; font-size: 16px;"> ${td.titre}</strong><br>
-        <span style="color: #6B7280; font-size: 14px;">
-           ${td.lieu} • ${new Date(td.date).toLocaleDateString('fr-FR')}
-        </span>
-      </p>
-    </div>
-  `).join('');
+  const talentDaysHtml = talentDays.map(td => {
+    // Formater le lieu selon son type
+    let lieuText = 'Lieu à confirmer';
+    if (td.lieu) {
+      if (td.lieu.type === 'physique' && td.lieu.adresse) {
+        lieuText = `${td.lieu.adresse}, ${td.lieu.ville || ''}`.trim();
+      } else if (td.lieu.type === 'en-ligne') {
+        lieuText = 'En ligne';
+      } else if (td.lieu.type === 'hybride') {
+        lieuText = `Hybride - ${td.lieu.ville || 'Lieu à confirmer'}`;
+      }
+    }
+    
+    return `
+      <div style="background-color: #F9FAFB; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #2E4A9E;">
+        <p style="margin: 0; color: #1F2937;">
+          <strong style="color: #2E4A9E; font-size: 16px;">📅 ${td.titre}</strong><br>
+          <span style="color: #6B7280; font-size: 14px;">
+            📍 ${lieuText} • ${new Date(td.date).toLocaleDateString('fr-FR')}
+          </span>
+        </p>
+      </div>
+    `;
+  }).join('');
   
   const content = `
     <p style="margin: 0 0 20px 0; font-size: 18px; color: #1F2937;">

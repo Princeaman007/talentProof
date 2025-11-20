@@ -5,12 +5,12 @@ import fs from 'fs';
 import TalentDay from '../models/Talentday.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { adminOnly } from '../middleware/adminMiddleware.js';
+import { sendEmail } from '../utils/emailService.js';
 import { 
-  sendEmail, 
   talentDayConfirmationTemplate,
   talentDayAcceptationTemplate,
   talentDayRefusTemplate
-} from '../utils/emailService.js';
+} from '../utils/emailTemplates.professional.js';
 
 const router = express.Router();
 
@@ -278,15 +278,56 @@ router.post('/:id/register', async (req, res) => {
     
     //  ENVOYER L'EMAIL DE CONFIRMATION
     try {
-      const emailHtml = talentDayConfirmationTemplate(inscriptionData, updatedTalentDay);
+      // Formater les données pour le template
+      const [prenom, ...nomParts] = inscriptionData.nom.split(' ');
+      const nom = nomParts.join(' ') || '';
+      
+      // Formater le lieu
+      let lieuFormate = 'Lieu à confirmer';
+      if (updatedTalentDay.lieu) {
+        if (updatedTalentDay.lieu.type === 'physique' && updatedTalentDay.lieu.adresse) {
+          lieuFormate = `${updatedTalentDay.lieu.adresse}, ${updatedTalentDay.lieu.ville || ''} ${updatedTalentDay.lieu.postalCode || ''}`.trim();
+        } else if (updatedTalentDay.lieu.type === 'en-ligne') {
+          lieuFormate = 'En ligne (lien fourni 24h avant l\'événement)';
+        } else if (updatedTalentDay.lieu.type === 'hybride') {
+          lieuFormate = `Hybride - ${updatedTalentDay.lieu.ville || 'Lieu à confirmer'}`;
+        }
+      }
+      
+      // Formater les horaires
+      const horaires = updatedTalentDay.heureDebut && updatedTalentDay.heureFin 
+        ? `${updatedTalentDay.heureDebut} - ${updatedTalentDay.heureFin}`
+        : 'Horaires à confirmer';
+      
+      // Créer les objets formatés pour le template
+      const inscriptionFormatted = {
+        prenom: prenom,
+        nom: nom,
+        email: inscriptionData.email,
+        telephone: inscriptionData.telephone || 'Non renseigné',
+        motivation: inscriptionData.motivation
+      };
+      
+      const talentDayFormatted = {
+        _id: updatedTalentDay._id,
+        titre: updatedTalentDay.titre,
+        description: updatedTalentDay.description || 'Description à venir',
+        date: updatedTalentDay.date,
+        lieu: lieuFormate,
+        horaires: horaires,
+        maxParticipants: updatedTalentDay.placesDisponibles || 0,
+        inscriptions: updatedTalentDay.inscriptions || []
+      };
+      
+      const emailHtml = talentDayConfirmationTemplate(inscriptionFormatted, talentDayFormatted);
       await sendEmail({
         to: inscriptionData.email,
-        subject: ` Inscription confirmée - ${updatedTalentDay.titre}`,
+        subject: `🎯 Inscription confirmée - ${updatedTalentDay.titre}`,
         html: emailHtml,
       });
-      console.log(' Email de confirmation envoyé à:', inscriptionData.email);
+      console.log('✅ Email de confirmation envoyé à:', inscriptionData.email);
     } catch (emailError) {
-      console.error(' Erreur envoi email:', emailError);
+      console.error('❌ Erreur envoi email:', emailError);
       // Ne pas bloquer l'inscription si l'email échoue
     }
     
@@ -626,15 +667,56 @@ router.put('/:id/inscriptions/:inscriptionIndex', protect, adminOnly, async (req
     let emailEnvoye = false;
     if (ancienStatut !== statut && (statut === 'accepte' || statut === 'refuse')) {
       try {
+        // Formater les données pour le template
+        const [prenom, ...nomParts] = inscription.nom.split(' ');
+        const nom = nomParts.join(' ') || '';
+        
+        // Formater le lieu
+        let lieuFormate = 'Lieu à confirmer';
+        if (talentDay.lieu) {
+          if (talentDay.lieu.type === 'physique' && talentDay.lieu.adresse) {
+            lieuFormate = `${talentDay.lieu.adresse}, ${talentDay.lieu.ville || ''} ${talentDay.lieu.postalCode || ''}`.trim();
+          } else if (talentDay.lieu.type === 'en-ligne') {
+            lieuFormate = 'En ligne (lien fourni 24h avant l\'événement)';
+          } else if (talentDay.lieu.type === 'hybride') {
+            lieuFormate = `Hybride - ${talentDay.lieu.ville || 'Lieu à confirmer'}`;
+          }
+        }
+        
+        // Formater les horaires
+        const horaires = talentDay.heureDebut && talentDay.heureFin 
+          ? `${talentDay.heureDebut} - ${talentDay.heureFin}`
+          : 'Horaires à confirmer';
+        
+        // Créer les objets formatés pour le template
+        const inscriptionFormatted = {
+          prenom: prenom,
+          nom: nom,
+          email: inscription.email,
+          telephone: inscription.telephone || 'Non renseigné',
+          motivation: inscription.motivation || ''
+        };
+        
+        const talentDayFormatted = {
+          _id: talentDay._id,
+          titre: talentDay.titre,
+          description: talentDay.description || 'Description à venir',
+          date: talentDay.date,
+          lieu: lieuFormate,
+          horaires: horaires,
+          maxParticipants: talentDay.placesDisponibles || 0,
+          inscriptions: talentDay.inscriptions || []
+        };
+        
         let emailSubject = '';
         let emailHtml = '';
         
         if (statut === 'accepte') {
-          emailSubject = ` Félicitations ! Vous êtes accepté(e) - ${talentDay.titre}`;
-          emailHtml = talentDayAcceptationTemplate(inscription, talentDay);
+          emailSubject = `🎉 Félicitations ! Vous êtes accepté(e) - ${talentDay.titre}`;
+          emailHtml = talentDayAcceptationTemplate(inscriptionFormatted, talentDayFormatted);
         } else if (statut === 'refuse') {
-          emailSubject = `Réponse à votre candidature - ${talentDay.titre}`;
-          emailHtml = talentDayRefusTemplate(inscription, talentDay);
+          emailSubject = `📋 Réponse à votre candidature - ${talentDay.titre}`;
+          emailHtml = talentDayRefusTemplate(inscriptionFormatted, talentDayFormatted);
         }
         
         await sendEmail({
@@ -643,10 +725,10 @@ router.put('/:id/inscriptions/:inscriptionIndex', protect, adminOnly, async (req
           html: emailHtml,
         });
         
-        console.log(` Email de ${statut} envoyé à:`, inscription.email);
+        console.log(`✅ Email de ${statut} envoyé à:`, inscription.email);
         emailEnvoye = true;
       } catch (emailError) {
-        console.error(' Erreur envoi email:', emailError);
+        console.error('❌ Erreur envoi email:', emailError);
         // Ne pas bloquer la mise à jour si l'email échoue
       }
     }

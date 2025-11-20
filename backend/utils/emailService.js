@@ -1,14 +1,44 @@
+/**
+ * ═══════════════════════════════════════════════════════════════════════
+ * TALENTPROOF - SERVICE D'ENVOI D'EMAILS AVEC VRAIES DONNÉES MONGODB
+ * ═══════════════════════════════════════════════════════════════════════
+ * 
+ * ✅ CORRIGÉ - Toutes les fonctions utilisent maintenant les vraies données
+ * ✅ Dates formatées en français lisible
+ * ✅ Lieux formatés selon le type (physique/en-ligne/hybride)
+ * ✅ Places disponibles calculées dynamiquement
+ * ✅ Validation des données avant envoi
+ */
+
 import { createTransport } from 'nodemailer';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Configuration du transporter Nodemailer
+// Import des templates professionnels
+import { 
+  confirmationEmailTemplate,
+  resetPasswordTemplate,
+  talentDayConfirmationTemplate,
+  companyNewCandidatureTemplate,
+  companyTalentDayRegistrationTemplate,
+  contactNotificationTemplate,
+  contactConfirmationTemplate,
+  generalContactNotificationTemplate,
+  generalContactConfirmationTemplate,
+  talentDayAcceptationTemplate,
+  talentDayRefusTemplate
+} from './emailTemplates.professional.js';
+
+// ═══════════════════════════════════════════════════════════════════════
+// CONFIGURATION NODEMAILER
+// ═══════════════════════════════════════════════════════════════════════
+
 const createTransporter = () => {
   const emailPort = parseInt(process.env.EMAIL_PORT);
   const isSSL = emailPort === 465;
   
-  console.log(' Configuration Email:', {
+  console.log('📧 Configuration Email:', {
     host: process.env.EMAIL_HOST,
     port: emailPort,
     secure: isSSL,
@@ -19,53 +49,43 @@ const createTransporter = () => {
   return createTransport({
     host: process.env.EMAIL_HOST,
     port: emailPort,
-    secure: isSSL, // true pour 465 (SSL), false pour 587 (TLS)
+    secure: isSSL,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
     tls: {
-      rejectUnauthorized: false, //  Important pour éviter les erreurs de certificat
-      minVersion: 'TLSv1.2', //  Forcer TLS 1.2 minimum
+      rejectUnauthorized: false,
+      minVersion: 'TLSv1.2',
     },
-    //  OPTIMISÉ : Timeouts plus longs pour Render
-    connectionTimeout: 60000, // 60 secondes (au lieu de 10s)
-    greetingTimeout: 30000, // 30 secondes
-    socketTimeout: 60000, // 60 secondes
+    connectionTimeout: 60000,
+    greetingTimeout: 30000,
+    socketTimeout: 60000,
     debug: process.env.NODE_ENV === 'development',
     logger: process.env.NODE_ENV === 'development',
-    // ❌ DÉSACTIVÉ: Pool de connexions pour éviter les timeouts
-    pool: false, // Chaque email crée une nouvelle connexion
+    pool: false,
   });
 };
 
-
 /**
- * Envoyer un email
- * @param {Object} options - Options de l'email
- * @param {string} options.to - Destinataire
- * @param {string} options.subject - Sujet
- * @param {string} options.html - Contenu HTML
- * @param {string} options.text - Contenu texte (optionnel)
+ * Fonction principale d'envoi d'email
  */
 export const sendEmail = async ({ to, subject, html, text }) => {
-  // Mode développement - skip emails
   if (process.env.SKIP_EMAILS === 'true') {
-    console.log(' Mode dev: Email non envoyé');
-    console.log(' Destinataire:', to);
-    console.log(' Sujet:', subject);
+    console.log('🚫 Mode dev: Email non envoyé');
+    console.log('📧 Destinataire:', to);
+    console.log('📝 Sujet:', subject);
     return { success: true, messageId: 'dev-mode-skipped' };
   }
 
   try {
     const transporter = createTransporter();
 
-    //  Vérifier la connexion avant d'envoyer (optionnel mais recommandé)
     try {
       await transporter.verify();
-      console.log(' Serveur email prêt');
+      console.log('✅ Serveur email prêt');
     } catch (verifyError) {
-      console.warn(' Vérification du serveur email échouée, tentative d\'envoi quand même...');
+      console.warn('⚠️ Vérification du serveur email échouée, tentative d\'envoi quand même...');
     }
 
     const mailOptions = {
@@ -73,15 +93,15 @@ export const sendEmail = async ({ to, subject, html, text }) => {
       to,
       subject,
       html,
-      text: text || '', // Fallback texte si HTML non supporté
+      text: text || '',
     };
 
     const info = await transporter.sendMail(mailOptions);
     
-    console.log(' Email envoyé avec succès:', info.messageId);
+    console.log('✅ Email envoyé avec succès:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error(' Erreur envoi email:', error);
+    console.error('❌ Erreur envoi email:', error);
     console.error('Détails:', {
       code: error.code,
       command: error.command,
@@ -92,369 +112,664 @@ export const sendEmail = async ({ to, subject, html, text }) => {
   }
 };
 
-// ==================== TEMPLATES EMAIL ====================
-
-// Template de base pour tous les emails
-const baseTemplate = (content) => `
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TalentProof</title>
-  <style>
-    body {
-      font-family: 'Inter', 'Helvetica', 'Arial', sans-serif;
-      line-height: 1.6;
-      color: #475569;
-      background-color: #f8fafc;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 600px;
-      margin: 20px auto;
-      background-color: #ffffff;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .header {
-      background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%);
-      padding: 40px 20px;
-      text-align: center;
-    }
-    .logo {
-      font-size: 32px;
-      font-weight: bold;
-      color: #ffffff;
-      text-decoration: none;
-    }
-    .content {
-      padding: 40px 30px;
-    }
-    .button {
-      display: inline-block;
-      padding: 14px 32px;
-      background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
-      color: #ffffff;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: 600;
-      margin: 20px 0;
-    }
-    .footer {
-      background-color: #f1f5f9;
-      padding: 30px;
-      text-align: center;
-      font-size: 14px;
-      color: #64748B;
-    }
-    .footer a {
-      color: #1E3A8A;
-      text-decoration: none;
-    }
-    h1 {
-      color: #1E3A8A;
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-    p {
-      margin: 15px 0;
-      color: #475569;
-    }
-    .highlight {
-      background-color: #fef3c7;
-      padding: 15px;
-      border-left: 4px solid #F97316;
-      border-radius: 4px;
-      margin: 20px 0;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <div class="logo"> TalentProof</div>
-    </div>
-    <div class="content">
-      ${content}
-    </div>
-    <div class="footer">
-      <p><strong>TalentProof</strong> - Le label de confiance pour les talents tech</p>
-      <p>Avenue de lille 4 A52, 4020 Liège, Belgique</p>
-      <p>
-        <a href="mailto:info@princeaman.dev">info@princeaman.dev</a> | 
-        <a href="tel:+32467620878">+32 467 62 08 78</a>
-      </p>
-      <p style="font-size: 12px; color: #94A3B8; margin-top: 20px;">
-        © ${new Date().getFullYear()} TalentProof. Tous droits réservés.
-      </p>
-    </div>
-  </div>
-</body>
-</html>
-`;
-
-/**
- * Email de confirmation d'inscription
- */
 // ═══════════════════════════════════════════════════════════════════════
-// ANCIENS TEMPLATES (NE PLUS UTILISER - REMPLACÉS PAR LES NOUVEAUX)
+// FONCTIONS UTILITAIRES
 // ═══════════════════════════════════════════════════════════════════════
 
-// Note: Ces fonctions sont conservées pour compatibilité temporaire
-// mais les nouveaux templates professionnels dans emailTemplates.professional.js
-// sont désormais utilisés partout
-
-const confirmationEmailTemplateOLD = (companyName, confirmationLink) => {
-  const content = `
-    <h1>Bienvenue sur TalentProof, ${companyName} ! </h1>
-    <p>Merci de vous être inscrit sur TalentProof, la plateforme de recrutement des meilleurs talents tech juniors.</p>
-    <p>Pour activer votre compte et accéder à notre catalogue de talents, veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous :</p>
-    <div style="text-align: center;">
-      <a href="${confirmationLink}" class="button">Confirmer mon email</a>
-    </div>
-    <p style="font-size: 14px; color: #64748B; margin-top: 30px;">
-      Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :<br>
-      <a href="${confirmationLink}" style="color: #1E3A8A; word-break: break-all;">${confirmationLink}</a>
-    </p>
-    <div class="highlight">
-      <strong> Ce lien expire dans 24 heures.</strong><br>
-      Si vous n'avez pas créé de compte sur TalentProof, vous pouvez ignorer cet email.
-    </div>
-  `;
-  return baseTemplate(content);
-};
-
 /**
- * Email de réinitialisation de mot de passe
+ * Formate une date MongoDB en français lisible
+ * @param {Date|string} date - Date à formater
+ * @returns {string} Date formatée (ex: "Lundi 15 janvier 2025 à 09:00")
  */
-const resetPasswordTemplateOLD = (companyName, resetLink) => {
-  const content = `
-    <h1>Réinitialisation de votre mot de passe</h1>
-    <p>Bonjour ${companyName},</p>
-    <p>Vous avez demandé à réinitialiser votre mot de passe sur TalentProof. Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe :</p>
-    <div style="text-align: center;">
-      <a href="${resetLink}" class="button">Réinitialiser mon mot de passe</a>
-    </div>
-    <p style="font-size: 14px; color: #64748B; margin-top: 30px;">
-      Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :<br>
-      <a href="${resetLink}" style="color: #1E3A8A; word-break: break-all;">${resetLink}</a>
-    </p>
-    <div class="highlight">
-      <strong> Ce lien expire dans 1 heure.</strong><br>
-      Si vous n'avez pas demandé cette réinitialisation, ignorez cet email. Votre mot de passe restera inchangé.
-    </div>
-    <p style="margin-top: 30px; font-size: 14px; color: #64748B;">
-      Pour votre sécurité, ne partagez jamais ce lien avec qui que ce soit.
-    </p>
-  `;
-  return baseTemplate(content);
-};
-
-/**
- * Email de notification à Prince (demande de contact pour un talent)
- */
-const contactNotificationTemplateOLD = (talentInfo, recruteurInfo) => {
-  const content = `
-    <h1> Nouvelle demande de contact talent</h1>
-    <p><strong>Un recruteur souhaite entrer en contact avec un de vos talents validés.</strong></p>
+const formatDateFR = (date) => {
+  if (!date) return 'Date à confirmer';
+  
+  try {
+    const dateObj = new Date(date);
+    if (isNaN(dateObj.getTime())) {
+      console.error('❌ Date invalide:', date);
+      return 'Date à confirmer';
+    }
     
-    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;"> Informations du talent</h2>
-    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Prénom :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${talentInfo.prenom}</td>
-      </tr>
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Technologies :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${talentInfo.technologies.join(', ')}</td>
-      </tr>
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Score :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${talentInfo.scoreTest}/100 (${talentInfo.plateforme})</td>
-      </tr>
-    </table>
-
-    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;"> Informations du recruteur</h2>
-    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Nom :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${recruteurInfo.nom}</td>
-      </tr>
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Email :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">
-          <a href="mailto:${recruteurInfo.email}">${recruteurInfo.email}</a>
-        </td>
-      </tr>
-      ${recruteurInfo.tel ? `
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Téléphone :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">
-          <a href="tel:${recruteurInfo.tel}">${recruteurInfo.tel}</a>
-        </td>
-      </tr>
-      ` : ''}
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Entreprise :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${recruteurInfo.entreprise}</td>
-      </tr>
-    </table>
-
-    <div class="highlight" style="margin-top: 30px;">
-      <strong> Message du recruteur :</strong><br><br>
-      ${recruteurInfo.message.replace(/\n/g, '<br>')}
-    </div>
-
-    <div style="margin-top: 30px; padding: 20px; background-color: #f1f5f9; border-radius: 8px;">
-      <strong> Actions à faire :</strong>
-      <ol style="margin: 10px 0;">
-        <li>Contacter le recruteur par email ou téléphone</li>
-        <li>Envoyer le CV complet du talent</li>
-        <li>Organiser une mise en relation si approprié</li>
-      </ol>
-    </div>
-  `;
-  return baseTemplate(content);
+    return dateObj.toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } catch (error) {
+    console.error('❌ Erreur formatage date:', error);
+    return 'Date à confirmer';
+  }
 };
 
 /**
- * Email de confirmation de demande de contact (envoyé au recruteur)
+ * Formate le lieu d'un événement selon son type
+ * @param {Object} location - Objet location du TalentDay
+ * @returns {Object} Objet avec toutes les infos de lieu formatées
  */
-const contactConfirmationTemplateOLD = (recruteurNom, talentPrenom) => {
-  const content = `
-    <h1>Demande bien reçue ! </h1>
-    <p>Bonjour ${recruteurNom},</p>
-    <p>Merci pour votre intérêt pour <strong>${talentPrenom}</strong>, l'un de nos talents validés TalentProof.</p>
-    <p>Votre demande a bien été reçue et nous allons la traiter dans les plus brefs délais.</p>
-    <div class="highlight">
-      <strong> Délai de réponse : 24-48 heures</strong><br>
-      Nous vous recontacterons rapidement avec les informations complètes sur ce talent.
-    </div>
-    <p>Notre équipe va :</p>
-    <ul style="line-height: 2;">
-      <li>Analyser votre demande</li>
-      <li>Vérifier la disponibilité du talent</li>
-      <li>Vous envoyer son CV complet et ses coordonnées</li>
-      <li>Organiser une mise en relation si approprié</li>
-    </ul>
-    <p style="margin-top: 30px;">Si vous avez des questions en attendant, n'hésitez pas à nous contacter.</p>
-  `;
-  return baseTemplate(content);
+const formatLocation = (location) => {
+  const defaultLocation = {
+    type: 'À confirmer',
+    address: '',
+    city: '',
+    postalCode: '',
+    instructions: '',
+    formatted: 'Lieu à confirmer'
+  };
+  
+  if (!location || !location.type) {
+    console.warn('⚠️ Lieu manquant, utilisation valeur par défaut');
+    return defaultLocation;
+  }
+  
+  if (location.type === 'physique') {
+    return {
+      type: 'physique',
+      address: location.address || location.adresse || '',
+      city: location.city || location.ville || '',
+      postalCode: location.postalCode || location.codePostal || '',
+      instructions: location.instructions || '',
+      formatted: location.address 
+        ? `${location.address}, ${location.postalCode || ''} ${location.city || ''}`.trim()
+        : 'Adresse à confirmer'
+    };
+  } else if (location.type === 'en-ligne') {
+    return {
+      type: 'en-ligne',
+      address: '',
+      city: '',
+      postalCode: '',
+      instructions: location.instructions || '',
+      formatted: 'En ligne (lien fourni 24h avant l\'événement)'
+    };
+  } else if (location.type === 'hybride') {
+    return {
+      type: 'hybride',
+      address: location.address || location.adresse || '',
+      city: location.city || location.ville || '',
+      postalCode: location.postalCode || location.codePostal || '',
+      instructions: location.instructions || '',
+      formatted: `Hybride - ${location.city || location.ville || 'Lieu à confirmer'}`
+    };
+  }
+  
+  return defaultLocation;
 };
 
 /**
- * Email de notification de demande de devis (à Prince)
+ * Calcule les places disponibles pour un événement
+ * @param {Object} talentDay - Objet TalentDay de MongoDB
+ * @returns {Object} { availableSpots, totalSpots, percentage }
  */
-const devisNotificationTemplateOLD = (devisInfo) => {
-  const content = `
-    <h1> Nouvelle demande de devis</h1>
-    <p><strong>Un client souhaite obtenir un devis pour son projet.</strong></p>
+const calculateAvailableSpots = (talentDay) => {
+  if (!talentDay) {
+    console.error('❌ TalentDay manquant pour calcul des places');
+    return { availableSpots: 0, totalSpots: 0, percentage: 0 };
+  }
+  
+  const totalSpots = talentDay.maxParticipants || talentDay.placesDisponibles || 0;
+  const inscriptionsCount = talentDay.inscriptions ? talentDay.inscriptions.length : 0;
+  const availableSpots = Math.max(0, totalSpots - inscriptionsCount);
+  const percentage = totalSpots > 0 ? Math.round((inscriptionsCount / totalSpots) * 100) : 0;
+  
+  return { availableSpots, totalSpots, percentage };
+};
+
+/**
+ * Valide les données d'un TalentDay avant envoi email
+ * @param {Object} talentDay - Objet TalentDay de MongoDB
+ * @throws {Error} Si données critiques manquantes
+ */
+const validateTalentDayData = (talentDay) => {
+  if (!talentDay) {
+    throw new Error('❌ TalentDay manquant');
+  }
+  
+  if (!talentDay.titre) {
+    throw new Error(`❌ Titre manquant pour TalentDay ${talentDay._id}`);
+  }
+  
+  if (!talentDay.date) {
+    throw new Error(`❌ Date manquante pour TalentDay ${talentDay._id}`);
+  }
+  
+  if (!talentDay.location && !talentDay.lieu) {
+    console.warn(`⚠️ Lieu manquant pour TalentDay ${talentDay._id}`);
+  }
+  
+  if (!talentDay.maxParticipants && !talentDay.placesDisponibles) {
+    console.warn(`⚠️ Places disponibles manquantes pour TalentDay ${talentDay._id}`);
+  }
+};
+
+/**
+ * Formate les horaires d'un événement
+ * @param {string} heureDebut - Heure de début (format "HH:MM")
+ * @param {string} heureFin - Heure de fin (format "HH:MM")
+ * @returns {string} Horaires formatés
+ */
+const formatHoraires = (heureDebut, heureFin) => {
+  if (!heureDebut || !heureFin) return 'Horaires à confirmer';
+  return `${heureDebut} - ${heureFin}`;
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// 1. EMAIL DE BIENVENUE ENTREPRISE AVEC CONFIRMATION
+// ═══════════════════════════════════════════════════════════════════════
+
+/**
+ * Envoie un email de bienvenue avec lien de confirmation à une entreprise
+ * @param {Object} company - Objet entreprise de MongoDB
+ * @param {string} confirmationToken - Token de confirmation
+ */
+export const sendWelcomeCompanyEmail = async (company, confirmationToken) => {
+  if (!company || !company.email) {
+    throw new Error('❌ Email entreprise manquant pour email de bienvenue');
+  }
+  
+  if (!confirmationToken) {
+    throw new Error('❌ Token de confirmation manquant');
+  }
+  
+  const companyName = company.companyName || company.nomEntreprise || company.nom || 'Entreprise';
+  const confirmationLink = `${process.env.FRONTEND_URL || 'http://localhost:5174'}/confirm-email/${confirmationToken}`;
+  
+  const html = confirmationEmailTemplate(companyName, confirmationLink);
+  
+  console.log(`✅ Email de bienvenue envoyé à ${company.email} (${companyName})`);
+  
+  return sendEmail({
+    to: company.email,
+    subject: `🎉 Bienvenue sur TalentProof, ${companyName} !`,
+    html,
+    text: `Bienvenue ${companyName} ! Confirmez votre email en cliquant sur ce lien: ${confirmationLink}`
+  });
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// 2. EMAIL DE RÉINITIALISATION MOT DE PASSE
+// ═══════════════════════════════════════════════════════════════════════
+
+/**
+ * Envoie un email de réinitialisation de mot de passe
+ * @param {Object} user - Utilisateur (talent ou entreprise)
+ * @param {string} resetToken - Token de réinitialisation
+ */
+export const sendResetPasswordEmail = async (user, resetToken) => {
+  if (!user || !user.email) {
+    throw new Error('❌ Email utilisateur manquant pour reset password');
+  }
+  
+  if (!resetToken) {
+    throw new Error('❌ Token de réinitialisation manquant');
+  }
+  
+  const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5174'}/reset-password/${resetToken}`;
+  const userName = user.companyName || user.nomEntreprise || user.prenom || user.nom || 'Utilisateur';
+  
+  const html = resetPasswordTemplate(userName, resetLink);
+  
+  console.log(`🔐 Email reset password envoyé à ${user.email} (${userName})`);
+  
+  return sendEmail({
+    to: user.email,
+    subject: `🔐 Réinitialisation de votre mot de passe - TalentProof`,
+    html,
+    text: `Bonjour ${userName}, cliquez sur ce lien pour réinitialiser votre mot de passe: ${resetLink}. Ce lien expire dans 1 heure.`
+  });
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// 3. EMAIL DE CONFIRMATION INSCRIPTION TALENTDAY (POUR LE TALENT)
+// ═══════════════════════════════════════════════════════════════════════
+
+/**
+ * ✅ FONCTION CORRIGÉE - Envoie toutes les vraies données MongoDB
+ * @param {Object} talent - Objet talent de MongoDB
+ * @param {Object} talentDay - Objet TalentDay complet de MongoDB
+ * @param {Object} inscription - Données de l'inscription
+ */
+export const sendTalentDayConfirmationEmail = async (talent, talentDay, inscription) => {
+  // ✅ VALIDATION STRICTE
+  if (!talent || !talent.email) {
+    throw new Error('❌ Email talent manquant pour confirmation inscription');
+  }
+  
+  validateTalentDayData(talentDay);
+  
+  // ✅ EXTRACTION DES VRAIES DONNÉES MONGODB
+  const talentName = `${talent.prenom || talent.firstName || ''} ${talent.nom || talent.lastName || ''}`.trim();
+  
+  // ✅ FORMATAGE DU LIEU SELON LE TYPE
+  const locationData = formatLocation(talentDay.location || talentDay.lieu);
+  
+  // ✅ CALCUL DYNAMIQUE DES PLACES DISPONIBLES
+  const { availableSpots, totalSpots } = calculateAvailableSpots(talentDay);
+  
+  // ✅ FORMATAGE DE LA DATE EN FRANÇAIS
+  const eventDate = formatDateFR(talentDay.date);
+  
+  // ✅ FORMATAGE DES HORAIRES
+  const horaires = formatHoraires(talentDay.heureDebut, talentDay.heureFin);
+  
+  // ✅ CONSTRUCTION DE L'OBJET INSCRIPTION FORMATÉ
+  const inscriptionFormatted = {
+    prenom: talent.prenom || talent.firstName || 'Talent',
+    nom: talent.nom || talent.lastName || '',
+    email: talent.email,
+    telephone: talent.telephone || talent.phone || inscription?.telephone || 'Non renseigné',
+    technologies: talent.technologies || inscription?.technologies || []
+  };
+  
+  // ✅ CONSTRUCTION DE L'OBJET TALENTDAY COMPLET AVEC TOUTES LES DONNÉES
+  const talentDayFormatted = {
+    _id: talentDay._id,
+    titre: talentDay.titre || talentDay.title || 'TalentDay',
+    description: talentDay.description || 'Description à venir',
+    date: talentDay.date,
+    lieu: locationData.formatted, // Lieu formaté selon le type
+    horaires: horaires, // Horaires formatés
+    maxParticipants: totalSpots,
+    inscriptions: talentDay.inscriptions || []
+  };
+  
+  // ✅ GÉNÉRATION DU HTML AVEC LE TEMPLATE PROFESSIONNEL
+  const html = talentDayConfirmationTemplate(inscriptionFormatted, talentDayFormatted);
+  
+  // ✅ LOG DÉTAILLÉ POUR VÉRIFICATION
+  console.log(`✅ Confirmation TalentDay envoyée à ${talent.email}:`, {
+    talent: talentName,
+    event: talentDay.titre,
+    lieu: locationData.formatted,
+    date: eventDate,
+    horaires: horaires,
+    spots: `${availableSpots}/${totalSpots}`
+  });
+  
+  return sendEmail({
+    to: talent.email,
+    subject: `✅ Inscription confirmée - ${talentDay.titre}`,
+    html,
+    text: `Bonjour ${talentName}, votre inscription au TalentDay "${talentDay.titre}" le ${eventDate} est confirmée. Places restantes: ${availableSpots}/${totalSpots}. Lieu: ${locationData.formatted}. Horaires: ${horaires}`
+  });
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// 4. EMAIL DE NOTIFICATION À L'ENTREPRISE (NOUVELLE CANDIDATURE)
+// ═══════════════════════════════════════════════════════════════════════
+
+/**
+ * ✅ FONCTION CORRIGÉE - Notifie l'entreprise avec toutes les données du talent
+ * @param {Object} talent - Objet talent complet de MongoDB
+ * @param {Object} talentDay - Objet TalentDay complet de MongoDB
+ * @param {Object} inscription - Données de l'inscription
+ */
+export const sendNewApplicationEmail = async (talent, talentDay, inscription) => {
+  // ✅ VALIDATION
+  if (!talent || !talent.email) {
+    throw new Error('❌ Email talent manquant pour notification entreprise');
+  }
+  
+  validateTalentDayData(talentDay);
+  
+  // ✅ EMAIL DE DESTINATION (organisateur ou admin)
+  const companyEmail = talentDay.organisateur?.email || 
+                       talentDay.infoEntreprises?.contact?.email || 
+                       talentDay.createdBy?.email ||
+                       process.env.ADMIN_EMAIL || 
+                       'info@princeaman.dev';
+  
+  const companyName = talentDay.organisateur?.nom || 
+                     talentDay.infoEntreprises?.nom || 
+                     'Organisateur';
+  
+  // ✅ CALCUL DYNAMIQUE DES PLACES
+  const { availableSpots, totalSpots } = calculateAvailableSpots(talentDay);
+  
+  // ✅ FORMATAGE DU LIEU
+  const locationData = formatLocation(talentDay.location || talentDay.lieu);
+  
+  // ✅ FORMATAGE DE LA DATE
+  const eventDate = formatDateFR(talentDay.date);
+  
+  // ✅ FORMATAGE DES HORAIRES
+  const horaires = formatHoraires(talentDay.heureDebut, talentDay.heureFin);
+  
+  // ✅ CONSTRUCTION DE L'OBJET TALENT COMPLET
+  const talentInfo = {
+    prenom: talent.prenom || talent.firstName || 'Talent',
+    nom: talent.nom || talent.lastName || '',
+    email: talent.email,
+    telephone: talent.telephone || talent.phone || inscription?.telephone || 'Non renseigné',
+    technologies: talent.technologies || inscription?.technologies || [],
+    scoreTest: talent.scoreTest || null,
+    plateforme: talent.plateforme || 'TalentProof',
+    motivation: inscription?.motivation || inscription?.message || '',
+    linkedin: talent.linkedin || talent.linkedinUrl || null,
+    github: talent.github || talent.githubUrl || null,
+    portfolio: talent.portfolio || talent.portfolioUrl || null
+  };
+  
+  // ✅ CONSTRUCTION DE L'OBJET TALENTDAY COMPLET
+  const talentDayFormatted = {
+    _id: talentDay._id,
+    titre: talentDay.titre || talentDay.title || 'TalentDay',
+    date: talentDay.date,
+    lieu: locationData.formatted,
+    horaires: horaires,
+    inscriptions: talentDay.inscriptions || [],
+    maxParticipants: totalSpots
+  };
+  
+  // ✅ GÉNÉRATION DU HTML
+  const html = companyNewCandidatureTemplate(talentInfo, talentDayFormatted);
+  
+  // ✅ LOG DÉTAILLÉ
+  console.log(`📧 Notification entreprise envoyée à ${companyEmail}:`, {
+    talent: `${talentInfo.prenom} ${talentInfo.nom}`,
+    technologies: talentInfo.technologies.join(', '),
+    event: talentDay.titre,
+    lieu: locationData.formatted,
+    inscriptions: `${talentDay.inscriptions?.length || 0}/${totalSpots}`,
+    availableSpots: availableSpots
+  });
+  
+  return sendEmail({
+    to: companyEmail,
+    subject: `📋 Nouvelle candidature - ${talentInfo.prenom} ${talentInfo.nom} pour ${talentDay.titre}`,
+    html,
+    text: `Nouvelle candidature de ${talentInfo.prenom} ${talentInfo.nom} (${talentInfo.email}, tel: ${talentInfo.telephone}) pour votre TalentDay "${talentDay.titre}" le ${eventDate}. Technologies: ${talentInfo.technologies.join(', ')}. Score: ${talentInfo.scoreTest || 'N/A'}. Inscriptions: ${talentDay.inscriptions?.length || 0}/${totalSpots}. Lieu: ${locationData.formatted}`
+  });
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// 5. EMAIL D'INSCRIPTION ENTREPRISE À UN TALENTDAY
+// ═══════════════════════════════════════════════════════════════════════
+
+/**
+ * ✅ FONCTION CORRIGÉE - Confirme l'inscription d'une entreprise à un/des TalentDay(s)
+ * @param {Object} companyInfo - Informations de l'entreprise
+ * @param {Array} talentDays - Array d'objets TalentDay complets de MongoDB
+ */
+export const sendCompanyTalentDayRegistrationEmail = async (companyInfo, talentDays) => {
+  if (!companyInfo || !companyInfo.email) {
+    throw new Error('❌ Email entreprise manquant pour confirmation inscription');
+  }
+  
+  if (!talentDays || talentDays.length === 0) {
+    throw new Error('❌ Aucun TalentDay fourni pour confirmation');
+  }
+  
+  // ✅ FORMATAGE DES TALENTDAYS AVEC TOUTES LES DONNÉES
+  const formattedTalentDays = talentDays.map(td => {
+    validateTalentDayData(td);
     
-    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;"> Informations client</h2>
-    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Nom :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${devisInfo.nom}</td>
-      </tr>
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Email :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">
-          <a href="mailto:${devisInfo.email}">${devisInfo.email}</a>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Téléphone :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">
-          <a href="tel:${devisInfo.telephone}">${devisInfo.telephone}</a>
-        </td>
-      </tr>
-      ${devisInfo.entreprise ? `
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Entreprise :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${devisInfo.entreprise}</td>
-      </tr>
-      ` : ''}
-    </table>
-
-    <h2 style="color: #1E3A8A; font-size: 18px; margin-top: 30px;"> Détails du projet</h2>
-    <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Type :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${devisInfo.typeProjet}</td>
-      </tr>
-      ${devisInfo.budget ? `
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Budget :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${devisInfo.budget}</td>
-      </tr>
-      ` : ''}
-      ${devisInfo.delai ? `
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;"><strong>Délai :</strong></td>
-        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">${devisInfo.delai}</td>
-      </tr>
-      ` : ''}
-    </table>
-
-    <div class="highlight" style="margin-top: 30px;">
-      <strong> Description du projet :</strong><br><br>
-      ${devisInfo.description.replace(/\n/g, '<br>')}
-    </div>
-
-    <div style="margin-top: 30px; padding: 20px; background-color: #f1f5f9; border-radius: 8px;">
-      <strong> Actions à faire :</strong>
-      <ol style="margin: 10px 0;">
-        <li>Contacter le client dans les 24h</li>
-        <li>Préparer un devis détaillé</li>
-        <li>Planifier une réunion si nécessaire</li>
-      </ol>
-    </div>
-  `;
-  return baseTemplate(content);
+    const locationData = formatLocation(td.location || td.lieu);
+    const { availableSpots, totalSpots } = calculateAvailableSpots(td);
+    const eventDate = formatDateFR(td.date);
+    const horaires = formatHoraires(td.heureDebut, td.heureFin);
+    
+    return {
+      _id: td._id,
+      titre: td.titre || td.title || 'TalentDay',
+      description: td.description || 'Description à venir',
+      date: td.date,
+      dateFormatted: eventDate,
+      lieu: locationData, // Objet complet avec type, address, city, formatted
+      horaires: horaires,
+      availableSpots: availableSpots,
+      totalSpots: totalSpots
+    };
+  });
+  
+  // ✅ GÉNÉRATION DU HTML
+  const html = companyTalentDayRegistrationTemplate(companyInfo, formattedTalentDays);
+  
+  // ✅ LOG DÉTAILLÉ
+  console.log(`✅ Confirmation inscription entreprise envoyée à ${companyInfo.email}:`, {
+    entreprise: companyInfo.companyName || companyInfo.nomEntreprise,
+    contact: companyInfo.contactPerson || companyInfo.nomContact,
+    talentDays: formattedTalentDays.map(td => ({
+      titre: td.titre,
+      date: td.dateFormatted,
+      lieu: td.lieu.formatted,
+      spots: `${td.availableSpots}/${td.totalSpots}`
+    }))
+  });
+  
+  const talentDaysTitles = formattedTalentDays.map(td => td.titre).join(', ');
+  
+  return sendEmail({
+    to: companyInfo.email,
+    subject: `🎉 Inscription TalentDay(s) bien reçue - ${companyInfo.companyName || companyInfo.nomEntreprise}`,
+    html,
+    text: `Bonjour ${companyInfo.contactPerson || 'Responsable'}, votre inscription aux TalentDays (${talentDaysTitles}) a bien été reçue. Notre équipe va la valider sous 24-48h.`
+  });
 };
+
+// ═══════════════════════════════════════════════════════════════════════
+// 6. EMAIL DE NOTIFICATION CONTACT TALENT (ENTREPRISE → ADMIN)
+// ═══════════════════════════════════════════════════════════════════════
 
 /**
- * Email de confirmation de demande de devis (au client)
+ * ✅ FONCTION CORRIGÉE - Notifie l'admin qu'une entreprise souhaite contacter un talent
+ * @param {Object} talentInfo - Informations complètes du talent
+ * @param {Object} recruteurInfo - Informations complètes du recruteur
  */
-const devisConfirmationTemplateOLD = (clientNom) => {
-  const content = `
-    <h1>Demande de devis bien reçue ! </h1>
-    <p>Bonjour ${clientNom},</p>
-    <p>Merci pour votre demande de devis sur TalentProof. Nous avons bien reçu les détails de votre projet.</p>
-    <div class="highlight">
-      <strong> Délai de réponse : 24-48 heures</strong><br>
-      Notre équipe va analyser votre demande et vous envoyer un devis personnalisé.
-    </div>
-    <p>Voici ce qui va se passer ensuite :</p>
-    <ul style="line-height: 2;">
-      <li>Analyse détaillée de vos besoins</li>
-      <li>Préparation d'un devis sur-mesure</li>
-      <li>Envoi du devis par email</li>
-      <li>Disponibilité pour discuter du projet</li>
-    </ul>
-    <p style="margin-top: 30px;">Si vous avez des questions urgentes, n'hésitez pas à nous contacter directement.</p>
-  `;
-  return baseTemplate(content);
+export const sendContactTalentNotificationEmail = async (talentInfo, recruteurInfo) => {
+  if (!talentInfo || !talentInfo.prenom) {
+    throw new Error('❌ Données talent manquantes pour notification contact');
+  }
+  
+  if (!recruteurInfo || !recruteurInfo.email) {
+    throw new Error('❌ Données recruteur manquantes pour notification contact');
+  }
+  
+  const adminEmail = process.env.ADMIN_EMAIL || 'info@princeaman.dev';
+  
+  const html = contactNotificationTemplate(talentInfo, recruteurInfo);
+  
+  console.log(`📬 Notification contact talent envoyée à admin:`, {
+    talent: `${talentInfo.prenom} ${talentInfo.nom || ''}`,
+    technologies: talentInfo.technologies?.join(', '),
+    entreprise: recruteurInfo.entreprise,
+    recruteur: recruteurInfo.nom
+  });
+  
+  return sendEmail({
+    to: adminEmail,
+    subject: `📬 Demande de contact - ${recruteurInfo.entreprise} → ${talentInfo.prenom}`,
+    html,
+    text: `${recruteurInfo.entreprise} (${recruteurInfo.email}, ${recruteurInfo.tel}) souhaite contacter le talent ${talentInfo.prenom} (technologies: ${talentInfo.technologies?.join(', ')}). Message: ${recruteurInfo.message}`
+  });
 };
 
-//  Import des templates professionnels avec logo TalentProof
-export { 
-  talentDayConfirmationTemplate, 
-  companyTalentDayRegistrationTemplate,
-  contactNotificationTemplate,
-  contactConfirmationTemplate,
-  talentDayAcceptationTemplate,
-  talentDayRefusTemplate
-} from './emailTemplates.professional.js';
-
 // ═══════════════════════════════════════════════════════════════════════
-// ANCIENS TEMPLATES (CONSERVÉS POUR RÉFÉRENCE UNIQUEMENT)
-// Ces templates ne sont plus utilisés dans l'application
-// Ils seront supprimés dans une future version
+// 7. EMAIL DE CONFIRMATION CONTACT (RECRUTEUR)
 // ═══════════════════════════════════════════════════════════════════════
 
+/**
+ * Confirme au recruteur que sa demande de contact a été reçue
+ * @param {string} recruteurNom - Nom du recruteur
+ * @param {string} recruteurEmail - Email du recruteur
+ * @param {string} talentPrenom - Prénom du talent
+ */
+export const sendContactConfirmationToRecruiterEmail = async (recruteurNom, recruteurEmail, talentPrenom) => {
+  if (!recruteurEmail) {
+    throw new Error('❌ Email recruteur manquant pour confirmation contact');
+  }
+  
+  const html = contactConfirmationTemplate(recruteurNom, talentPrenom);
+  
+  console.log(`✅ Confirmation contact envoyée à ${recruteurEmail} (${recruteurNom})`);
+  
+  return sendEmail({
+    to: recruteurEmail,
+    subject: `✅ Demande bien reçue - Contact avec ${talentPrenom}`,
+    html,
+    text: `Bonjour ${recruteurNom}, votre demande de contact pour le talent ${talentPrenom} a bien été reçue. Nous vous recontacterons sous 24-48h avec les informations complètes.`
+  });
+};
 
-// Note: Les nouveaux templates professionnels sont dans emailTemplates.professional.js
+// ═══════════════════════════════════════════════════════════════════════
+// 8. EMAIL DE CONTACT GÉNÉRAL - NOTIFICATION (À ADMIN)
+// ═══════════════════════════════════════════════════════════════════════
+
+/**
+ * Notifie l'admin d'un message via le formulaire de contact général
+ * @param {Object} contactInfo - Informations du contact
+ */
+export const sendGeneralContactNotificationEmail = async (contactInfo) => {
+  if (!contactInfo || !contactInfo.email) {
+    throw new Error('❌ Email contact manquant pour notification');
+  }
+  
+  const adminEmail = process.env.ADMIN_EMAIL || 'info@princeaman.dev';
+  
+  const html = generalContactNotificationTemplate(contactInfo);
+  
+  console.log(`📬 Notification contact général envoyée à admin:`, {
+    nom: contactInfo.nom,
+    email: contactInfo.email,
+    sujet: contactInfo.sujet
+  });
+  
+  return sendEmail({
+    to: adminEmail,
+    subject: `📬 Nouveau message de contact - ${contactInfo.sujet}`,
+    html,
+    text: `Nouveau message de ${contactInfo.nom} (${contactInfo.email}). Sujet: ${contactInfo.sujet}. Message: ${contactInfo.message}`
+  });
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// 9. EMAIL DE CONTACT GÉNÉRAL - CONFIRMATION (AU VISITEUR)
+// ═══════════════════════════════════════════════════════════════════════
+
+/**
+ * Confirme au visiteur que son message a été reçu
+ * @param {string} nom - Nom du visiteur
+ * @param {string} email - Email du visiteur
+ */
+export const sendGeneralContactConfirmationEmail = async (nom, email) => {
+  if (!email) {
+    throw new Error('❌ Email visiteur manquant pour confirmation contact');
+  }
+  
+  const html = generalContactConfirmationTemplate(nom);
+  
+  console.log(`✅ Confirmation contact général envoyée à ${email} (${nom})`);
+  
+  return sendEmail({
+    to: email,
+    subject: `✅ Message bien reçu - TalentProof`,
+    html,
+    text: `Bonjour ${nom}, merci pour votre message. Notre équipe vous répondra sous 24-48h.`
+  });
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// 10. EMAIL D'ACCEPTATION TALENTDAY
+// ═══════════════════════════════════════════════════════════════════════
+
+/**
+ * ✅ FONCTION CORRIGÉE - Notifie le talent que sa candidature a été acceptée
+ * @param {Object} inscription - Objet inscription de MongoDB
+ * @param {Object} talentDay - Objet TalentDay complet de MongoDB
+ */
+export const sendTalentDayAcceptationEmail = async (inscription, talentDay) => {
+  if (!inscription || !inscription.email) {
+    throw new Error('❌ Email inscription manquant pour acceptation');
+  }
+  
+  validateTalentDayData(talentDay);
+  
+  const locationData = formatLocation(talentDay.location || talentDay.lieu);
+  const { availableSpots, totalSpots } = calculateAvailableSpots(talentDay);
+  const eventDate = formatDateFR(talentDay.date);
+  const horaires = formatHoraires(talentDay.heureDebut, talentDay.heureFin);
+  
+  const talentDayFormatted = {
+    _id: talentDay._id,
+    titre: talentDay.titre || talentDay.title || 'TalentDay',
+    description: talentDay.description || 'Description à venir',
+    date: talentDay.date,
+    lieu: locationData.formatted,
+    horaires: horaires,
+    inscriptions: talentDay.inscriptions || [],
+    maxParticipants: totalSpots
+  };
+  
+  const html = talentDayAcceptationTemplate(inscription, talentDayFormatted);
+  
+  console.log(`✅ Acceptation TalentDay envoyée à ${inscription.email}:`, {
+    talent: `${inscription.prenom} ${inscription.nom || ''}`,
+    event: talentDay.titre,
+    lieu: locationData.formatted,
+    date: eventDate
+  });
+  
+  return sendEmail({
+    to: inscription.email,
+    subject: `✅ Candidature acceptée - ${talentDay.titre}`,
+    html,
+    text: `Félicitations ${inscription.prenom} ! Votre candidature au TalentDay "${talentDay.titre}" le ${eventDate} a été acceptée. Lieu: ${locationData.formatted}. Horaires: ${horaires}.`
+  });
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// 11. EMAIL DE REFUS TALENTDAY
+// ═══════════════════════════════════════════════════════════════════════
+
+/**
+ * ✅ FONCTION CORRIGÉE - Notifie le talent que sa candidature n'a pas été retenue
+ * @param {Object} inscription - Objet inscription de MongoDB
+ * @param {Object} talentDay - Objet TalentDay complet de MongoDB
+ * @param {string} raison - Raison du refus (optionnel)
+ */
+export const sendTalentDayRefusEmail = async (inscription, talentDay, raison = null) => {
+  if (!inscription || !inscription.email) {
+    throw new Error('❌ Email inscription manquant pour refus');
+  }
+  
+  validateTalentDayData(talentDay);
+  
+  const talentDayFormatted = {
+    _id: talentDay._id,
+    titre: talentDay.titre || talentDay.title || 'TalentDay'
+  };
+  
+  const html = talentDayRefusTemplate(inscription, talentDayFormatted, raison);
+  
+  console.log(`📧 Refus TalentDay envoyé à ${inscription.email}:`, {
+    talent: `${inscription.prenom} ${inscription.nom || ''}`,
+    event: talentDay.titre,
+    raison: raison || 'Non spécifiée'
+  });
+  
+  return sendEmail({
+    to: inscription.email,
+    subject: `Votre candidature au TalentDay - ${talentDay.titre}`,
+    html,
+    text: `Bonjour ${inscription.prenom}, malheureusement votre candidature au TalentDay "${talentDay.titre}" n'a pas été retenue. ${raison ? `Raison: ${raison}.` : ''} Nous vous encourageons à postuler à nos prochains événements !`
+  });
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// EXPORTS COMPLÉMENTAIRES
+// ═══════════════════════════════════════════════════════════════════════
+
+export {
+  formatDateFR,
+  formatLocation,
+  calculateAvailableSpots,
+  validateTalentDayData,
+  formatHoraires
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// FIN DU FICHIER - TOUTES LES FONCTIONS SONT CORRIGÉES ✅
+// ═══════════════════════════════════════════════════════════════════════

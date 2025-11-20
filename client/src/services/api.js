@@ -195,18 +195,18 @@ const apiService = {
 
   // Companies
   companies: {
-    register: (data) => api.post('/companies/register', data),
+    register: (data) => api.post('/companies', data),
     getById: (id) => api.get(`/companies/${id}`),
     update: (id, data) => api.put(`/companies/${id}`, data),
   },
 
   // TalentDays
   talentDays: {
-    getAll: (params) => api.get('/talentdays', { params }),
-    getById: (id) => api.get(`/talentdays/${id}`),
-    register: (id) => api.post(`/talentdays/${id}/register`),
-    cancel: (id) => api.post(`/talentdays/${id}/cancel`),
-    getMyRegistrations: () => api.get('/talentdays/my-registrations'),
+    getAll: (params) => api.get('/talent-days', { params }),
+    getById: (id) => api.get(`/talent-days/${id}`),
+    register: (id) => api.post(`/talent-days/${id}/register`),
+    cancel: (id) => api.post(`/talent-days/${id}/cancel`),
+    getMyRegistrations: () => api.get('/talent-days/my-registrations'),
   },
 
   // Talents
@@ -250,7 +250,7 @@ const apiService = {
     getStats: () => api.get('/admin/stats'),
     getCompanies: (params) => api.get('/admin/companies', { params }),
     getTalents: (params) => api.get('/admin/talents', { params }),
-    getTalentDays: (params) => api.get('/admin/talentdays', { params }),
+    getTalentDays: (params) => api.get('/admin/talent-days', { params }),
     updateUser: (id, data) => api.put(`/admin/users/${id}`, data),
     deleteUser: (id) => api.delete(`/admin/users/${id}`),
   },

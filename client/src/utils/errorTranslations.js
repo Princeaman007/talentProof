@@ -28,7 +28,7 @@ export const errorTranslations = {
   
   // Erreurs TalentDays
   TALENTDAY_FULL: 'Cet événement est complet',
-  ALREADY_REGISTERED: 'Vous êtes déjà inscrit à cet événement',
+  ALREADY_REGISTERED: 'Vous êtes déjà inscrit(e) à tous ces TalentDays',
   NOT_REGISTERED: 'Vous n\'êtes pas inscrit à cet événement',
   REGISTRATION_CLOSED: 'Les inscriptions pour cet événement sont fermées',
   CANCELLATION_DEADLINE_PASSED: 'Le délai d\'annulation est dépassé',

@@ -296,7 +296,7 @@ const CompanyRegistration = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   required
-                  pattern="[\d\s+()-]{9,20}"
+                  pattern="[\d\s+\-()]{9,20}"
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
                     errors.phone ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-primary/30'
                   }`}
@@ -333,15 +333,25 @@ const CompanyRegistration = () => {
               <select
                 multiple
                 onChange={handleTalentDayChange}
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 min-h-[120px] ${
+                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 min-h-[200px] ${
                   errors.interestedTalentDays ? 'border-red-500 focus:ring-red-300' : 'border-gray-300 focus:ring-primary/30'
                 }`}
+                style={{ fontFamily: 'monospace', fontSize: '13px' }}
               >
-                {talentDays.map(td => (
-                  <option key={td._id} value={td._id}>
-                    {td.titre} - {new Date(td.date).toLocaleDateString('fr-FR')}
-                  </option>
-                ))}
+                {talentDays.map(td => {
+                  const dateStr = new Date(td.date).toLocaleDateString('fr-FR', { 
+                    day: '2-digit', 
+                    month: 'short' 
+                  });
+                  const horaires = td.heureDebut && td.heureFin ? `${td.heureDebut}-${td.heureFin}` : 'Horaires à confirmer';
+                  const lieuText = td.lieu?.ville || td.lieu?.type === 'en-ligne' ? 'En ligne' : 'Lieu à confirmer';
+                  
+                  return (
+                    <option key={td._id} value={td._id}>
+                      📅 {dateStr} | ⏰ {horaires} | 📍 {lieuText} - {td.titre}
+                    </option>
+                  );
+                })}
               </select>
               <FieldError error={errors.interestedTalentDays} />
               <p className="text-xs text-gray-500 mt-1">

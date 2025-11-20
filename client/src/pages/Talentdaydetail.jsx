@@ -74,6 +74,26 @@ const TalentDayDetail = () => {
     });
   };
 
+  // Calculer la durée entre deux horaires
+  const calculateDuration = (heureDebut, heureFin) => {
+    if (!heureDebut || !heureFin) return 'Durée à confirmer';
+    
+    const [startHour, startMin] = heureDebut.split(':').map(Number);
+    const [endHour, endMin] = heureFin.split(':').map(Number);
+    
+    const startTotalMin = startHour * 60 + startMin;
+    const endTotalMin = endHour * 60 + endMin;
+    
+    const durationMin = endTotalMin - startTotalMin;
+    
+    const hours = Math.floor(durationMin / 60);
+    const minutes = durationMin % 60;
+    
+    if (hours === 0) return `${minutes} minutes`;
+    if (minutes === 0) return `${hours}h`;
+    return `${hours}h ${minutes}min`;
+  };
+
   // Badge de statut avec styles
   const getStatusBadge = (statut) => {
     const badges = {
@@ -238,9 +258,7 @@ const TalentDayDetail = () => {
                         <div key={index} className="bg-white/70 rounded-lg p-4">
                           <h4 className="font-semibold text-gray-900 mb-1">{format.nom}</h4>
                           <p className="text-sm text-gray-600 mb-1">{format.description}</p>
-                          {format.duree && (
-                            <p className="text-xs text-gray-500"> Durée : {format.duree}</p>
-                          )}
+                          <p className="text-xs text-gray-500">⏱️ Durée : {calculateDuration(talentDay.heureDebut, talentDay.heureFin)}</p>
                         </div>
                       ))}
                     </div>
@@ -412,7 +430,7 @@ const TalentDayDetail = () => {
                     <div>
                       <p className="text-sm text-gray-500">Horaires</p>
                       <p className="font-semibold text-gray-900">
-                        {formatTime(talentDay.heureDebut)} - {formatTime(talentDay.heureFin)}
+                        {talentDay.heureDebut} - {talentDay.heureFin}
                       </p>
                     </div>
                   </div>

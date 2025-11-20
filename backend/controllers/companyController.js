@@ -15,6 +15,31 @@ import AppError, {
 import { asyncHandler } from '../utils/errorHandler.js';
 
 /**
+ * Calcule la durée entre deux horaires au format HH:MM
+ * @param {string} heureDebut - Heure de début (ex: "09:30")
+ * @param {string} heureFin - Heure de fin (ex: "14:00")
+ * @returns {string} - Durée formatée (ex: "4h 30min")
+ */
+const calculateDuration = (heureDebut, heureFin) => {
+  if (!heureDebut || !heureFin) return 'Durée à confirmer';
+  
+  const [startHour, startMin] = heureDebut.split(':').map(Number);
+  const [endHour, endMin] = heureFin.split(':').map(Number);
+  
+  const startTotalMin = startHour * 60 + startMin;
+  const endTotalMin = endHour * 60 + endMin;
+  
+  const durationMin = endTotalMin - startTotalMin;
+  
+  const hours = Math.floor(durationMin / 60);
+  const minutes = durationMin % 60;
+  
+  if (hours === 0) return `${minutes}min`;
+  if (minutes === 0) return `${hours}h`;
+  return `${hours}h ${minutes}min`;
+};
+
+/**
  * @desc    Créer une inscription entreprise
  * @route   POST /api/companies
  * @access  Public
@@ -35,29 +60,55 @@ export const createCompanyRegistration = asyncHandler(async (req, res) => {
 
   const { companyName, contactPerson, email, phone, website, interestedTalentDays, notes } = req.body;
   
-  console.log('[COMPANY REGISTRATION] Validation passed. Checking for existing email...');
+  console.log('[COMPANY REGISTRATION] Validation passed. Checking for existing company...');
 
-  // Vérifier si l'email existe déjà
-  const existingCompany = await CompanyRegistration.findOne({ email });
-  if (existingCompany) {
-    console.warn('[COMPANY REGISTRATION] Email already exists:', email);
-    throw emailAlreadyExists();
-  }
+  // Vérifier si l'entreprise existe déjà
+  let existingCompany = await CompanyRegistration.findOne({ email });
+  let company;
   
-  console.log('[COMPANY REGISTRATION] Email check passed. Creating company registration...');
-
-  // Créer l'inscription
-  const company = await CompanyRegistration.create({
-    companyName,
-    contactPerson,
-    email,
-    phone,
-    website,
-    interestedTalentDays,
-    notes,
-    user: req.user?._id,
-  });
-  console.log('[COMPANY REGISTRATION] Company created successfully. ID:', company._id);
+  if (existingCompany) {
+    console.log('[COMPANY REGISTRATION] Company already exists, adding new TalentDays...');
+    
+    // Ajouter uniquement les TalentDays qui ne sont pas déjà inscrits
+    const newTalentDays = interestedTalentDays.filter(
+      tdId => !existingCompany.interestedTalentDays.some(existingId => existingId.toString() === tdId)
+    );
+    
+    if (newTalentDays.length === 0) {
+      console.warn('[COMPANY REGISTRATION] All TalentDays already registered for this email');
+      throw new AppError(
+        'Vous êtes déjà inscrit(e) à tous ces TalentDays',
+        'ALREADY_REGISTERED',
+        409
+      );
+    }
+    
+    // Mettre à jour l'inscription existante
+    existingCompany.interestedTalentDays.push(...newTalentDays);
+    existingCompany.companyName = companyName; // Mettre à jour les infos au cas où
+    existingCompany.contactPerson = contactPerson;
+    existingCompany.phone = phone;
+    existingCompany.website = website;
+    if (notes) existingCompany.notes = notes;
+    
+    company = await existingCompany.save();
+    console.log('[COMPANY REGISTRATION] Company updated with new TalentDays. Total:', company.interestedTalentDays.length);
+  } else {
+    console.log('[COMPANY REGISTRATION] New company, creating registration...');
+    
+    // Créer une nouvelle inscription
+    company = await CompanyRegistration.create({
+      companyName,
+      contactPerson,
+      email,
+      phone,
+      website,
+      interestedTalentDays,
+      notes,
+      user: req.user?._id,
+    });
+    console.log('[COMPANY REGISTRATION] Company created successfully. ID:', company._id);
+  }
 
   // Populer les TalentDays avec tous les détails
   console.log('[COMPANY REGISTRATION] Populating TalentDays...');
@@ -90,15 +141,19 @@ export const createCompanyRegistration = asyncHandler(async (req, res) => {
         
         <div style="display: grid; gap: 10px; margin-top: 15px;">
           <div style="display: flex; align-items: center;">
-            <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Date :</span>
+            <span style="color: #6b7280; font-weight: bold; min-width: 120px;">📅 Date :</span>
             <span>${dateFormatted}</span>
           </div>
           <div style="display: flex; align-items: center;">
-            <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Horaire :</span>
+            <span style="color: #6b7280; font-weight: bold; min-width: 120px;">⏰ Horaire :</span>
             <span>${td.heureDebut} - ${td.heureFin}</span>
           </div>
           <div style="display: flex; align-items: center;">
-            <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Lieu :</span>
+            <span style="color: #6b7280; font-weight: bold; min-width: 120px;">⏱️ Durée :</span>
+            <span>${calculateDuration(td.heureDebut, td.heureFin)}</span>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <span style="color: #6b7280; font-weight: bold; min-width: 120px;">📍 Lieu :</span>
             <span>${lieuText}</span>
           </div>
           <div style="display: flex; align-items: center;">
@@ -318,15 +373,19 @@ export const updateCompanyStatus = asyncHandler(async (req, res) => {
           
           <div style="display: grid; gap: 10px; margin-top: 15px;">
             <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Date :</span>
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">📅 Date :</span>
               <span>${dateFormatted}</span>
             </div>
             <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Horaire :</span>
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">⏰ Horaire :</span>
               <span>${td.heureDebut} - ${td.heureFin}</span>
             </div>
             <div style="display: flex; align-items: center;">
-              <span style="color: #6b7280; font-weight: bold; min-width: 120px;"> Lieu :</span>
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">⏱️ Durée :</span>
+              <span>${calculateDuration(td.heureDebut, td.heureFin)}</span>
+            </div>
+            <div style="display: flex; align-items: center;">
+              <span style="color: #6b7280; font-weight: bold; min-width: 120px;">📍 Lieu :</span>
               <span>${lieuText}</span>
             </div>
             <div style="display: flex; align-items: center;">
