@@ -138,8 +138,12 @@ export const AuthProvider = ({ children }) => {
   // Inscription
   const register = async (formData) => {
     try {
+      console.log('📤 [REGISTER] Starting registration...', formData);
       const response = await api.post('/auth/register', formData);
-      // L'interceptor retourne déjà response.data
+      console.log('✅ [REGISTER] Full response:', response);
+      console.log('✅ [REGISTER] response.data:', response.data);
+      console.log('✅ [REGISTER] response.data.success:', response.data?.success);
+      
       // After register, attempt to fetch CSRF token (if backend set cookies)
       try {
         const csrfRes = await api.get('/csrf-token');
@@ -148,8 +152,13 @@ export const AuthProvider = ({ children }) => {
       } catch (csrfErr) {
         // ignore
       }
-      return { success: true, data: response };
+      
+      // ✅ Retourner response.data qui contient { success, message, data }
+      return response.data;
     } catch (error) {
+      console.error('❌ [REGISTER] Error:', error);
+      console.error('❌ [REGISTER] Error response:', error.response?.data);
+      console.error('❌ [REGISTER] Error message:', error.message);
       // L'interceptor axios formate déjà l'erreur
       const message = extractErrorMessage(error, 'Erreur lors de l\'inscription');
       return { success: false, message };
