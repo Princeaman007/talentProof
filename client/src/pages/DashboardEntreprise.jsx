@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Sidebar from '../components/dashboard/Sidebar';
+import { useState, useEffect } from 'react';
 
 // Pages Dashboard existantes
 import DashboardHome from './dashboard/Dashboardhome';
@@ -28,11 +29,34 @@ import MesNotifications from './dashboard/MesNotifications';
 
 const DashboardEntreprise = () => {
   const { isAdmin, user } = useAuth();
+  
+  // ✅ Écouter les changements de largeur de la sidebar
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    return localStorage.getItem('sidebarCollapsed') === 'true';
+  });
+
+  useEffect(() => {
+    // Écouter les changements dans localStorage
+    const handleStorageChange = () => {
+      setSidebarCollapsed(localStorage.getItem('sidebarCollapsed') === 'true');
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Vérifier périodiquement les changements (pour le même onglet)
+    const interval = setInterval(handleStorageChange, 100);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
 
   console.log('🏢 [DASHBOARD ENTREPRISE] Rendering:', {
     isAdmin,
     userEmail: user?.email,
-    userRole: user?.role
+    userRole: user?.role,
+    sidebarCollapsed
   });
 
   return (
@@ -41,8 +65,13 @@ const DashboardEntreprise = () => {
         {/* Sidebar */}
         <Sidebar />
 
-        {/* Main Content */}
-        <div className="flex-1 lg:ml-64">
+        {/* Main Content - S'adapte à la largeur de la sidebar */}
+        <div 
+          className={`
+            flex-1 transition-all duration-300
+            ${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'}
+          `}
+        >
           <div className="p-6 lg:p-8">
             <Routes>
               {/* Route principale - Page d'accueil du dashboard */}
