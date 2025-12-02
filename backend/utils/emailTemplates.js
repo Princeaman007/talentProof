@@ -179,7 +179,7 @@ const welcomeTalentEmail = (talentData) => {
     <body>
       <div class="email-container">
         <div class="header">
-          <a href="https://talentproof.com" class="logo">🚀 TalentProof</a>
+          <a href="https://talentproof.com" class="logo"> TalentProof</a>
           <p style="color: #e0e7ff; margin-top: 10px; font-size: 16px;">
             Votre carrière tech commence ici
           </p>

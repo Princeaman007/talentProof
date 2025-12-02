@@ -10,7 +10,7 @@ const TalentDays = () => {
   const [stats, setStats] = useState(null);
   const [activeTab, setActiveTab] = useState('upcoming'); // upcoming, all, past
   const [filters, setFilters] = useState({
-    technologie: '',
+    technologies: [], // Changé en tableau pour sélection multiple
     type: '',
   });
 
@@ -62,10 +62,11 @@ const TalentDays = () => {
   useEffect(() => {
     let filtered = [...talentDays];
 
-    if (filters.technologie) {
+    // Filtre par technologies (sélection multiple)
+    if (filters.technologies.length > 0) {
       filtered = filtered.filter(td =>
         td.technologies?.some(tech =>
-          tech.toLowerCase().includes(filters.technologie.toLowerCase())
+          filters.technologies.includes(tech)
         )
       );
     }
@@ -76,6 +77,23 @@ const TalentDays = () => {
 
     setFilteredTalentDays(filtered);
   }, [filters, talentDays]);
+
+  // Fonctions pour gérer les technologies
+  const toggleTechnology = (tech) => {
+    setFilters(prev => ({
+      ...prev,
+      technologies: prev.technologies.includes(tech)
+        ? prev.technologies.filter(t => t !== tech)
+        : [...prev.technologies, tech]
+    }));
+  };
+
+  const removeTechnology = (tech) => {
+    setFilters(prev => ({
+      ...prev,
+      technologies: prev.technologies.filter(t => t !== tech)
+    }));
+  };
 
   // Technologies uniques pour le filtre
   const uniqueTechnologies = [...new Set(
@@ -123,55 +141,6 @@ const TalentDays = () => {
         </div>
       </section>
 
-      {/* Statistiques */}
-      {stats && (
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
-              <div className="text-center">
-                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Calendar className="w-8 h-8 text-primary" />
-                </div>
-                <div className="text-4xl font-bold text-primary mb-2">
-                  {stats.totalEvenements}
-                </div>
-                <div className="text-gray-600">Événements organisés</div>
-              </div>
-
-              <div className="text-center">
-                <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-8 h-8 text-accent" />
-                </div>
-                <div className="text-4xl font-bold text-accent mb-2">
-                  {stats.totalParticipants}
-                </div>
-                <div className="text-gray-600">Participants</div>
-              </div>
-
-              <div className="text-center">
-                <div className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Award className="w-8 h-8 text-secondary" />
-                </div>
-                <div className="text-4xl font-bold text-secondary mb-2">
-                  {stats.totalTalentsValides}
-                </div>
-                <div className="text-gray-600">Talents validés</div>
-              </div>
-
-              <div className="text-center">
-                <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="w-8 h-8 text-purple-600" />
-                </div>
-                <div className="text-4xl font-bold text-purple-600 mb-2">
-                  {stats.prochainsEvenements}
-                </div>
-                <div className="text-gray-600">Prochains événements</div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Onglets et Filtres */}
       <section id="prochains-evenements" className="py-16">
         <div className="container mx-auto px-4">
@@ -211,40 +180,85 @@ const TalentDays = () => {
             </div>
 
             {/* Filtres */}
-            <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-              <div className="flex items-center gap-2 mb-4">
-                <Filter className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-bold text-gray-900">Filtrer les événements</h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Filtre Technologie */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Technologie
-                  </label>
-                  <select
-                    value={filters.technologie}
-                    onChange={(e) => setFilters({ ...filters, technologie: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                  >
-                    <option value="">Toutes les technologies</option>
-                    {uniqueTechnologies.map((tech) => (
-                      <option key={tech} value={tech}>
-                        {tech}
-                      </option>
-                    ))}
-                  </select>
+            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary/10 p-3 rounded-lg">
+                    <Filter className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">Filtres de recherche</h3>
+                    <p className="text-sm text-gray-500">Affinez votre recherche d'événements</p>
+                  </div>
                 </div>
+                {(filters.technologies.length > 0 || filters.type) && (
+                  <button
+                    onClick={() => setFilters({ technologies: [], type: '' })}
+                    className="text-sm font-medium text-primary hover:text-primary-dark hover:underline transition-colors flex items-center gap-1"
+                  >
+                    <span>Réinitialiser</span>
+                  </button>
+                )}
+              </div>
 
-                {/* Filtre Type */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Type d'événement
-                  </label>
+              {/* Filtre Technologies - Sélection multiple */}
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-gray-800 mb-3">
+                  Technologies {filters.technologies.length > 0 && (
+                    <span className="text-primary">({filters.technologies.length} sélectionnée{filters.technologies.length > 1 ? 's' : ''})</span>
+                  )}
+                </label>
+                
+                {/* Technologies sélectionnées */}
+                {filters.technologies.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4 p-4 bg-primary/5 rounded-xl border border-primary/20">
+                    {filters.technologies.map((tech) => (
+                      <span
+                        key={tech}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary text-white rounded-full text-sm font-semibold shadow-sm"
+                      >
+                        {tech}
+                        <button
+                          onClick={() => removeTechnology(tech)}
+                          className="hover:bg-white/20 rounded-full p-1 transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Grille de technologies disponibles */}
+                <div className="flex flex-wrap gap-2">
+                  {uniqueTechnologies.map((tech) => (
+                    <button
+                      key={tech}
+                      onClick={() => toggleTechnology(tech)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all hover:scale-105 border-2 ${
+                        filters.technologies.includes(tech)
+                          ? 'bg-primary text-white border-primary shadow-md'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-primary hover:text-primary'
+                      }`}
+                    >
+                      {tech}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Filtre Type */}
+              <div>
+                <label className="block text-sm font-bold text-gray-800 mb-3">
+                  Type d'événement
+                </label>
+                <div className="relative">
                   <select
                     value={filters.type}
                     onChange={(e) => setFilters({ ...filters, type: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all appearance-none cursor-pointer font-medium text-gray-700 hover:border-primary"
                   >
                     {eventTypes.map((type) => (
                       <option key={type.value} value={type.value}>
@@ -252,17 +266,39 @@ const TalentDays = () => {
                       </option>
                     ))}
                   </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
                 </div>
               </div>
 
-              {/* Reset filters */}
-              {(filters.technologie || filters.type) && (
-                <button
-                  onClick={() => setFilters({ technologie: '', type: '' })}
-                  className="mt-4 text-sm text-primary hover:underline"
-                >
-                  Réinitialiser les filtres
-                </button>
+              {/* Résumé des filtres actifs */}
+              {(filters.technologies.length > 0 || filters.type) && (
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <p className="text-xs font-semibold text-gray-500 uppercase mb-3">Résumé des filtres</p>
+                  <div className="flex flex-wrap gap-2">
+                    {filters.technologies.length > 0 && (
+                      <span className="px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-sm font-medium">
+                        {filters.technologies.length} technologie{filters.technologies.length > 1 ? 's' : ''}
+                      </span>
+                    )}
+                    {filters.type && (
+                      <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-secondary/10 text-secondary rounded-lg text-sm font-medium">
+                        {eventTypes.find(t => t.value === filters.type)?.label}
+                        <button
+                          onClick={() => setFilters({ ...filters, type: '' })}
+                          className="hover:bg-secondary/20 rounded-full p-0.5 transition-colors"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </span>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
 
