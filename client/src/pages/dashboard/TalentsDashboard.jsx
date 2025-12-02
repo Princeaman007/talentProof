@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FaFilter, FaStar, FaCheckCircle, FaEnvelope, FaTimes, FaBriefcase, FaMapMarkerAlt, FaGlobe, FaUser, FaBuilding } from 'react-icons/fa';
+import { FaFilter, FaStar, FaCheckCircle, FaEnvelope, FaTimes, FaBriefcase, FaMapMarkerAlt, FaGlobe, FaUser, FaBuilding, FaPlus, FaSearch } from 'react-icons/fa';
 import api from '../../utils/api';
 import { extractErrorMessage } from '../../utils/errorHandler';
 
@@ -55,9 +55,12 @@ const TalentsDashboard = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [selectedTalent, setSelectedTalent] = useState(null);
   const [showContactModal, setShowContactModal] = useState(false);
+  
+  // ✅ NOUVEAU: État pour les technologies sélectionnées (array)
+  const [selectedTechnologies, setSelectedTechnologies] = useState([]);
+  const [techSearchQuery, setTechSearchQuery] = useState('');
 
   const [filters, setFilters] = useState({
-    technologies: '',
     typeProfil: '',
     niveau: '',
     typeContrat: '',
@@ -68,7 +71,7 @@ const TalentsDashboard = () => {
 
   useEffect(() => {
     fetchTalents();
-  }, [filters]);
+  }, [filters, selectedTechnologies]); // ✅ Ajouter selectedTechnologies comme dépendance
 
   const fetchTalents = async () => {
     try {
@@ -79,6 +82,11 @@ const TalentsDashboard = () => {
         if (value) acc[key] = value;
         return acc;
       }, {});
+      
+      // ✅ NOUVEAU: Ajouter les technologies sélectionnées (séparées par virgule)
+      if (selectedTechnologies.length > 0) {
+        params.technologies = selectedTechnologies.join(',');
+      }
 
       console.log('📤 [TALENTS DASHBOARD] Fetching with params:', params);
       const response = await api.get('/talents/filter', { params });
@@ -109,10 +117,26 @@ const TalentsDashboard = () => {
     const { name, value } = e.target;
     setFilters(prev => ({ ...prev, [name]: value }));
   };
+  
+  // ✅ NOUVEAU: Gestion des technologies sélectionnées
+  const toggleTechnology = (tech) => {
+    setSelectedTechnologies(prev => {
+      if (prev.includes(tech)) {
+        // Retirer la technologie
+        return prev.filter(t => t !== tech);
+      } else {
+        // Ajouter la technologie
+        return [...prev, tech];
+      }
+    });
+  };
+  
+  const removeTechnology = (tech) => {
+    setSelectedTechnologies(prev => prev.filter(t => t !== tech));
+  };
 
   const resetFilters = () => {
     setFilters({
-      technologies: '',
       typeProfil: '',
       niveau: '',
       typeContrat: '',
@@ -120,9 +144,11 @@ const TalentsDashboard = () => {
       experienceMin: '',
       experienceMax: '',
     });
+    setSelectedTechnologies([]); // ✅ Réinitialiser aussi les technologies
+    setTechSearchQuery('');
   };
 
-  const hasActiveFilters = Object.values(filters).some(value => value !== '');
+  const hasActiveFilters = Object.values(filters).some(value => value !== '') || selectedTechnologies.length > 0;
 
   const handleContact = (talent) => {
     setSelectedTalent(talent);
@@ -163,6 +189,11 @@ const TalentsDashboard = () => {
           <div className="flex items-center gap-2">
             <FaFilter className="text-primary text-xl" />
             <h2 className="font-bold text-lg">Filtres de recherche</h2>
+            {hasActiveFilters && (
+              <span className="px-2 py-1 text-xs bg-primary text-white rounded-full">
+                {selectedTechnologies.length + Object.values(filters).filter(v => v !== '').length}
+              </span>
+            )}
           </div>
 
           {hasActiveFilters && (
@@ -171,29 +202,85 @@ const TalentsDashboard = () => {
               className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 font-medium transition-colors"
             >
               <FaTimes />
-              Réinitialiser
+              Réinitialiser tout
             </button>
           )}
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {/* Technologie */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Technologie
+        
+        {/* ✅ NOUVEAU: Section Technologies avec sélection multiple */}
+        <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-sm font-semibold text-gray-800">
+              🔍 Technologies recherchées
             </label>
-            <select
-              name="technologies"
-              value={filters.technologies}
-              onChange={handleFilterChange}
-              className="input-field"
-            >
-              <option value="">Toutes</option>
-              {TECHNOLOGIES.map((tech) => (
-                <option key={tech} value={tech}>{tech}</option>
-              ))}
-            </select>
+            {selectedTechnologies.length > 0 && (
+              <span className="text-xs text-gray-600">
+                {selectedTechnologies.length} sélectionnée{selectedTechnologies.length > 1 ? 's' : ''}
+              </span>
+            )}
           </div>
+          
+          {/* Barre de recherche pour filtrer les technologies */}
+          <div className="relative mb-3">
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              value={techSearchQuery}
+              onChange={(e) => setTechSearchQuery(e.target.value)}
+              placeholder="Rechercher une technologie..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+            />
+          </div>
+          
+          {/* Technologies sélectionnées (chips avec croix) */}
+          {selectedTechnologies.length > 0 && (
+            <div className="mb-3 p-3 bg-white rounded-lg border border-blue-200">
+              <div className="text-xs font-medium text-gray-600 mb-2">Sélectionnées :</div>
+              <div className="flex flex-wrap gap-2">
+                {selectedTechnologies.map(tech => (
+                  <span
+                    key={tech}
+                    className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${getTechBadgeColor(tech)} shadow-sm`}
+                  >
+                    <FaCheckCircle className="text-xs" />
+                    {tech}
+                    <button
+                      onClick={() => removeTechnology(tech)}
+                      className="hover:bg-black hover:bg-opacity-10 rounded-full p-0.5 transition-colors"
+                      title="Retirer"
+                    >
+                      <FaTimes className="text-xs" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Grille de technologies disponibles */}
+          <div className="flex flex-wrap gap-2">
+            {TECHNOLOGIES
+              .filter(tech => 
+                !selectedTechnologies.includes(tech) && 
+                tech.toLowerCase().includes(techSearchQuery.toLowerCase())
+              )
+              .map(tech => (
+                <button
+                  key={tech}
+                  onClick={() => toggleTechnology(tech)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all hover:scale-105 ${getTechBadgeColor(tech)} hover:shadow-md border border-transparent hover:border-current`}
+                  title="Cliquer pour ajouter"
+                >
+                  <FaPlus className="inline text-xs mr-1" />
+                  {tech}
+                </button>
+              ))
+            }
+          </div>
+        </div>
+
+        {/* Autres filtres */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
 
           {/* Type de profil */}
           <div>
@@ -312,18 +399,103 @@ const TalentsDashboard = () => {
 
       {/* Stats des résultats */}
       {!loading && talents.length > 0 && (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm">
-            <span className="font-bold text-2xl text-primary">{talents.length}</span>
-            <span className="text-neutral">
-              talent{talents.length > 1 ? 's' : ''} trouvé{talents.length > 1 ? 's' : ''}
-            </span>
-            {hasActiveFilters && (
-              <span className="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full font-medium">
-                Filtres actifs
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="font-bold text-2xl text-primary">{talents.length}</span>
+              <span className="text-neutral">
+                talent{talents.length > 1 ? 's' : ''} trouvé{talents.length > 1 ? 's' : ''}
               </span>
-            )}
+              {hasActiveFilters && (
+                <span className="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full font-medium">
+                  Filtres actifs
+                </span>
+              )}
+            </div>
           </div>
+          
+          {/* ✅ NOUVEAU: Affichage visuel des filtres actifs */}
+          {(selectedTechnologies.length > 0 || Object.values(filters).some(v => v !== '')) && (
+            <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <span className="text-xs font-semibold text-gray-600 self-center">Filtres appliqués :</span>
+              
+              {selectedTechnologies.map(tech => (
+                <span
+                  key={tech}
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${getTechBadgeColor(tech)}`}
+                >
+                  {tech}
+                  <button
+                    onClick={() => removeTechnology(tech)}
+                    className="hover:bg-black hover:bg-opacity-10 rounded-full p-0.5"
+                  >
+                    <FaTimes className="text-[10px]" />
+                  </button>
+                </span>
+              ))}
+              
+              {filters.typeProfil && (
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${getProfilColor(filters.typeProfil)}`}>
+                  {filters.typeProfil}
+                  <button
+                    onClick={() => setFilters(prev => ({ ...prev, typeProfil: '' }))}
+                    className="hover:bg-black hover:bg-opacity-10 rounded-full p-0.5"
+                  >
+                    <FaTimes className="text-[10px]" />
+                  </button>
+                </span>
+              )}
+              
+              {filters.niveau && (
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${getNiveauColor(filters.niveau)}`}>
+                  {filters.niveau}
+                  <button
+                    onClick={() => setFilters(prev => ({ ...prev, niveau: '' }))}
+                    className="hover:bg-black hover:bg-opacity-10 rounded-full p-0.5"
+                  >
+                    <FaTimes className="text-[10px]" />
+                  </button>
+                </span>
+              )}
+              
+              {filters.typeContrat && (
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${getContratColor(filters.typeContrat)}`}>
+                  {filters.typeContrat}
+                  <button
+                    onClick={() => setFilters(prev => ({ ...prev, typeContrat: '' }))}
+                    className="hover:bg-black hover:bg-opacity-10 rounded-full p-0.5"
+                  >
+                    <FaTimes className="text-[10px]" />
+                  </button>
+                </span>
+              )}
+              
+              {filters.disponibilite && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                  📅 {filters.disponibilite}
+                  <button
+                    onClick={() => setFilters(prev => ({ ...prev, disponibilite: '' }))}
+                    className="hover:bg-black hover:bg-opacity-10 rounded-full p-0.5"
+                  >
+                    <FaTimes className="text-[10px]" />
+                  </button>
+                </span>
+              )}
+              
+              {(filters.experienceMin || filters.experienceMax) && (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
+                  💼 {filters.experienceMin || '0'}+ ans
+                  {filters.experienceMax && ` - ${filters.experienceMax} ans`}
+                  <button
+                    onClick={() => setFilters(prev => ({ ...prev, experienceMin: '', experienceMax: '' }))}
+                    className="hover:bg-black hover:bg-opacity-10 rounded-full p-0.5"
+                  >
+                    <FaTimes className="text-[10px]" />
+                  </button>
+                </span>
+              )}
+            </div>
+          )}
         </div>
       )}
 

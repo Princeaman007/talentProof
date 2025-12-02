@@ -50,12 +50,19 @@ export const filterTalents = asyncHandler(async (req, res) => {
 
   let query = { statut: 'actif' };
 
-  //  Filtrer par technologies (ancien + amélioré)
+  // ✅ AMÉLIORÉ - Filtrer par technologies (TOUTES les technologies = AND logic)
   if (technologies) {
     const techArray = Array.isArray(technologies) 
       ? technologies 
       : technologies.split(',').map(tech => tech.trim());
-    query.technologies = { $in: techArray };
+    
+    // Si plusieurs technologies, utiliser $all pour AND logic (le talent doit avoir TOUTES)
+    // Si une seule technologie, utiliser $in
+    if (techArray.length > 1) {
+      query.technologies = { $all: techArray };
+    } else if (techArray.length === 1) {
+      query.technologies = { $in: techArray };
+    }
   }
 
   //  NOUVEAU - Filtrer par type de profil
