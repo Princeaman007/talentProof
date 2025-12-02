@@ -52,12 +52,12 @@ const Hero = () => {
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white">
               Connectez-vous aux
-              <span className="text-secondary"> meilleurs talents tech</span> juniors
+              <span className="text-secondary"> talents tech</span> qui correspondent à vos besoins
             </h1>
             
             <p className="text-lg md:text-xl text-gray-200">
-              TalentProof détecte, évalue et valorise les jeunes développeurs via des tests en conditions réelles. 
-              Accédez à des profils testés, motivés et prêts à rejoindre votre équipe.
+              TalentProof identifie, évalue et met en valeur les développeurs grâce à des tests techniques concrets. 
+              Découvrez des profils certifiés, compétents et prêts à contribuer à votre succès.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4">

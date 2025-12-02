@@ -70,7 +70,7 @@ const ProblemSolution = () => {
               <div className="border-l-4 border-accent pl-4 py-2">
                 <h3 className="font-bold text-lg text-neutral-dark">Accompagnement</h3>
                 <p className="text-neutral">
-                  Parcours de perfectionnement avec nos partenaires formation (Forem, Technifutur) 
+                  Parcours de montée en compétences avec des certifications professionnelles reconnues (Coursera, LinkedIn Learning, Udemy) 
                   avant la mise en relation avec les entreprises.
                 </p>
               </div>

@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { FaTimes, FaCheckCircle, FaPaperPlane } from 'react-icons/fa';
+import { FaTimes, FaCheckCircle, FaPaperPlane, FaCode } from 'react-icons/fa';
 import api from '../../utils/api';
 import { getUserDisplayName, formatNumber, safeValue } from '../../utils/formatters';
+import { getTechBadgeColor } from '../../constants/technologies';
 
 const ContactTalentModal = ({ talent, onClose }) => {
   const [loading, setLoading] = useState(false);
@@ -92,19 +93,48 @@ const ContactTalentModal = ({ talent, onClose }) => {
           )}
 
           {/* Info talent */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-primary mb-2">À propos de ce talent</h3>
-            <div className="space-y-1 text-sm text-neutral">
-              <p>
-                <strong>Score :</strong> {formatNumber(talent.scoreTest)}/100 ({safeValue(talent.plateforme, 'Non précisé')})
-              </p>
-              <p>
-                <strong>Technologies :</strong> {talent.technologies?.join(', ') || 'Non spécifiées'}
-              </p>
-              <p>
-                <strong>Expérience :</strong> {safeValue(talent.anneeExperience, '0')} {talent.anneeExperience > 1 ? 'ans' : 'an'}
-              </p>
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-6 mb-6">
+            <div className="flex items-center space-x-2 mb-4">
+              <FaCode className="text-primary text-xl" />
+              <h3 className="font-bold text-primary text-lg">Profil du talent</h3>
             </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="bg-white rounded-lg p-3 shadow-sm">
+                <p className="text-xs text-neutral uppercase font-semibold mb-1">Score technique</p>
+                <p className="text-2xl font-bold text-primary">
+                  {formatNumber(talent.scoreTest)}/100
+                </p>
+                <p className="text-xs text-neutral mt-1">{safeValue(talent.plateforme, 'Non précisé')}</p>
+              </div>
+              
+              <div className="bg-white rounded-lg p-3 shadow-sm">
+                <p className="text-xs text-neutral uppercase font-semibold mb-1">Expérience</p>
+                <p className="text-2xl font-bold text-primary">
+                  {safeValue(talent.anneeExperience, '0')} {talent.anneeExperience > 1 ? 'ans' : 'an'}
+                </p>
+              </div>
+            </div>
+
+            {/* Section Technologies maîtrisées */}
+            {talent.technologies && talent.technologies.length > 0 && (
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <p className="text-sm font-bold text-primary mb-3 flex items-center space-x-2">
+                  <FaCode className="text-secondary" />
+                  <span>Compétences techniques</span>
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {talent.technologies.map((tech, index) => (
+                    <span
+                      key={index}
+                      className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm transition-transform hover:scale-105 ${getTechBadgeColor(tech)}`}
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

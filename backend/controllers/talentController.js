@@ -46,22 +46,29 @@ export const filterTalents = asyncHandler(async (req, res) => {
     experienceMax,
     localisation,
     langue,
+    techFilterMode, // ✅ NOUVEAU: 'OR' ou 'AND'
   } = req.query;
 
   let query = { statut: 'actif' };
 
-  // ✅ AMÉLIORÉ - Filtrer par technologies (TOUTES les technologies = AND logic)
+  // ✅ CORRIGÉ - Filtrer par technologies avec logique OR/AND configurable
   if (technologies) {
     const techArray = Array.isArray(technologies) 
       ? technologies 
       : technologies.split(',').map(tech => tech.trim());
     
-    // Si plusieurs technologies, utiliser $all pour AND logic (le talent doit avoir TOUTES)
-    // Si une seule technologie, utiliser $in
-    if (techArray.length > 1) {
+    console.log('🔍 [TALENT FILTER] Technologies recherchées:', techArray);
+    console.log('🔍 [TALENT FILTER] Mode de filtre:', techFilterMode || 'OR (défaut)');
+    
+    // Mode AND : le talent doit avoir TOUTES les technologies
+    // Mode OR (défaut) : le talent doit avoir AU MOINS UNE technologie
+    if (techFilterMode === 'AND' && techArray.length > 1) {
       query.technologies = { $all: techArray };
-    } else if (techArray.length === 1) {
+      console.log('🔍 [TALENT FILTER] Utilisation de $all (AND) - Toutes les technologies requises');
+    } else {
+      // Par défaut, utiliser $in (OR logic)
       query.technologies = { $in: techArray };
+      console.log('🔍 [TALENT FILTER] Utilisation de $in (OR) - Au moins une technologie requise');
     }
   }
 
@@ -109,7 +116,14 @@ export const filterTalents = asyncHandler(async (req, res) => {
     query.langues = { $in: [langue] };
   }
 
+  console.log('🔍 [TALENT FILTER] Query MongoDB finale:', JSON.stringify(query, null, 2));
+
   const talents = await Talent.find(query).sort({ scoreTest: -1, createdAt: -1 });
+  
+  console.log('✅ [TALENT FILTER] Résultats trouvés:', talents.length, 'talents');
+  if (talents.length > 0 && technologies) {
+    console.log('📋 [TALENT FILTER] Exemple - Technologies du 1er talent:', talents[0].technologies);
+  }
 
   res.status(200).json({
     success: true,

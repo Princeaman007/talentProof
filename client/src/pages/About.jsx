@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../utils/api';
-import { FaCheckCircle, FaUsers, FaRocket, FaLinkedin, FaEnvelope } from 'react-icons/fa';
+import { FaCheckCircle, FaUsers, FaRocket, FaLinkedin, FaEnvelope, FaUserPlus, FaChalkboardTeacher, FaCode, FaClipboardCheck, FaHandshake, FaArrowDown } from 'react-icons/fa';
 
 const About = () => {
   const [team, setTeam] = useState([]);
@@ -79,8 +80,7 @@ const About = () => {
               </div>
               <h3 className="text-xl font-bold text-primary mb-3">Excellence</h3>
               <p className="text-neutral">
-                Nous sélectionnons uniquement les meilleurs talents, avec des scores
-                validés supérieurs à 80%.
+                Processus de sélection exigeant : chaque talent est rigoureusement évalué via des tests techniques en conditions réelles avant certification.
               </p>
             </div>
 
@@ -110,62 +110,151 @@ const About = () => {
       </section>
 
       {/* Processus Talent Days */}
-      <section className="section-padding bg-white">
+      <section className="section-padding bg-gradient-to-b from-gray-50 to-white">
         <div className="container-custom">
-          <h2 className="text-3xl font-bold text-primary text-center mb-12">
-            Comment fonctionnent nos Talent Days ?
-          </h2>
-          <div className="max-w-4xl mx-auto space-y-8">
-            <div className="flex gap-6 items-start">
-              <div className="flex-shrink-0 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl">
-                1
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-primary mb-4">
+              Comment fonctionnent nos Talent Days ?
+            </h2>
+            <p className="text-lg text-neutral max-w-2xl mx-auto">
+              Un processus complet et transparent en 5 étapes pour connecter talents et entreprises
+            </p>
+          </div>
+
+          <div className="max-w-5xl mx-auto">
+            {/* Étape 1 */}
+            <div className="relative">
+              <div className="flex flex-col md:flex-row gap-8 items-start mb-12">
+                <div className="flex-shrink-0">
+                  <div className="relative">
+                    <div className="w-20 h-20 bg-gradient-to-br from-primary to-primary-dark rounded-2xl shadow-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
+                      <FaUserPlus className="text-white text-3xl" />
+                    </div>
+                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-secondary rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                      1
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1 bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6 border-l-4 border-primary">
+                  <h3 className="text-2xl font-bold text-primary mb-3">Inscription</h3>
+                  <p className="text-neutral leading-relaxed">
+                    Talents et entreprises s'inscrivent en ligne pour participer à l'événement. <span className="font-semibold text-secondary">Aucune pré-sélection</span>, tous les développeurs motivés sont les bienvenus.
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-primary mb-2">Pré-sélection</h3>
-                <p className="text-neutral">
-                  Les développeurs passent des tests techniques sur des plateformes
-                  reconnues (Codingame, LeetCode...). Seuls ceux avec un score ≥ 80%
-                  sont invités.
-                </p>
+              <div className="flex justify-center mb-8">
+                <FaArrowDown className="text-primary text-3xl animate-bounce" />
               </div>
             </div>
 
-            <div className="flex gap-6 items-start">
-              <div className="flex-shrink-0 w-12 h-12 bg-secondary text-white rounded-full flex items-center justify-center font-bold text-xl">
-                2
+            {/* Étape 2 */}
+            <div className="relative">
+              <div className="flex flex-col md:flex-row gap-8 items-start mb-12">
+                <div className="flex-shrink-0">
+                  <div className="relative">
+                    <div className="w-20 h-20 bg-gradient-to-br from-secondary to-accent rounded-2xl shadow-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
+                      <FaChalkboardTeacher className="text-white text-3xl" />
+                    </div>
+                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                      2
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1 bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6 border-l-4 border-secondary">
+                  <h3 className="text-2xl font-bold text-primary mb-3">Présentation des besoins</h3>
+                  <p className="text-neutral leading-relaxed">
+                    Le jour J, les entreprises présentent leur structure, leur culture et définissent précisément leurs <span className="font-semibold text-secondary">besoins techniques</span> (technologies, frameworks, compétences spécifiques).
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-primary mb-2">Talent Day</h3>
-                <p className="text-neutral">
-                  Événement d'une journée où les développeurs rencontrent plusieurs
-                  entreprises partenaires dans un cadre décontracté et professionnel.
-                </p>
+              <div className="flex justify-center mb-8">
+                <FaArrowDown className="text-secondary text-3xl animate-bounce" />
               </div>
             </div>
 
-            <div className="flex gap-6 items-start">
-              <div className="flex-shrink-0 w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center font-bold text-xl">
-                3
+            {/* Étape 3 */}
+            <div className="relative">
+              <div className="flex flex-col md:flex-row gap-8 items-start mb-12">
+                <div className="flex-shrink-0">
+                  <div className="relative">
+                    <div className="w-20 h-20 bg-gradient-to-br from-accent to-secondary rounded-2xl shadow-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
+                      <FaCode className="text-white text-3xl" />
+                    </div>
+                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                      3
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1 bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6 border-l-4 border-accent">
+                  <h3 className="text-2xl font-bold text-primary mb-3">Tests personnalisés en direct</h3>
+                  <p className="text-neutral leading-relaxed">
+                    Les talents passent des <span className="font-semibold text-secondary">tests techniques adaptés</span> aux besoins exprimés par les entreprises, évaluant leurs compétences en conditions réelles.
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-primary mb-2">Mise en relation</h3>
-                <p className="text-neutral">
-                  Après l'événement, nous facilitons les mises en relation entre
-                  entreprises et talents qui ont matché.
-                </p>
+              <div className="flex justify-center mb-8">
+                <FaArrowDown className="text-accent text-3xl animate-bounce" />
               </div>
             </div>
 
-            <div className="flex gap-6 items-start">
-              <div className="flex-shrink-0 w-12 h-12 bg-primary-dark text-white rounded-full flex items-center justify-center font-bold text-xl">
-                4
+            {/* Étape 4 */}
+            <div className="relative">
+              <div className="flex flex-col md:flex-row gap-8 items-start mb-12">
+                <div className="flex-shrink-0">
+                  <div className="relative">
+                    <div className="w-20 h-20 bg-gradient-to-br from-primary-dark to-primary rounded-2xl shadow-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
+                      <FaClipboardCheck className="text-white text-3xl" />
+                    </div>
+                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-secondary rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                      4
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1 bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6 border-l-4 border-primary-dark">
+                  <h3 className="text-2xl font-bold text-primary mb-3">Résultats instantanés</h3>
+                  <p className="text-neutral leading-relaxed">
+                    Dès la fin des tests, les entreprises accèdent <span className="font-semibold text-secondary">immédiatement aux résultats</span> personnalisés et identifient les profils qui correspondent exactement à leurs attentes.
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-primary mb-2">Suivi & Support</h3>
-                <p className="text-neutral">
-                  Nous accompagnons le processus jusqu'à l'embauche et restons disponibles
-                  pour garantir le succès du recrutement.
-                </p>
+              <div className="flex justify-center mb-8">
+                <FaArrowDown className="text-primary-dark text-3xl animate-bounce" />
+              </div>
+            </div>
+
+            {/* Étape 5 */}
+            <div className="relative">
+              <div className="flex flex-col md:flex-row gap-8 items-start">
+                <div className="flex-shrink-0">
+                  <div className="relative">
+                    <div className="w-20 h-20 bg-gradient-to-br from-secondary to-primary rounded-2xl shadow-xl flex items-center justify-center transform hover:scale-110 transition-transform duration-300">
+                      <FaHandshake className="text-white text-3xl" />
+                    </div>
+                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-accent rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                      5
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1 bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6 border-l-4 border-secondary">
+                  <h3 className="text-2xl font-bold text-primary mb-3">Entretiens sur place</h3>
+                  <p className="text-neutral leading-relaxed">
+                    Les entreprises invitent directement les talents qualifiés pour des entretiens <span className="font-semibold text-secondary">le jour même</span>, favorisant un matching rapide et efficace.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Call to action */}
+          <div className="text-center mt-16">
+            <div className="inline-block bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 shadow-2xl">
+              <p className="text-white text-xl font-semibold mb-4">
+                Prêt à participer à notre prochain Talent Day ?
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link to="/talent-days" className="bg-white text-primary px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors duration-300">
+                  Découvrir les Talent Days
+                </Link>
               </div>
             </div>
           </div>

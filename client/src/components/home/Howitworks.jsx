@@ -6,7 +6,7 @@ const HowItWorks = () => {
     {
       icon: <FaUserPlus />,
       title: 'Recrutement',
-      description: 'Appel à candidatures pour juniors et freelances tech',
+      description: 'Appel à candidatures pour développeurs de tous niveaux et freelances tech',
       number: '01',
     },
     {
@@ -18,7 +18,7 @@ const HowItWorks = () => {
     {
       icon: <FaGraduationCap />,
       title: 'Formation',
-      description: 'Collaboration avec Forem / Technifutur pour le perfectionnement',
+      description: 'Certifications professionnelles reconnues (Coursera, LinkedIn Learning, Udemy)',
       number: '03',
     },
     {
@@ -30,7 +30,7 @@ const HowItWorks = () => {
     {
       icon: <FaEuroSign />,
       title: 'Rémunération',
-      description: 'Commission sur contrat ou abonnement entreprise',
+      description: 'Frais de recrutement au succès : 15% du salaire annuel brut, payables uniquement après l\'embauche confirmée du talent. Aucun frais caché, aucun abonnement.',
       number: '05',
     },
   ];

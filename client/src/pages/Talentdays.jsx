@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import TalentDayCard from '../components/talentday/TalentDayCard';
-import { Calendar, Users, Award, TrendingUp, Filter } from 'lucide-react';
+import { Calendar, Users, Award, TrendingUp, Filter, UserCheck, Building2, Coffee, ClipboardCheck, Briefcase } from 'lucide-react';
 import talentDayService from '../services/talentDayService';
 
 const TalentDays = () => {
@@ -297,97 +297,204 @@ const TalentDays = () => {
       </section>
 
       {/* Comment ça marche */}
-      <section id="comment-ca-marche" className="py-16 bg-white">
+      <section id="comment-ca-marche" className="py-16 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold text-center text-primary mb-12">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-4xl font-bold text-center text-primary mb-4">
               Comment participer à un TalentDay ?
             </h2>
+            <p className="text-center text-gray-600 mb-16 text-lg">
+              Un processus clair et transparent pour talents et entreprises
+            </p>
 
-            <div className="space-y-8">
-              {/* Étape 1 */}
-              <div className="flex gap-6">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl">
-                    1
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+              {/* COLONNE TALENTS */}
+              <div className="bg-white rounded-2xl shadow-xl p-8 border-t-4 border-secondary">
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-secondary to-accent rounded-full mb-4">
+                    <UserCheck className="w-8 h-8 text-white" />
                   </div>
+                  <h3 className="text-2xl font-bold text-secondary mb-2">POUR LES TALENTS</h3>
+                  <p className="text-gray-600">Développeurs, montrez vos compétences</p>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    Choisissez votre événement
-                  </h3>
-                  <p className="text-gray-600">
-                    Parcourez notre calendrier et sélectionnez un TalentDay qui correspond à vos compétences et intérêts.
-                  </p>
+
+                <div className="space-y-6">
+                  {/* Talent Étape 1 */}
+                  <div className="flex gap-4 items-start group">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-secondary to-accent text-white rounded-full flex items-center justify-center font-bold shadow-lg group-hover:scale-110 transition-transform">
+                        1
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-gray-900 mb-1">
+                        Inscrivez-vous gratuitement
+                      </h4>
+                      <p className="text-gray-600 leading-relaxed">
+                        Sélectionnez un TalentDay dans notre calendrier et inscrivez-vous en ligne. <span className="font-semibold text-secondary">Aucune pré-sélection requise.</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Talent Étape 2 */}
+                  <div className="flex gap-4 items-start group">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-secondary to-accent text-white rounded-full flex items-center justify-center font-bold shadow-lg group-hover:scale-110 transition-transform">
+                        2
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-gray-900 mb-1">
+                        Découvrez les entreprises
+                      </h4>
+                      <p className="text-gray-600 leading-relaxed">
+                        Assistez aux présentations des entreprises participantes et identifiez celles qui correspondent à vos aspirations.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Talent Étape 3 */}
+                  <div className="flex gap-4 items-start group">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-secondary to-accent text-white rounded-full flex items-center justify-center font-bold shadow-lg group-hover:scale-110 transition-transform">
+                        3
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-gray-900 mb-1">
+                        Démontrez vos compétences
+                      </h4>
+                      <p className="text-gray-600 leading-relaxed">
+                        Passez des <span className="font-semibold text-secondary">tests techniques en ligne</span> adaptés aux besoins des recruteurs présents.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Talent Étape 4 */}
+                  <div className="flex gap-4 items-start group">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-secondary to-accent text-white rounded-full flex items-center justify-center font-bold shadow-lg group-hover:scale-110 transition-transform">
+                        4
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-gray-900 mb-1">
+                        Entretiens sur place
+                      </h4>
+                      <p className="text-gray-600 leading-relaxed">
+                        Les entreprises intéressées vous invitent directement en entretien. <span className="font-semibold text-secondary">Opportunités immédiates !</span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Étape 2 */}
-              <div className="flex gap-6">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-secondary text-white rounded-full flex items-center justify-center font-bold text-xl">
-                    2
+              {/* COLONNE ENTREPRISES */}
+              <div className="bg-white rounded-2xl shadow-xl p-8 border-t-4 border-primary">
+                <div className="text-center mb-8">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-primary-dark rounded-full mb-4">
+                    <Building2 className="w-8 h-8 text-white" />
                   </div>
+                  <h3 className="text-2xl font-bold text-primary mb-2">POUR LES ENTREPRISES</h3>
+                  <p className="text-gray-600">Recruteurs, trouvez vos talents</p>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    Inscrivez-vous gratuitement
-                  </h3>
-                  <p className="text-gray-600">
-                    Remplissez le formulaire d'inscription et expliquez-nous pourquoi vous souhaitez participer.
-                  </p>
+
+                <div className="space-y-6">
+                  {/* Entreprise Étape 1 */}
+                  <div className="flex gap-4 items-start group">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full flex items-center justify-center font-bold shadow-lg group-hover:scale-110 transition-transform">
+                        1
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-gray-900 mb-1">
+                        Inscrivez-vous à l'événement
+                      </h4>
+                      <p className="text-gray-600 leading-relaxed">
+                        Réservez votre place et préparez votre présentation d'entreprise et vos besoins en recrutement.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Entreprise Étape 2 */}
+                  <div className="flex gap-4 items-start group">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full flex items-center justify-center font-bold shadow-lg group-hover:scale-110 transition-transform">
+                        2
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-gray-900 mb-1">
+                        Présentez votre entreprise
+                      </h4>
+                      <p className="text-gray-600 leading-relaxed">
+                        Pitchez votre structure, votre culture et les profils recherchés devant les talents présents.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Entreprise Étape 3 */}
+                  <div className="flex gap-4 items-start group">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full flex items-center justify-center font-bold shadow-lg group-hover:scale-110 transition-transform">
+                        3
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-gray-900 mb-1">
+                        Networking & café
+                      </h4>
+                      <p className="text-gray-600 leading-relaxed">
+                        Moment d'échange convivial avec les autres recruteurs et <span className="font-semibold text-primary">premiers contacts informels</span> avec les talents.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Entreprise Étape 4 */}
+                  <div className="flex gap-4 items-start group">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full flex items-center justify-center font-bold shadow-lg group-hover:scale-110 transition-transform">
+                        4
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-gray-900 mb-1">
+                        Accédez aux résultats en temps réel
+                      </h4>
+                      <p className="text-gray-600 leading-relaxed">
+                        Consultez <span className="font-semibold text-primary">instantanément</span> les performances des talents sur vos critères spécifiques.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Entreprise Étape 5 */}
+                  <div className="flex gap-4 items-start group">
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark text-white rounded-full flex items-center justify-center font-bold shadow-lg group-hover:scale-110 transition-transform">
+                        5
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-gray-900 mb-1">
+                        Recrutez sur place
+                      </h4>
+                      <p className="text-gray-600 leading-relaxed">
+                        Organisez des entretiens avec les candidats qualifiés le jour même. <span className="font-semibold text-primary">Efficace et humain.</span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
+            </div>
 
-              {/* Étape 3 */}
-              <div className="flex gap-6">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center font-bold text-xl">
-                    3
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    Prouvez votre talent
-                  </h3>
-                  <p className="text-gray-600">
-                    Participez à des challenges, workshops ou hackathons en conditions réelles. Montrez vos compétences techniques et votre capacité à travailler en équipe.
-                  </p>
-                </div>
-              </div>
-
-              {/* Étape 4 */}
-              <div className="flex gap-6">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-xl">
-                    4
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    Obtenez votre validation
-                  </h3>
-                  <p className="text-gray-600">
-                    Les meilleurs talents reçoivent une validation TalentProof et sont ajoutés à notre catalogue visible par les entreprises partenaires.
-                  </p>
-                </div>
-              </div>
-
-              {/* Étape 5 */}
-              <div className="flex gap-6">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-pink-600 text-white rounded-full flex items-center justify-center font-bold text-xl">
-                    5
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    Décrochez des opportunités
-                  </h3>
-                  <p className="text-gray-600">
-                    Les entreprises peuvent vous contacter directement pour des opportunités d'emploi, de stage ou de mission freelance.
-                  </p>
-                </div>
+            {/* Note informative */}
+            <div className="mt-12 text-center">
+              <div className="inline-block bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl px-8 py-4">
+                <p className="text-gray-700 font-medium">
+                  <span className="text-primary font-bold">Participation gratuite</span> pour les talents • 
+                  <span className="text-secondary font-bold"> Frais de recrutement</span> uniquement en cas d'embauche
+                </p>
               </div>
             </div>
           </div>

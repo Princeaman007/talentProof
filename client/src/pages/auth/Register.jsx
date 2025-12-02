@@ -38,6 +38,26 @@ const Register = () => {
     }
   };
 
+  const validatePassword = (password) => {
+    const errors = [];
+    if (password.length < 8) {
+      errors.push('Au moins 8 caractères');
+    }
+    if (!/[A-Z]/.test(password)) {
+      errors.push('Au moins une majuscule');
+    }
+    if (!/[a-z]/.test(password)) {
+      errors.push('Au moins une minuscule');
+    }
+    if (!/[0-9]/.test(password)) {
+      errors.push('Au moins un chiffre');
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      errors.push('Au moins un caractère spécial (!@#$%^&*...)');
+    }
+    return errors;
+  };
+
   const validateForm = () => {
     const newErrors = {};
     if (!formData.nom.trim()) newErrors.nom = 'Le nom de l\'entreprise est requis';
@@ -48,8 +68,11 @@ const Register = () => {
     }
     if (!formData.password) {
       newErrors.password = 'Le mot de passe est requis';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
+    } else {
+      const passwordErrors = validatePassword(formData.password);
+      if (passwordErrors.length > 0) {
+        newErrors.password = passwordErrors.join(', ');
+      }
     }
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
@@ -124,9 +147,14 @@ const Register = () => {
                 required
                 value={formData.nom}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                  errors.nom ? 'border-red-500' : 'border-gray-300'
+                }`}
                 placeholder="Tech Solutions"
               />
+              {errors.nom && (
+                <p className="mt-1 text-sm text-red-600">{errors.nom}</p>
+              )}
             </div>
 
             {/* Email */}
@@ -140,9 +168,14 @@ const Register = () => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                  errors.email ? 'border-red-500' : 'border-gray-300'
+                }`}
                 placeholder="contact@exemple.com"
               />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+              )}
             </div>
 
             {/* Taille entreprise */}
@@ -176,7 +209,9 @@ const Register = () => {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent pr-10"
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent pr-10 ${
+                    errors.password ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   placeholder="••••••••"
                 />
                 <button
@@ -187,7 +222,35 @@ const Register = () => {
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
-              <p className="text-xs text-neutral mt-1">Minimum 6 caractères</p>
+              
+              {/* Critères de validation */}
+              <div className="mt-2 space-y-1">
+                <p className="text-xs font-semibold text-neutral-dark">Le mot de passe doit contenir :</p>
+                <ul className="text-xs space-y-0.5">
+                  <li className={formData.password.length >= 8 ? 'text-green-600' : 'text-gray-500'}>
+                    {formData.password.length >= 8 ? '✓' : '○'} Au moins 8 caractères
+                  </li>
+                  <li className={/[A-Z]/.test(formData.password) ? 'text-green-600' : 'text-gray-500'}>
+                    {/[A-Z]/.test(formData.password) ? '✓' : '○'} Au moins une majuscule
+                  </li>
+                  <li className={/[a-z]/.test(formData.password) ? 'text-green-600' : 'text-gray-500'}>
+                    {/[a-z]/.test(formData.password) ? '✓' : '○'} Au moins une minuscule
+                  </li>
+                  <li className={/[0-9]/.test(formData.password) ? 'text-green-600' : 'text-gray-500'}>
+                    {/[0-9]/.test(formData.password) ? '✓' : '○'} Au moins un chiffre
+                  </li>
+                  <li className={/[!@#$%^&*(),.?":{}|<>]/.test(formData.password) ? 'text-green-600' : 'text-gray-500'}>
+                    {/[!@#$%^&*(),.?":{}|<>]/.test(formData.password) ? '✓' : '○'} Au moins un caractère spécial (!@#$%...)
+                  </li>
+                </ul>
+              </div>
+              
+              {errors.password && (
+                <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600 font-semibold">Mot de passe invalide :</p>
+                  <p className="text-xs text-red-600 mt-1">{errors.password}</p>
+                </div>
+              )}
             </div>
 
             {/* Confirmation mot de passe */}
@@ -201,9 +264,14 @@ const Register = () => {
                 required
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${
+                  errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                }`}
                 placeholder="••••••••"
               />
+              {errors.confirmPassword && (
+                <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+              )}
             </div>
 
             {/* Bouton */}

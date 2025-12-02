@@ -1,29 +1,13 @@
 import { useState, useEffect } from 'react';
-import { FaFilter, FaStar, FaCheckCircle, FaEnvelope, FaTimes, FaBriefcase, FaMapMarkerAlt, FaGlobe, FaUser, FaBuilding, FaPlus, FaSearch } from 'react-icons/fa';
+import { FaFilter, FaStar, FaCheckCircle, FaEnvelope, FaTimes, FaBriefcase, FaMapMarkerAlt, FaGlobe, FaUser, FaBuilding, FaPlus, FaSearch, FaCode } from 'react-icons/fa';
 import api from '../../utils/api';
 import { extractErrorMessage } from '../../utils/errorHandler';
-
-//  Constantes (gardées identiques)
-const TECHNOLOGIES = [
-  'React.js', 'Vue.js', 'Angular', 'Svelte', 'Next.js', 'Node.js', 'Express',
-  'Python', 'Django', 'PHP', 'Laravel', 'Java', 'MongoDB', 'PostgreSQL',
-  'MySQL', 'JavaScript', 'TypeScript', 'Docker', 'AWS', 'GraphQL',
-];
+import { TECHNOLOGIES, getTechBadgeColor } from '../../constants/technologies';
 
 const PROFIL_TYPES = ['Frontend', 'Backend', 'Full-stack', 'Mobile', 'DevOps', 'Data'];
 const NIVEAUX = ['Junior', 'Medior', 'Senior'];
 const TYPES_CONTRAT = ['CDI', 'CDD', 'Freelance', 'Stage', 'Alternance'];
 const DISPONIBILITES = ['Immédiate', '1-2 semaines', '1 mois', 'Non disponible'];
-
-const TECH_COLORS = {
-  'React.js': 'bg-blue-100 text-blue-700',
-  'Node.js': 'bg-green-100 text-green-800',
-  'Python': 'bg-yellow-100 text-yellow-700',
-  'MongoDB': 'bg-green-100 text-green-700',
-  'JavaScript': 'bg-yellow-100 text-yellow-700',
-  'TypeScript': 'bg-blue-100 text-blue-700',
-  'default': 'bg-gray-100 text-gray-700',
-};
 
 const NIVEAU_COLORS = {
   'Junior': 'bg-green-100 text-green-700',
@@ -59,6 +43,7 @@ const TalentsDashboard = () => {
   // ✅ NOUVEAU: État pour les technologies sélectionnées (array)
   const [selectedTechnologies, setSelectedTechnologies] = useState([]);
   const [techSearchQuery, setTechSearchQuery] = useState('');
+  const [techFilterMode, setTechFilterMode] = useState('OR'); // ✅ NOUVEAU: 'OR' ou 'AND'
 
   const [filters, setFilters] = useState({
     typeProfil: '',
@@ -71,7 +56,7 @@ const TalentsDashboard = () => {
 
   useEffect(() => {
     fetchTalents();
-  }, [filters, selectedTechnologies]); // ✅ Ajouter selectedTechnologies comme dépendance
+  }, [filters, selectedTechnologies, techFilterMode]); // ✅ Ajouter techFilterMode comme dépendance
 
   const fetchTalents = async () => {
     try {
@@ -86,9 +71,13 @@ const TalentsDashboard = () => {
       // ✅ NOUVEAU: Ajouter les technologies sélectionnées (séparées par virgule)
       if (selectedTechnologies.length > 0) {
         params.technologies = selectedTechnologies.join(',');
+        params.techFilterMode = techFilterMode; // ✅ Ajouter le mode de filtre
       }
 
       console.log('📤 [TALENTS DASHBOARD] Fetching with params:', params);
+      console.log('🔍 [TALENTS DASHBOARD] Technologies sélectionnées:', selectedTechnologies);
+      console.log('🔍 [TALENTS DASHBOARD] Mode de filtre:', techFilterMode);
+      
       const response = await api.get('/talents/filter', { params });
       console.log('📥 [TALENTS DASHBOARD] Response:', {
         status: response.status,
@@ -146,6 +135,7 @@ const TalentsDashboard = () => {
     });
     setSelectedTechnologies([]); // ✅ Réinitialiser aussi les technologies
     setTechSearchQuery('');
+    setTechFilterMode('OR'); // ✅ Réinitialiser le mode de filtre
   };
 
   const hasActiveFilters = Object.values(filters).some(value => value !== '') || selectedTechnologies.length > 0;
@@ -160,7 +150,6 @@ const TalentsDashboard = () => {
     setSelectedTalent(null);
   };
 
-  const getTechBadgeColor = (tech) => TECH_COLORS[tech] || TECH_COLORS.default;
   const getNiveauColor = (niveau) => NIVEAU_COLORS[niveau] || 'bg-gray-100 text-gray-700';
   const getProfilColor = (profil) => PROFIL_COLORS[profil] || 'bg-gray-100 text-gray-700';
   const getContratColor = (contrat) => CONTRAT_COLORS[contrat] || 'bg-gray-100 text-gray-700';
@@ -211,14 +200,56 @@ const TalentsDashboard = () => {
         <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
           <div className="flex items-center justify-between mb-3">
             <label className="block text-sm font-semibold text-gray-800">
-              🔍 Technologies recherchées
+              Technologies recherchées
             </label>
-            {selectedTechnologies.length > 0 && (
-              <span className="text-xs text-gray-600">
-                {selectedTechnologies.length} sélectionnée{selectedTechnologies.length > 1 ? 's' : ''}
-              </span>
-            )}
+            <div className="flex items-center gap-4">
+              {selectedTechnologies.length > 0 && (
+                <span className="text-xs text-gray-600">
+                  {selectedTechnologies.length} sélectionnée{selectedTechnologies.length > 1 ? 's' : ''}
+                </span>
+              )}
+              
+              {/* ✅ NOUVEAU: Toggle OR/AND */}
+              {selectedTechnologies.length > 1 && (
+                <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-300">
+                  <span className="text-xs font-medium text-gray-600">Mode:</span>
+                  <button
+                    onClick={() => setTechFilterMode('OR')}
+                    className={`px-2 py-0.5 rounded text-xs font-bold transition-all ${
+                      techFilterMode === 'OR' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                    }`}
+                    title="Au moins UNE technologie (défaut)"
+                  >
+                    OU
+                  </button>
+                  <button
+                    onClick={() => setTechFilterMode('AND')}
+                    className={`px-2 py-0.5 rounded text-xs font-bold transition-all ${
+                      techFilterMode === 'AND' 
+                        ? 'bg-blue-500 text-white' 
+                        : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                    }`}
+                    title="TOUTES les technologies"
+                  >
+                    ET
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
+          
+          {/* Explication du mode sélectionné */}
+          {selectedTechnologies.length > 1 && (
+            <div className="mb-3 text-xs text-gray-600 bg-white p-2 rounded border border-gray-200">
+              {techFilterMode === 'OR' ? (
+                <span>📋 Affiche les talents ayant <strong>au moins une</strong> des technologies sélectionnées</span>
+              ) : (
+                <span>📋 Affiche les talents ayant <strong>toutes</strong> les technologies sélectionnées</span>
+              )}
+            </div>
+          )}
           
           {/* Barre de recherche pour filtrer les technologies */}
           <div className="relative mb-3">
@@ -472,7 +503,7 @@ const TalentsDashboard = () => {
               
               {filters.disponibilite && (
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
-                  📅 {filters.disponibilite}
+                  {filters.disponibilite}
                   <button
                     onClick={() => setFilters(prev => ({ ...prev, disponibilite: '' }))}
                     className="hover:bg-black hover:bg-opacity-10 rounded-full p-0.5"
@@ -483,8 +514,8 @@ const TalentsDashboard = () => {
               )}
               
               {(filters.experienceMin || filters.experienceMax) && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
-                  💼 {filters.experienceMin || '0'}+ ans
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">
+                  {filters.experienceMin || '0'}+ ans
                   {filters.experienceMax && ` - ${filters.experienceMax} ans`}
                   <button
                     onClick={() => setFilters(prev => ({ ...prev, experienceMin: '', experienceMax: '' }))}
@@ -729,15 +760,27 @@ const ContactTalentModal = ({ talent, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-gray-200">
           <div>
-            <h2 className="text-2xl font-bold text-primary">Contacter {talent.prenom}</h2>
-            <p className="text-sm text-neutral mt-1">
-              {talent.typeProfil} {talent.niveau} • {talent.technologies?.slice(0, 3).join(', ')}
-            </p>
+            <h2 className="text-2xl font-bold text-primary">
+              Contacter {talent.prenom} {talent.nom && talent.nom !== 'Nouveau' ? talent.nom : ''}
+            </h2>
+            <div className="flex flex-wrap gap-2 mt-2">
+              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${PROFIL_COLORS[talent.typeProfil] || 'bg-gray-100 text-gray-700'}`}>
+                {talent.typeProfil}
+              </span>
+              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${NIVEAU_COLORS[talent.niveau] || 'bg-gray-100 text-gray-700'}`}>
+                {talent.niveau}
+              </span>
+              {talent.anneeExperience && (
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-teal-100 text-teal-700">
+                  {talent.anneeExperience} {talent.anneeExperience > 1 ? 'ans' : 'an'} d'expérience
+                </span>
+              )}
+            </div>
           </div>
           <button
             onClick={onClose}
@@ -766,78 +809,102 @@ const ContactTalentModal = ({ talent, onClose }) => {
               </div>
             )}
 
-            {/*  Affichage des infos de l'entreprise (CORRIGÉ) */}
-            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <h3 className="font-semibold text-primary mb-3 flex items-center gap-2">
-                <FaUser />
+            {/*  Affichage des infos de l'entreprise */}
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-5 border border-gray-300 shadow-sm">
+              <h3 className="font-bold text-primary mb-4 flex items-center gap-2 text-lg">
+                <FaBuilding className="text-secondary" />
                 Vos informations
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                <div>
-                  <span className="text-neutral">Nom:</span>
-                  <p className="font-medium text-primary">{userInfo?.nom || 'Non renseigné'}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white rounded-lg p-3 shadow-sm">
+                  <span className="text-xs text-gray-500 uppercase font-semibold">Nom</span>
+                  <p className="font-semibold text-primary mt-1">{userInfo?.nom || 'Non renseigné'}</p>
                 </div>
-                <div>
-                  <span className="text-neutral">Email:</span>
-                  <p className="font-medium text-primary">{userInfo?.email || 'Non renseigné'}</p>
+                <div className="bg-white rounded-lg p-3 shadow-sm">
+                  <span className="text-xs text-gray-500 uppercase font-semibold">Email</span>
+                  <p className="font-semibold text-primary mt-1 truncate">{userInfo?.email || 'Non renseigné'}</p>
                 </div>
-                <div>
-                  <span className="text-neutral">Taille:</span>
-                  <p className="font-medium text-primary">{userInfo?.nombreEmployes || 'Non renseigné'} employés</p>
+                <div className="bg-white rounded-lg p-3 shadow-sm">
+                  <span className="text-xs text-gray-500 uppercase font-semibold">Entreprise</span>
+                  <p className="font-semibold text-primary mt-1">{userInfo?.nom || 'Non renseigné'}</p>
                 </div>
-                <div>
-                  <span className="text-neutral flex items-center gap-1">
-                    <FaBuilding className="text-xs" />
-                    Entreprise:
-                  </span>
-                  <p className="font-medium text-primary">{userInfo?.nom || 'Non renseigné'}</p>
+                <div className="bg-white rounded-lg p-3 shadow-sm">
+                  <span className="text-xs text-gray-500 uppercase font-semibold">Taille</span>
+                  <p className="font-semibold text-primary mt-1">{userInfo?.nombreEmployes || 'Non renseigné'}</p>
                 </div>
               </div>
-              <p className="text-xs text-blue-600 mt-2">
-                 Pour ajouter un numéro de téléphone, mettez à jour votre profil
-              </p>
             </div>
 
-            {/*  Champ message (optionnel) */}
+            {/* Section Technologies maîtrisées */}
+            {talent.technologies && talent.technologies.length > 0 && (
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-300 shadow-sm">
+                <h3 className="font-bold text-primary mb-4 flex items-center gap-2 text-lg">
+                  <FaCode className="text-secondary" />
+                  Compétences techniques
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {talent.technologies.map((tech, index) => (
+                    <span
+                      key={index}
+                      className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm transition-all hover:scale-105 hover:shadow-md ${getTechBadgeColor(tech)}`}
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/*  Champ message */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Message (optionnel)
+              <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                <FaEnvelope className="text-secondary" />
+                Votre message
               </label>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="input-field"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary transition-all"
                 rows="5"
                 placeholder="Décrivez votre projet, vos besoins, ou toute information complémentaire..."
               />
-              <p className="text-xs text-neutral mt-1">
+              <p className="text-xs text-gray-500 mt-2">
                 Ce message sera transmis à notre équipe avec votre demande.
               </p>
             </div>
 
             {/* Info */}
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800">
-                 <strong>Prochaines étapes :</strong> Notre équipe vous recontactera sous 24-48h avec le CV complet et les coordonnées directes du talent pour organiser un entretien.
+            <div className="p-5 bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-primary rounded-xl shadow-sm">
+              <p className="text-sm text-gray-800">
+                <strong className="text-primary">Prochaines étapes :</strong> Notre équipe vous recontactera sous 24-48h avec le CV complet et les coordonnées directes du talent pour organiser un entretien.
               </p>
             </div>
 
             {/* Buttons */}
-            <div className="flex gap-3 pt-4 border-t">
+            <div className="flex gap-4 pt-2">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all font-semibold"
               >
                 Annuler
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 btn-primary py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-gradient-to-r from-primary to-primary-dark text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                <FaEnvelope className="inline mr-2" />
-                {loading ? 'Envoi en cours...' : 'Envoyer la demande'}
+                {loading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Envoi en cours...</span>
+                  </>
+                ) : (
+                  <>
+                    <FaEnvelope />
+                    <span>Envoyer la demande</span>
+                  </>
+                )}
               </button>
             </div>
           </form>

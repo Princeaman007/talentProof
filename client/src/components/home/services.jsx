@@ -6,7 +6,7 @@ const Services = () => {
     {
       icon: <FaUsers className="text-4xl" />,
       title: 'Recrutement de Talents',
-      description: 'Accédez à une base de talents tech juniors testés et validés en conditions réelles.',
+      description: 'Accédez à une base de talents tech testés et validés en conditions réelles.',
       color: 'from-primary to-primary-dark',
       link: '/talents',
     },

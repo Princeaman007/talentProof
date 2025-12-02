@@ -17,7 +17,7 @@ const Footer = () => {
               <span className="text-2xl font-bold">TalentProof</span>
             </div>
             <p className="text-gray-300 mb-4">
-              Le label de confiance pour les talents tech juniors en Wallonie et à Bruxelles.
+              Le label de confiance pour les talents tech en Wallonie et à Bruxelles.
             </p>
           </div>
 

@@ -1,14 +1,9 @@
 import { useState } from 'react';
 import api from '../../utils/api';
 import { FaTimes, FaSave, FaExclamationTriangle } from 'react-icons/fa';
+import { TECHNOLOGIES } from '../../constants/technologies';
 
 // Constantes
-const TECHNOLOGIES = [
-  'React.js', 'Vue.js', 'Angular', 'Next.js', 'Node.js', 'Express', 'Python',
-  'Django', 'PHP', 'Laravel', 'MongoDB', 'PostgreSQL', 'MySQL', 'JavaScript',
-  'TypeScript', 'Docker', 'AWS', 'GraphQL', 'React Native', 'Flutter',
-];
-
 const PROFIL_TYPES = ['Frontend', 'Backend', 'Full-stack', 'Mobile', 'DevOps', 'Data'];
 const NIVEAUX = ['Junior', 'Medior', 'Senior'];
 const TYPES_CONTRAT = ['CDI', 'CDD', 'Freelance', 'Stage', 'Alternance'];
