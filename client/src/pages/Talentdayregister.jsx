@@ -37,7 +37,6 @@ const TalentDayRegister = () => {
           setTalentDay(td);
         }
       } catch (err) {
-        console.error('Erreur récupération TalentDay:', err);
         setError('Événement non trouvé');
       } finally {
         setLoading(false);
@@ -72,7 +71,6 @@ const TalentDayRegister = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } catch (err) {
-      console.error('Erreur inscription:', err);
       setError(
         err.response?.data?.message ||
         'Une erreur est survenue lors de l\'inscription. Veuillez réessayer.'

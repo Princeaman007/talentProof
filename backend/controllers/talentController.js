@@ -57,18 +57,14 @@ export const filterTalents = asyncHandler(async (req, res) => {
       ? technologies 
       : technologies.split(',').map(tech => tech.trim());
     
-    console.log(' [TALENT FILTER] Technologies recherchées:', techArray);
-    console.log(' [TALENT FILTER] Mode de filtre:', techFilterMode || 'OR (défaut)');
     
     // Mode AND : le talent doit avoir TOUTES les technologies
     // Mode OR (défaut) : le talent doit avoir AU MOINS UNE technologie
     if (techFilterMode === 'AND' && techArray.length > 1) {
       query.technologies = { $all: techArray };
-      console.log(' [TALENT FILTER] Utilisation de $all (AND) - Toutes les technologies requises');
     } else {
       // Par défaut, utiliser $in (OR logic)
       query.technologies = { $in: techArray };
-      console.log(' [TALENT FILTER] Utilisation de $in (OR) - Au moins une technologie requise');
     }
   }
 
@@ -116,13 +112,10 @@ export const filterTalents = asyncHandler(async (req, res) => {
     query.langues = { $in: [langue] };
   }
 
-  console.log(' [TALENT FILTER] Query MongoDB finale:', JSON.stringify(query, null, 2));
 
   const talents = await Talent.find(query).sort({ scoreTest: -1, createdAt: -1 });
   
-  console.log(' [TALENT FILTER] Résultats trouvés:', talents.length, 'talents');
   if (talents.length > 0 && technologies) {
-    console.log(' [TALENT FILTER] Exemple - Technologies du 1er talent:', talents[0].technologies);
   }
 
   res.status(200).json({
@@ -214,7 +207,6 @@ export const contactTalent = asyncHandler(async (req, res) => {
       html: contactNotificationTemplate(talentInfo, recruteurInfo),
     });
   } catch (emailError) {
-    console.error('Erreur envoi email à Prince:', emailError);
   }
 
   // 2. Envoyer un email AU TALENT pour l'informer de l'intérêt de l'entreprise
@@ -233,7 +225,6 @@ export const contactTalent = asyncHandler(async (req, res) => {
       }),
     });
   } catch (emailError) {
-    console.error('Erreur envoi email au talent:', emailError);
   }
 
   // 3. Envoyer un email de CONFIRMATION à l'entreprise (recruteur)
@@ -244,7 +235,6 @@ export const contactTalent = asyncHandler(async (req, res) => {
       html: contactConfirmationTemplate(recruteurNom, entreprise, talent.prenom),
     });
   } catch (emailError) {
-    console.error('Erreur envoi email de confirmation au recruteur:', emailError);
   }
 
   res.status(201).json({
@@ -319,7 +309,6 @@ export const getTalentsStats = asyncHandler(async (req, res) => {
  * @access  Private/Admin
  */
 export const createTalent = asyncHandler(async (req, res) => {
-  console.log(' Données reçues dans le backend:', req.body);
 
   const {
     prenom,
@@ -371,7 +360,6 @@ export const createTalent = asyncHandler(async (req, res) => {
     statut,
   });
 
-  console.log(' Talent créé:', talent);
 
   res.status(201).json({
     success: true,

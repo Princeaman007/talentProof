@@ -84,7 +84,6 @@ router.post('/', async (req, res) => {
         html: emailContent
       });
     } catch (emailError) {
-      console.error('Erreur envoi email:', emailError);
       // Ne pas bloquer la création du devis si l'email échoue
     }
     
@@ -122,7 +121,6 @@ router.post('/', async (req, res) => {
         html: confirmationEmail
       });
     } catch (emailError) {
-      console.error('Erreur envoi email confirmation:', emailError);
     }
     
     res.status(201).json({
@@ -135,7 +133,6 @@ router.post('/', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Erreur lors de la création du devis:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de l\'envoi de votre demande',

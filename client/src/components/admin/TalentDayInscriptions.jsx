@@ -16,23 +16,16 @@ const TalentDayInscriptions = ({ talentDayId, onClose }) => {
   const fetchInscriptions = async () => {
     try {
       setLoading(true);
-      console.log(' Fetching inscriptions for TalentDay:', talentDayId);
       
       const response = await api.get(`/talent-days/${talentDayId}/inscriptions`);
       
-      console.log(' Réponse API:', response.data);
-      console.log(' Nombre d\'inscriptions:', response.data.count);
       
       if (response.data.success) {
         setInscriptions(response.data.data);
-        console.log(' Inscriptions chargées:', response.data.data.length);
       } else {
-        console.error(' Success = false:', response.data.message);
       }
     } catch (err) {
-      console.error(' Erreur complète:', err.response?.data || err.message);
       setError('Erreur lors du chargement des inscriptions');
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -41,14 +34,12 @@ const TalentDayInscriptions = ({ talentDayId, onClose }) => {
   const updateStatut = async (inscriptionIndex, newStatut) => {
     try {
       const inscription = inscriptions[inscriptionIndex];
-      console.log(' Mise à jour statut:', { inscriptionIndex, newStatut, talentDayId });
       
       const response = await api.put(
         `/talent-days/${talentDayId}/inscriptions/${inscriptionIndex}`,
         { statut: newStatut }
       );
       
-      console.log(' Statut mis à jour:', response.data);
       
       // Rafraîchir la liste
       await fetchInscriptions();
@@ -63,7 +54,6 @@ const TalentDayInscriptions = ({ talentDayId, onClose }) => {
         toast.success(message);
       }
     } catch (err) {
-      console.error(' Erreur mise à jour statut:', err.response?.data || err.message);
       toast.error('Erreur lors de la mise à jour du statut: ' + (err.response?.data?.message || err.message));
     }
   };

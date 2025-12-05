@@ -102,12 +102,10 @@ const EditTalentModal = ({ talent, onClose, onSuccess }) => {
         tarifJournalier: formData.tarifJournalier ? Number(formData.tarifJournalier) : null,
       };
 
-      console.log(' Payload envoyé:', payload);  //  DEBUG
 
       await api.put(`/admin/talents/${talent._id}`, payload);
       onSuccess('Talent modifié avec succès !');
     } catch (error) {
-      console.error(' Erreur modification:', error);
       setError(error?.error?.message || error?.message || 'Erreur lors de la modification');
     } finally {
       setLoading(false);

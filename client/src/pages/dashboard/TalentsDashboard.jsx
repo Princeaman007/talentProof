@@ -74,12 +74,8 @@ const TalentsDashboard = () => {
         params.techFilterMode = techFilterMode; // Ajouter le mode de filtre
       }
 
-      console.log('[TALENTS DASHBOARD] Fetching with params:', params);
-      console.log('[TALENTS DASHBOARD] Technologies sélectionnées:', selectedTechnologies);
-      console.log('[TALENTS DASHBOARD] Mode de filtre:', techFilterMode);
       
       const response = await api.get('/talents/filter', { params });
-      console.log('[TALENTS DASHBOARD] Response:', {
         status: response.status,
         data: response.data,
         success: response.data.success,
@@ -88,13 +84,10 @@ const TalentsDashboard = () => {
 
       if (response.data.success && Array.isArray(response.data.data)) {
         setTalents(response.data.data);
-        console.log('[TALENTS DASHBOARD] Loaded', response.data.data.length, 'talents');
       } else {
         setTalents([]);
-        console.warn('[TALENTS DASHBOARD] No talents or invalid response');
       }
     } catch (error) {
-      console.error('[TALENTS DASHBOARD] Error:', error);
       setError(extractErrorMessage(error, 'Erreur lors du chargement des talents'));
       setTalents([]);
     } finally {
@@ -739,11 +732,9 @@ const ContactTalentModal = ({ talent, onClose }) => {
     payload.recruteurTel = userInfo.telephone;
   }
 
-      console.log(' Payload envoyé:', payload);
 
       const response = await api.post('/talents/contact', payload);
 
-      console.log(' Réponse:', response.data);
 
       setSuccess(true);
 
@@ -752,7 +743,6 @@ const ContactTalentModal = ({ talent, onClose }) => {
         onClose();
       }, 2000);
     } catch (err) {
-      console.error(' Erreur contact:', err.response?.data || err.message);
       setError(extractErrorMessage(err, 'Erreur lors de l\'envoi de la demande'));
     } finally {
       setLoading(false);

@@ -22,10 +22,8 @@ const TalentDayDetail = () => {
       const response = await talentDayService.getTalentDayById(id);
       if (response.data.success) {
         setTalentDay(response.data.data);
-        console.log('TalentDay chargé:', response.data.data);
       }
     } catch (err) {
-      console.error('Erreur récupération TalentDay:', err);
       setError('Événement non trouvé');
     } finally {
       setLoading(false);

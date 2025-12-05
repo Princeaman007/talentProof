@@ -17,7 +17,6 @@ const Hero = () => {
         const response = await api.get('/public/stats');
         setStats(response.data.stats);
       } catch (error) {
-        console.error('Erreur chargement stats:', error);
         // Garde les valeurs par défaut en cas d'erreur
       } finally {
         setLoading(false);

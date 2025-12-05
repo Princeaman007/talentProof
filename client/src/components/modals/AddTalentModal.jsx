@@ -49,11 +49,9 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
       finalValue = value === '' ? '' : Number(value);
     }
     
-    console.log(` Changement de ${name}:`, value, '→', finalValue);
     
     setFormData(prevData => {
       const newData = { ...prevData, [name]: finalValue };
-      console.log(' FormData mis à jour:', newData);
       return newData;
     });
 
@@ -71,11 +69,9 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
     const options = Array.from(e.target.selectedOptions);
     const selected = options.map(option => option.value);
     
-    console.log(' Technologies sélectionnées:', selected);
     
     setFormData(prevData => {
       const newData = { ...prevData, technologies: selected };
-      console.log(' FormData mis à jour:', newData);
       return newData;
     });
   };
@@ -84,11 +80,9 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
     const options = Array.from(e.target.selectedOptions);
     const selected = options.map(option => option.value);
     
-    console.log(' Langues sélectionnées:', selected);
     
     setFormData(prevData => {
       const newData = { ...prevData, langues: selected };
-      console.log(' FormData mis à jour:', newData);
       return newData;
     });
   };
@@ -96,7 +90,6 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    console.log(' FormData avant validation:', formData);
     
     setLoading(true);
     setError('');
@@ -141,9 +134,6 @@ const AddTalentModal = ({ onClose, onSuccess }) => {
       onSuccess('Talent ajouté avec succès !');
       onClose();
     } catch (error) {
-      console.error(' Erreur complète:', error);
-      console.error(' Erreur response:', error.response);
-      console.error(' Erreur data:', error.response?.data);
       
       //  Afficher les erreurs de validation du backend
       if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {

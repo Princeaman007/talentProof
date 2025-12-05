@@ -36,7 +36,6 @@ router.get('/', async (req, res) => {
       data: projets
     });
   } catch (error) {
-    console.error('Erreur lors de la récupération du portfolio:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des projets',
@@ -70,7 +69,6 @@ router.get('/categories', async (req, res) => {
       data: categoriesAvecLabels
     });
   } catch (error) {
-    console.error('Erreur lors de la récupération des catégories:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des catégories',
@@ -100,7 +98,6 @@ router.get('/:id', async (req, res) => {
       data: projet
     });
   } catch (error) {
-    console.error('Erreur lors de la récupération du projet:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération du projet',
@@ -135,7 +132,6 @@ router.get('/stats/overview', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Erreur lors de la récupération des statistiques:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des statistiques',

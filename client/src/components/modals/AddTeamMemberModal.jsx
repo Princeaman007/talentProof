@@ -28,7 +28,6 @@ const AddTeamMemberModal = ({ onClose, onSuccess }) => {
     await api.post('/team', formData);
     onSuccess('Membre ajouté avec succès !');
   } catch (error) {
-    console.error('Erreur ajout:', error);
     setError(error?.error?.message || error?.message || 'Erreur lors de l\'ajout');
   } finally {
     setLoading(false);

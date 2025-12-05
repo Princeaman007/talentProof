@@ -21,7 +21,6 @@ const PortfolioSection = () => {
         ...response.data.data
       ]);
     } catch (error) {
-      console.error('Erreur chargement catégories:', error);
     }
   };
 
@@ -30,17 +29,11 @@ const PortfolioSection = () => {
     setLoading(true);
     const params = categorieActive !== 'tous' ? { categorie: categorieActive } : {};
     
-    console.log(' Paramètres de recherche:', params);
     const response = await api.get('/portfolio', { params });
     
-    console.log(' Réponse API:', response.data);
-    console.log(' Nombre de projets:', response.data.count);
-    console.log(' Projets reçus:', response.data.data);
     
     setProjets(response.data.data);
   } catch (error) {
-    console.error(' Erreur chargement projets:', error);
-    console.error(' Détails:', error.response?.data);
   } finally {
     setLoading(false);
   }

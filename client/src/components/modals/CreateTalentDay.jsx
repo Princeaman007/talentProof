@@ -271,7 +271,6 @@ const CreateTalentDay = ({ talentDay, isEditing, onClose, onSuccess }) => {
     } catch (err) {
       const errorMsg = err.response?.data?.message || err.message || 'Erreur lors de la sauvegarde';
       toast.error('Erreur: ' + errorMsg);
-      console.error(err);
     } finally {
       setLoading(false);
     }

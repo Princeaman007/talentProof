@@ -80,7 +80,6 @@ export const getAllContactRequests = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Erreur getAllContactRequests:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des demandes',
@@ -123,7 +122,6 @@ export const updateContactRequestStatus = async (req, res) => {
       contactRequest,
     });
   } catch (error) {
-    console.error('Erreur updateContactRequestStatus:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la mise à jour du statut',
@@ -153,7 +151,6 @@ export const deleteContactRequest = async (req, res) => {
       message: 'Demande de contact supprimée avec succès',
     });
   } catch (error) {
-    console.error('Erreur deleteContactRequest:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la suppression',

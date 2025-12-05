@@ -52,7 +52,6 @@ const DashboardEntreprise = () => {
     };
   }, []);
 
-  console.log('[DASHBOARD ENTREPRISE] Rendering:', {
     isAdmin,
     userEmail: user?.email,
     userRole: user?.role,

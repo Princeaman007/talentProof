@@ -17,7 +17,6 @@ import { asyncHandler } from '../utils/errorHandler.js';
  * @access  Private/Admin
  */
 export const createTalent = asyncHandler(async (req, res) => {
-  console.log(' Données reçues dans adminController:', req.body);
 
   const {
     prenom,
@@ -62,7 +61,6 @@ export const createTalent = asyncHandler(async (req, res) => {
     statut: statut || 'actif',
   });
 
-  console.log(' Talent créé avec succès:', talent);
 
   res.status(201).json({
     success: true,
@@ -92,8 +90,6 @@ export const getAllTalentsAdmin = asyncHandler(async (req, res) => {
  * @access  Private/Admin
  */
 export const updateTalent = asyncHandler(async (req, res) => {
-  console.log(' Mise à jour du talent:', req.params.id);
-  console.log(' Données reçues:', req.body);
 
   const talent = await Talent.findById(req.params.id);
 
@@ -145,7 +141,6 @@ export const updateTalent = asyncHandler(async (req, res) => {
 
   await talent.save();
 
-  console.log(' Talent mis à jour:', talent);
 
   res.status(200).json({
     success: true,

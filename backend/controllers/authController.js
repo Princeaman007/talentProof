@@ -50,8 +50,6 @@ export const register = asyncHandler(async (req, res) => {
   const confirmationLink = `${process.env.CLIENT_URL}/confirm-email/${confirmationToken}`;
 
   // Envoyer l'email de confirmation
-  console.log(' Tentative d\'envoi email de confirmation à:', email);
-  console.log(' Lien de confirmation:', confirmationLink);
   
   try {
     const simpleHtml = `
@@ -93,9 +91,7 @@ L'équipe TalentProof
       html: simpleHtml,
       text: simpleText,
     });
-    console.log(' Email de confirmation envoyé avec succès:', emailResult.messageId);
   } catch (emailError) {
-    console.error(' ERREUR CRITIQUE - Envoi email échoué:', {
       error: emailError.message,
       code: emailError.code,
       stack: emailError.stack,
@@ -224,7 +220,6 @@ export const login = asyncHandler(async (req, res) => {
     data: companyData,
   };
 
-  console.log(' [BACKEND] Envoi réponse login:', {
     hasToken: !!token,
     tokenLength: token?.length,
     success: responsePayload.success,
@@ -244,13 +239,11 @@ export const login = asyncHandler(async (req, res) => {
 export const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
-  console.log(' [FORGOT PASSWORD] Request received:', { email });
 
   // Trouver l'entreprise
   const company = await Company.findOne({ email });
 
   if (!company) {
-    console.log(' [FORGOT PASSWORD] Email not found:', email);
     // Ne pas révéler si l'email existe ou non (sécurité)
     return res.status(200).json({
       success: true,
@@ -258,13 +251,11 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     });
   }
 
-  console.log(' [FORGOT PASSWORD] Company found:', { id: company._id, nom: company.nom });
 
   // Générer un token de reset
   const resetToken = generateRandomToken();
   const hashedToken = hashToken(resetToken);
 
-  console.log(' [FORGOT PASSWORD] Token generated:', { 
     tokenLength: resetToken.length,
     hashedLength: hashedToken.length 
   });
@@ -274,16 +265,13 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   company.resetPasswordExpires = Date.now() + 3600000;
   await company.save();
 
-  console.log(' [FORGOT PASSWORD] Token saved to database');
 
   // Construire le lien de reset
   const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
-  console.log(' [FORGOT PASSWORD] Reset link:', resetLink);
 
   // Envoyer l'email
   try {
-    console.log(' [FORGOT PASSWORD] Attempting to send email...');
     
     // Utiliser un template HTML simple pour éviter le filtre anti-spam d'Infomaniak
     const simpleHtml = `
@@ -307,10 +295,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
       subject: 'Réinitialisation de votre mot de passe TalentProof',
       html: simpleHtml,
     });
-    console.log(' [FORGOT PASSWORD] Email sent successfully');
   } catch (emailError) {
-    console.error(' [FORGOT PASSWORD] Email error:', emailError);
-    console.error(' [FORGOT PASSWORD] Email error details:', {
       message: emailError.message,
       code: emailError.code,
       stack: emailError.stack
@@ -321,7 +306,6 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     throw internalError('Erreur lors de l\'envoi de l\'email de réinitialisation');
   }
 
-  console.log(' [FORGOT PASSWORD] Process completed successfully');
   res.status(200).json({
     success: true,
     message: 'Si cet email existe, un lien de réinitialisation a été envoyé.',
@@ -367,16 +351,13 @@ export const resetPassword = asyncHandler(async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
 
-  console.log(' [RESET PASSWORD] Request received with token:', token?.substring(0, 20) + '...');
 
   if (!token) {
-    console.error(' [RESET PASSWORD] Token missing');
     throw validationError('Token manquant');
   }
 
   // Hasher le token reçu
   const hashedToken = hashToken(token);
-  console.log(' [RESET PASSWORD] Token hashed');
 
   // Trouver l'entreprise avec ce token et vérifier l'expiration
   const company = await Company.findOne({
@@ -385,15 +366,12 @@ export const resetPassword = asyncHandler(async (req, res) => {
   });
 
   if (!company) {
-    console.error(' [RESET PASSWORD] Token invalid or expired');
     throw tokenInvalid('Token de réinitialisation invalide ou expiré');
   }
 
-  console.log(' [RESET PASSWORD] Company found:', company.nom);
 
   // Hasher le nouveau mot de passe
   const hashedPassword = await hashPassword(password);
-  console.log(' [RESET PASSWORD] New password hashed');
 
   // Mettre à jour le mot de passe et supprimer le token
   company.password = hashedPassword;
@@ -401,7 +379,6 @@ export const resetPassword = asyncHandler(async (req, res) => {
   company.resetPasswordExpires = null;
   await company.save();
 
-  console.log(' [RESET PASSWORD] Password updated successfully');
 
   res.status(200).json({
     success: true,
@@ -504,27 +481,22 @@ export const updateProfile = asyncHandler(async (req, res) => {
 export const changePassword = asyncHandler(async (req, res) => {
   const { currentPassword, newPassword } = req.body;
 
-  console.log(' [CHANGE PASSWORD] Request received for company:', req.company._id);
 
   // Récupérer l'entreprise avec le password
   const company = await Company.findById(req.company._id).select('+password');
 
   if (!company) {
-    console.error(' [CHANGE PASSWORD] Company not found');
     throw notFound('Entreprise');
   }
 
-  console.log(' [CHANGE PASSWORD] Company found:', company.nom);
 
   // Vérifier le mot de passe actuel
   const isPasswordValid = await comparePassword(currentPassword, company.password);
 
   if (!isPasswordValid) {
-    console.error(' [CHANGE PASSWORD] Current password is invalid');
     throw invalidCredentials('Mot de passe actuel incorrect');
   }
 
-  console.log(' [CHANGE PASSWORD] Current password validated');
 
   // Hasher le nouveau mot de passe
   const hashedPassword = await hashPassword(newPassword);
@@ -533,7 +505,6 @@ export const changePassword = asyncHandler(async (req, res) => {
   company.password = hashedPassword;
   await company.save();
 
-  console.log(' [CHANGE PASSWORD] Password updated successfully');
 
   res.status(200).json({
     success: true,

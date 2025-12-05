@@ -75,7 +75,6 @@ export const protect = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('Erreur middleware auth:', error);
     
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({

@@ -43,7 +43,6 @@ dotenv.config();
 const requiredEnvVars = ['MONGODB_URI', 'JWT_SECRET', 'CLIENT_URL'];
 const missingEnvVars = requiredEnvVars.filter(env => !process.env[env]);
 if (missingEnvVars.length > 0) {
-  console.error(' ERREUR: Variables d\'environnement manquantes:', missingEnvVars.join(', '));
   process.exit(1);
 }
 
@@ -124,7 +123,6 @@ if (isProd) {
 
 //  SÉCURITÉ: CORS restrictif (au lieu de cors() ouvert)
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000').split(',');
-console.log(' CORS allowedOrigins:', allowedOrigins);
 
 // CORS configuration with dynamic origin validation
 app.use(cors({
@@ -139,11 +137,9 @@ app.use(cors({
     
     // In production, also allow *.onrender.com domains
     if (process.env.NODE_ENV === 'production' && origin.endsWith('.onrender.com')) {
-      console.log(' Allowing Render domain:', origin);
       return callback(null, true);
     }
     
-    console.warn(' CORS blocked origin:', origin);
     callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
@@ -248,7 +244,6 @@ app.use(cookieParser());
 
 //  DEBUG: Log ALL incoming requests
 app.use((req, res, next) => {
-  console.log(` [${req.method}] ${req.path} - Origin: ${req.get('origin') || 'none'}`);
   next();
 });
 
@@ -326,9 +321,6 @@ app.use('/api-docs', swaggerUi.serve);
 app.get('/api-docs', swaggerUi.setup(swaggerSpec, { customCss: '.swagger-ui { max-width: 1200px; }' }));
 
 // MongoDB Connection with detailed logging and error handling
-console.log('[MONGODB] Attempting to connect...');
-console.log('[MONGODB] URI:', process.env.MONGODB_URI ? 'Set (hidden for security)' : 'NOT SET');
-console.log('[MONGODB] Connection timeout:', process.env.MONGO_TIMEOUT || '30000ms (default)');
 
 mongoose.connect(process.env.MONGODB_URI, {
   serverSelectionTimeoutMS: parseInt(process.env.MONGO_TIMEOUT) || 30000,
@@ -337,7 +329,6 @@ mongoose.connect(process.env.MONGODB_URI, {
   minPoolSize: 2,
 })
   .then(() => {
-    console.log('[MONGODB] Connected successfully');
     logger.info('MongoDB connecté', {
       host: mongoose.connection.host,
       name: mongoose.connection.name,
@@ -345,7 +336,6 @@ mongoose.connect(process.env.MONGODB_URI, {
     });
   })
   .catch((err) => {
-    console.error('[MONGODB] Connection FAILED:', {
       message: err.message,
       code: err.code,
       name: err.name
@@ -358,24 +348,20 @@ mongoose.connect(process.env.MONGODB_URI, {
     
     // Exit process if MongoDB connection fails in production
     if (process.env.NODE_ENV === 'production') {
-      console.error('[MONGODB] CRITICAL: Cannot start server without database connection');
       process.exit(1);
     }
   });
 
 // Monitor MongoDB connection events
 mongoose.connection.on('disconnected', () => {
-  console.warn('[MONGODB] Disconnected from database');
   logger.warn('MongoDB disconnected');
 });
 
 mongoose.connection.on('reconnected', () => {
-  console.log('[MONGODB] Reconnected to database');
   logger.info('MongoDB reconnected');
 });
 
 mongoose.connection.on('error', (err) => {
-  console.error('[MONGODB] Connection error:', err.message);
   logger.error('MongoDB error', { error: err.message });
 });
 
@@ -443,11 +429,6 @@ if (process.env.NODE_ENV !== 'test') {
       environment: process.env.NODE_ENV || 'development',
       mongoConnection: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
     });
-    console.log(` Serveur TalentProof démarré`);
-    console.log(` http://localhost:${PORT}`);
-    console.log(` Documentation API: http://localhost:${PORT}/api-docs`);
-    console.log(` Environnement: ${process.env.NODE_ENV || 'development'}`);
-    console.log(` Sécurité: Helmet activé, CORS restrictif, Rate-limiting actif`);
   });
 }
 

@@ -12,10 +12,8 @@ import { XCircle, AlertTriangle, Info } from 'lucide-react';
  */
 const ErrorMessage = ({ message, details = null, type = 'error', onClose = null }) => {
   // DEBUG: Logger pour diagnostiquer les problèmes d'affichage
-  console.log(' ErrorMessage - Props reçues:', { message, details, type }); // DEBUG
   
   if (!message && !details) {
-    console.log(' ErrorMessage - Aucun message/détails, return null'); // DEBUG
     return null;
   }
 

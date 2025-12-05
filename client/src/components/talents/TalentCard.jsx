@@ -50,7 +50,6 @@ const TalentCard = ({ talent, onContact }) => {
         setIsFavorite(true);
       }
     } catch (error) {
-      console.error('Erreur toggle favori:', error);
       toast.error('Erreur lors de la mise à jour des favoris');
     } finally {
       setLoadingFavorite(false);

@@ -41,7 +41,6 @@ const EditTeamMemberModal = ({ member, onClose, onSuccess }) => {
     await api.put(`/team/${member._id}`, formData);
     onSuccess('Membre modifié avec succès !');
   } catch (error) {
-    console.error('Erreur modification:', error);
     setError(error?.error?.message || error?.message || 'Erreur lors de la modification');
   } finally {
     setLoading(false);

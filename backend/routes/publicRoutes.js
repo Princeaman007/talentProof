@@ -23,7 +23,6 @@ router.get('/entreprises/count', publicStatsLimiter, async (req, res) => {
     });
     res.json({ count, message: "Nombre d'entreprises partenaires" });
   } catch (error) {
-    console.error('Erreur comptage entreprises:', error);
     res.status(500).json({ message: "Erreur lors de la récupération du nombre d'entreprises" });
   }
 });
@@ -33,7 +32,6 @@ router.get('/talents/count', publicStatsLimiter, async (req, res) => {
     const count = await Talent.countDocuments({ statut: 'actif' });
     res.json({ count, message: 'Nombre de talents validés' });
   } catch (error) {
-    console.error('Erreur comptage talents:', error);
     res.status(500).json({ message: "Erreur lors de la récupération du nombre de talents" });
   }
 });
@@ -64,7 +62,6 @@ router.get('/stats', publicStatsLimiter, async (req, res) => {
       message: 'Statistiques publiques de TalentProof'
     });
   } catch (error) {
-    console.error('Erreur récupération stats publiques:', error);
     res.status(500).json({ message: 'Erreur lors de la récupération des statistiques' });
   }
 });

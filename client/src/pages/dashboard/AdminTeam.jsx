@@ -25,7 +25,6 @@ const AdminTeam = () => {
       const response = await api.get('/team');
       setMembers(response.data.data || []);
     } catch (error) {
-      console.error('Erreur chargement équipe:', error);
       showMessage('error', 'Erreur lors du chargement de l\'équipe');
     } finally {
       setLoading(false);
@@ -65,7 +64,6 @@ const AdminTeam = () => {
           showMessage('success', 'Membre supprimé avec succès');
           fetchMembers();
         } catch (error) {
-          console.error('Erreur suppression:', error);
           showMessage('error', 'Erreur lors de la suppression');
         }
       }

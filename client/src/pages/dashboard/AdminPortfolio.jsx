@@ -36,12 +36,9 @@ const AdminPortfolio = () => {
   const fetchProjets = async () => {
     try {
       setLoading(true);
-      console.log(' Chargement des projets portfolio...');
       const response = await api.get('/admin/portfolio');
-      console.log(' Projets chargés:', response.data);
       setProjets(response.data.data);
     } catch (error) {
-      console.error(' Erreur chargement projets:', error);
       setMessage({ type: 'error', text: 'Erreur lors du chargement des projets' });
     } finally {
       setLoading(false);
@@ -169,7 +166,6 @@ const AdminPortfolio = () => {
       closeModal();
       setTimeout(() => setMessage({ type: '', text: '' }), 3000);
     } catch (error) {
-      console.error('Erreur:', error);
       setMessage({ 
         type: 'error', 
         text: error?.error?.message || error?.message || 'Une erreur est survenue' 
@@ -187,7 +183,6 @@ const AdminPortfolio = () => {
           fetchProjets();
           setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch (error) {
-          console.error('Erreur suppression:', error);
           setMessage({ type: 'error', text: 'Erreur lors de la suppression' });
         }
       }

@@ -23,7 +23,6 @@ const TalentDays = () => {
           setStats(response.data.data);
         }
       } catch (error) {
-        console.error('Erreur récupération stats:', error);
       }
     };
     fetchStats();
@@ -49,7 +48,6 @@ const TalentDays = () => {
           setFilteredTalentDays(response.data.data);
         }
       } catch (error) {
-        console.error('Erreur récupération TalentDays:', error);
       } finally {
         setLoading(false);
       }

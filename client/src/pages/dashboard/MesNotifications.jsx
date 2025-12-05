@@ -31,9 +31,7 @@ const MesNotifications = () => {
         unreadOnly: unreadOnly.toString(),
         limit: 20,
       };
-      console.log(' [NOTIFICATIONS] Fetching with params:', params);
       const response = await api.get('/entreprise/notifications', { params });
-      console.log(' [NOTIFICATIONS] Response:', {
         status: response.status,
         data: response.data,
         notificationsCount: response.data.notifications?.length,
@@ -42,9 +40,7 @@ const MesNotifications = () => {
 
       setNotifications(response.data.notifications);
       setUnreadCount(response.data.unreadCount);
-      console.log('[NOTIFICATIONS] Loaded', response.data.notifications?.length, 'notifications');
     } catch (error) {
-      console.error('[NOTIFICATIONS] Error:', error);
     } finally {
       setLoading(false);
     }
@@ -62,7 +58,6 @@ const MesNotifications = () => {
       );
       setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (error) {
-      console.error('Erreur marquage notification:', error);
     }
   };
 
@@ -76,7 +71,6 @@ const MesNotifications = () => {
       );
       setUnreadCount(0);
     } catch (error) {
-      console.error('Erreur marquage toutes notifications:', error);
       toast.error('Erreur lors du marquage');
     }
   };
@@ -95,7 +89,6 @@ const MesNotifications = () => {
             setUnreadCount((prev) => Math.max(0, prev - 1));
           }
         } catch (error) {
-          console.error('Erreur suppression notification:', error);
           toast.error('Erreur lors de la suppression');
         }
       }

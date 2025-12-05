@@ -171,7 +171,6 @@ router.get('/portfolio', async (req, res) => {
       data: projets
     });
   } catch (error) {
-    console.error('Erreur récupération portfolio:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération du portfolio',
@@ -237,7 +236,6 @@ router.post('/portfolio', upload.single('screenshot'), async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Erreur création projet:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la création du projet',
@@ -310,7 +308,6 @@ router.put('/portfolio/:id', upload.single('screenshot'), async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Erreur modification projet:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la modification du projet',
@@ -357,7 +354,6 @@ router.delete('/portfolio/:id', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Erreur suppression projet:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la suppression du projet',
@@ -394,7 +390,6 @@ router.get('/devis/stats/overview', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Erreur statistiques devis:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des statistiques',
@@ -430,7 +425,6 @@ router.get('/devis', async (req, res) => {
       data: devis
     });
   } catch (error) {
-    console.error('Erreur récupération devis:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des devis',
@@ -456,7 +450,6 @@ router.get('/devis/:id', async (req, res) => {
       data: devis
     });
   } catch (error) {
-    console.error('Erreur récupération devis:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération du devis',
@@ -493,7 +486,6 @@ router.put('/devis/:id', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Erreur mise à jour devis:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la mise à jour du devis',
@@ -520,7 +512,6 @@ router.delete('/devis/:id', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Erreur suppression devis:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la suppression du devis',

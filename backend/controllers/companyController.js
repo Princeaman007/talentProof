@@ -45,13 +45,10 @@ const calculateDuration = (heureDebut, heureFin) => {
  * @access  Public
  */
 export const createCompanyRegistration = asyncHandler(async (req, res) => {
-  console.log('[COMPANY REGISTRATION] Starting registration process');
-  console.log('[COMPANY REGISTRATION] Request body:', JSON.stringify(req.body, null, 2));
   
   // Vérifier les erreurs de validation
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error('[COMPANY REGISTRATION] Validation failed:', errors.array());
     throw validationError('Erreur de validation des données', errors.array().map(err => ({
       field: err.path || err.param,
       message: err.msg
@@ -60,14 +57,12 @@ export const createCompanyRegistration = asyncHandler(async (req, res) => {
 
   const { companyName, contactPerson, email, phone, website, interestedTalentDays, notes } = req.body;
   
-  console.log('[COMPANY REGISTRATION] Validation passed. Checking for existing company...');
 
   // Vérifier si l'entreprise existe déjà
   let existingCompany = await CompanyRegistration.findOne({ email });
   let company;
   
   if (existingCompany) {
-    console.log('[COMPANY REGISTRATION] Company already exists, adding new TalentDays...');
     
     // Ajouter uniquement les TalentDays qui ne sont pas déjà inscrits
     const newTalentDays = interestedTalentDays.filter(
@@ -75,7 +70,6 @@ export const createCompanyRegistration = asyncHandler(async (req, res) => {
     );
     
     if (newTalentDays.length === 0) {
-      console.warn('[COMPANY REGISTRATION] All TalentDays already registered for this email');
       throw new AppError(
         'Vous êtes déjà inscrit(e) à tous ces TalentDays',
         'ALREADY_REGISTERED',
@@ -92,9 +86,7 @@ export const createCompanyRegistration = asyncHandler(async (req, res) => {
     if (notes) existingCompany.notes = notes;
     
     company = await existingCompany.save();
-    console.log('[COMPANY REGISTRATION] Company updated with new TalentDays. Total:', company.interestedTalentDays.length);
   } else {
-    console.log('[COMPANY REGISTRATION] New company, creating registration...');
     
     // Créer une nouvelle inscription
     company = await CompanyRegistration.create({
@@ -107,17 +99,14 @@ export const createCompanyRegistration = asyncHandler(async (req, res) => {
       notes,
       user: req.user?._id,
     });
-    console.log('[COMPANY REGISTRATION] Company created successfully. ID:', company._id);
   }
 
   // Populer les TalentDays avec tous les détails
-  console.log('[COMPANY REGISTRATION] Populating TalentDays...');
   await company.populate({
     path: 'interestedTalentDays',
     select: 'titre description date heureDebut heureFin lieu technologies placesDisponibles typeEvenement niveauRequis organisateur'
   });
   
-  console.log('[COMPANY REGISTRATION] TalentDays populated. Count:', company.interestedTalentDays.length);
 
   // Fonction helper pour formater les détails d'un TalentDay
   const formatTalentDayDetails = (td) => {
@@ -190,7 +179,6 @@ export const createCompanyRegistration = asyncHandler(async (req, res) => {
   };
 
   //  NOUVEAU : Envoyer email professionnel avec logo TalentProof
-  console.log('[COMPANY REGISTRATION] Sending confirmation email to company...');
   try {
     const companyInfo = {
       companyName,
@@ -205,9 +193,7 @@ export const createCompanyRegistration = asyncHandler(async (req, res) => {
       subject: ' Inscription TalentDay confirmée - TalentProof',
       html: companyTalentDayRegistrationTemplate(companyInfo, company.interestedTalentDays),
     });
-    console.log('[COMPANY REGISTRATION] Confirmation email sent successfully to:', email);
   } catch (emailError) {
-    console.error('[COMPANY REGISTRATION] Error sending confirmation email:', {
       error: emailError.message,
       stack: emailError.stack,
       recipient: email
@@ -216,7 +202,6 @@ export const createCompanyRegistration = asyncHandler(async (req, res) => {
   }
 
   // Envoyer notification à l'admin
-  console.log('[COMPANY REGISTRATION] Sending notification email to admin...');
   try {
     await sendEmail({
       to: process.env.ADMIN_EMAIL || 'admin@talentproof.com',
@@ -248,16 +233,13 @@ export const createCompanyRegistration = asyncHandler(async (req, res) => {
         </div>
       `,
     });
-    console.log('[COMPANY REGISTRATION] Admin notification email sent successfully');
   } catch (emailError) {
-    console.error('[COMPANY REGISTRATION] Error sending admin notification:', {
       error: emailError.message,
       stack: emailError.stack
     });
     // Continue even if email fails
   }
 
-  console.log('[COMPANY REGISTRATION] Registration process completed successfully');
   res.status(201).json({
     success: true,
     message: 'Inscription enregistrée avec succès. Vous recevrez un email de confirmation.',
@@ -559,7 +541,6 @@ export const updateCompanyStatus = asyncHandler(async (req, res) => {
           html: emailContent,
         });
       } catch (emailError) {
-        console.error('Erreur envoi email statut:', emailError);
       }
     }
 
@@ -650,7 +631,6 @@ export const bookTalentMeeting = asyncHandler(async (req, res) => {
         `,
       });
     } catch (emailError) {
-      console.error('Erreur envoi email talent:', emailError);
     }
 
     // Envoyer confirmation à l'entreprise
@@ -677,7 +657,6 @@ export const bookTalentMeeting = asyncHandler(async (req, res) => {
         `,
       });
     } catch (emailError) {
-      console.error('Erreur envoi email confirmation:', emailError);
     }
 
     await company.populate('meetingRequests.talent', 'nom prenom email');

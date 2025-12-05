@@ -7,12 +7,10 @@ dotenv.config();
 // Create and return a transporter according to environment flags
 export const createTransporter = async () => {
   if (process.env.SKIP_EMAILS === 'true' || process.env.EMAIL_TEST_MODE === 'noop') {
-    console.log(' Email: using noop/jsonTransport (emails will not be sent)');
     return nodemailer.createTransport({ jsonTransport: true });
   }
 
   if (process.env.NODE_ENV === 'test' || process.env.EMAIL_TEST_MODE === 'ethereal') {
-    console.log(' Email: using Ethereal test account for NODE_ENV=test');
     const testAccount = await nodemailer.createTestAccount();
     return nodemailer.createTransport({
       host: testAccount.smtp.host,
@@ -25,13 +23,6 @@ export const createTransporter = async () => {
   const port = parseInt(process.env.EMAIL_PORT, 10) || 587;
   const secureFlag = (process.env.EMAIL_SECURE === 'true') || port === 465;
   const tlsRejectUnauthorized = process.env.EMAIL_ALLOW_INVALID_CERT === 'true' ? false : true;
-
-  console.log(' Configuration Email:', {
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    user: process.env.EMAIL_USER,
-    passLength: process.env.EMAIL_PASS?.length,
-  });
 
   return nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
@@ -60,9 +51,6 @@ export const createTransporter = async () => {
  */
 export const sendMailImmediate = async ({ to, subject, html, text }) => {
   if (process.env.SKIP_EMAILS === 'true') {
-    console.log(' Mode dev: Email non envoyé');
-    console.log(' Destinataire:', to);
-    console.log(' Sujet:', subject);
     return { success: true, messageId: 'dev-mode-skipped' };
   }
 
@@ -89,7 +77,6 @@ export const sendMailImmediate = async ({ to, subject, html, text }) => {
 export const sendEmail = async ({ to, subject, html, text }) => {
   // If explicitly skipping emails, short-circuit
   if (process.env.SKIP_EMAILS === 'true' || process.env.EMAIL_TEST_MODE === 'noop') {
-    console.log(' Mode dev/CI: Email non envoyé');
     return { success: true, messageId: 'dev-mode-skipped' };
   }
 
@@ -102,7 +89,6 @@ export const sendEmail = async ({ to, subject, html, text }) => {
       await enqueueEmail({ to, subject, html, text });
       return { success: true, queued: true };
     } catch (err) {
-      console.error(' Failed to enqueue email job, falling back to immediate send:', err?.message || err);
       // fall through to immediate send
     }
   }

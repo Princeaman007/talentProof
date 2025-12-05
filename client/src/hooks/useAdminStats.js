@@ -21,7 +21,6 @@ export const useAdminStats = () => {
       const response = await api.get('/admin/stats');
       setStats(response.data.stats);
     } catch (err) {
-      console.error('Erreur récupération stats:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -67,7 +66,6 @@ export const usePublicStats = () => {
         demandesTraitees: response.data.stats.demandesTraitees || 0,
       });
     } catch (err) {
-      console.error('Erreur récupération stats publiques:', err);
       setError(err.message);
       // Valeurs par défaut en cas d'erreur
       setStats({
@@ -111,7 +109,6 @@ export const useTimeline = (period = '6m') => {
       const response = await api.get(`/admin/stats/timeline?period=${period}`);
       setTimeline(response.data.timeline);
     } catch (err) {
-      console.error('Erreur récupération timeline:', err);
       setError(err.message);
     } finally {
       setLoading(false);

@@ -23,10 +23,8 @@ async function loginAsAdmin() {
       }
     );
     
-    console.log(' Connexion admin réussie');
     return response.headers['set-cookie'];
   } catch (error) {
-    console.error(' Erreur de connexion:', error.response?.data || error.message);
     throw error;
   }
 }
@@ -75,9 +73,6 @@ async function createTalentDayWithImage(cookies) {
       }
     );
     
-    console.log(' TalentDay créé avec succès!');
-    console.log(' Image URL:', response.data.talentDay.image);
-    console.log(' Détails:', {
       id: response.data.talentDay._id,
       titre: response.data.talentDay.titre,
       image: response.data.talentDay.image
@@ -88,7 +83,6 @@ async function createTalentDayWithImage(cookies) {
     
     return response.data.talentDay;
   } catch (error) {
-    console.error(' Erreur de création:', error.response?.data || error.message);
     throw error;
   }
 }
@@ -99,18 +93,13 @@ async function verifyImageAccess(imageUrl) {
     const fullUrl = `http://localhost:5000${imageUrl}`;
     const response = await axios.get(fullUrl, { responseType: 'arraybuffer' });
     
-    console.log(' Image accessible!');
-    console.log(' Taille:', response.data.length, 'bytes');
-    console.log(' Content-Type:', response.headers['content-type']);
   } catch (error) {
-    console.error(' Image non accessible:', error.message);
     throw error;
   }
 }
 
 // Exécution du test
 async function runTest() {
-  console.log(' Début du test d\'upload d\'image TalentDay\n');
   
   try {
     // 1. Connexion
@@ -122,9 +111,7 @@ async function runTest() {
     // 3. Vérification de l'accès à l'image
     await verifyImageAccess(talentDay.image);
     
-    console.log('\n Test terminé avec succès!');
   } catch (error) {
-    console.error('\n Test échoué:', error.message);
     process.exit(1);
   }
 }

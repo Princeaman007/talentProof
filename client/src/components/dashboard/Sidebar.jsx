@@ -32,7 +32,6 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(() => {
     const width = window.innerWidth;
     const shouldOpen = width >= 1024 || localStorage.getItem('justLoggedIn') === 'true';
-    console.log(' [SIDEBAR] Initial state:', { width, shouldOpen, justLoggedIn: localStorage.getItem('justLoggedIn') });
     return shouldOpen;
   });
   
@@ -44,7 +43,6 @@ const Sidebar = () => {
 
   // Ajuster isOpen selon la taille de l'écran
   useEffect(() => {
-    console.log(' [SIDEBAR] Component mounted', {
       isOpen,
       width: window.innerWidth,
       user: user?.email,
@@ -53,7 +51,6 @@ const Sidebar = () => {
     
     // Si on vient de se connecter, ouvrir la sidebar et nettoyer le flag
     if (localStorage.getItem('justLoggedIn') === 'true') {
-      console.log(' [SIDEBAR] Just logged in, opening sidebar');
       setIsOpen(true);
       localStorage.removeItem('justLoggedIn');
     }
@@ -61,7 +58,6 @@ const Sidebar = () => {
     const handleResize = () => {
       const width = window.innerWidth;
       if (width >= 1024 && !isOpen) {
-        console.log(' [SIDEBAR] Auto-opening on large screen:', width);
         setIsOpen(true);
       }
     };
@@ -71,13 +67,11 @@ const Sidebar = () => {
   }, [isOpen, user, isAdmin]);
 
   const handleLogout = () => {
-    console.log(' [SIDEBAR] Logging out...');
     logout();
     navigate('/login');
   };
 
   const toggleSidebar = () => {
-    console.log(' [SIDEBAR] Toggling sidebar:', !isOpen);
     setIsOpen(!isOpen);
   };
   
@@ -86,7 +80,6 @@ const Sidebar = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
     localStorage.setItem('sidebarCollapsed', newState.toString());
-    console.log(' [SIDEBAR] Toggling collapsed:', newState);
   };
 
   const menuItems = [

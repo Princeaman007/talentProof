@@ -63,9 +63,7 @@ router.post('/', async (req, res) => {
         subject: `[TalentProof Contact] ${contactInfo.sujet}`,
         html: generalContactNotificationTemplate(contactInfo),
       });
-      console.log(' Email de notification envoyé à Prince');
     } catch (emailError) {
-      console.error(' Erreur envoi email notification:', emailError);
       // On continue quand même pour envoyer la confirmation à l'utilisateur
     }
 
@@ -76,9 +74,7 @@ router.post('/', async (req, res) => {
         subject: 'Message bien reçu - TalentProof',
         html: generalContactConfirmationTemplate(contactInfo.nom),
       });
-      console.log(' Email de confirmation envoyé à l\'expéditeur');
     } catch (emailError) {
-      console.error(' Erreur envoi email confirmation:', emailError);
       // On ne bloque pas la réponse même si l'email de confirmation échoue
     }
 
@@ -89,7 +85,6 @@ router.post('/', async (req, res) => {
     });
 
   } catch (error) {
-    console.error(' Erreur dans la route contact:', error);
     res.status(500).json({
       success: false,
       message: 'Une erreur est survenue lors de l\'envoi du message. Veuillez réessayer.',

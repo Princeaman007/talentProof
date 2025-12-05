@@ -3,13 +3,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 async function testEmailSend() {
-  console.log(' Configuration Email:');
-  console.log('HOST:', process.env.EMAIL_HOST);
-  console.log('PORT:', process.env.EMAIL_PORT);
-  console.log('USER:', process.env.EMAIL_USER);
-  console.log('FROM:', process.env.EMAIL_FROM);
-  console.log('CLIENT_URL:', process.env.CLIENT_URL);
-  console.log('');
 
   // Créer le transporteur
   const transporter = nodemailer.createTransport({
@@ -25,16 +18,12 @@ async function testEmailSend() {
     }
   });
 
-  console.log(' Test 1: Vérification de la connexion SMTP...');
   try {
     await transporter.verify();
-    console.log(' Connexion SMTP réussie!\n');
   } catch (error) {
-    console.error(' Erreur de connexion SMTP:', error.message);
     return;
   }
 
-  console.log(' Test 2: Envoi email de confirmation...');
   try {
     const confirmationToken = 'test-token-123';
     const confirmationLink = `${process.env.CLIENT_URL}/confirm-email/${confirmationToken}`;
@@ -57,12 +46,9 @@ async function testEmailSend() {
         </div>
       `
     });
-    console.log(' Email de confirmation envoyé!\n');
   } catch (error) {
-    console.error(' Erreur envoi confirmation:', error.message);
   }
 
-  console.log(' Test 3: Envoi email de réinitialisation...');
   try {
     const resetToken = 'test-reset-token-456';
     const resetLink = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
@@ -85,12 +71,9 @@ async function testEmailSend() {
         </div>
       `
     });
-    console.log(' Email de réinitialisation envoyé!\n');
   } catch (error) {
-    console.error(' Erreur envoi reset:', error.message);
   }
 
-  console.log(' Tests terminés! Vérifiez votre boîte mail:', process.env.EMAIL_USER);
 }
 
 testEmailSend().catch(console.error);

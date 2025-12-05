@@ -24,7 +24,6 @@ const AdminDevis = () => {
       const response = await api.get('/admin/devis', { params });
       setDevis(response.data.data);
     } catch (error) {
-      console.error('Erreur chargement devis:', error);
       setMessage({ type: 'error', text: 'Erreur lors du chargement des devis' });
     } finally {
       setLoading(false);
@@ -36,7 +35,6 @@ const AdminDevis = () => {
       const response = await api.get('/admin/devis/stats/overview');
       setStats(response.data.data);
     } catch (error) {
-      console.error('Erreur stats:', error);
     }
   };
 
@@ -58,7 +56,6 @@ const AdminDevis = () => {
       fetchStats();
       setTimeout(() => setMessage({ type: '', text: '' }), 3000);
     } catch (error) {
-      console.error('Erreur mise à jour:', error);
       setMessage({ type: 'error', text: 'Erreur lors de la mise à jour' });
     }
   };
@@ -70,7 +67,6 @@ const AdminDevis = () => {
       fetchDevis();
       setTimeout(() => setMessage({ type: '', text: '' }), 3000);
     } catch (error) {
-      console.error('Erreur mise à jour:', error);
       setMessage({ type: 'error', text: 'Erreur lors de la mise à jour' });
     }
   };
@@ -86,7 +82,6 @@ const AdminDevis = () => {
           fetchStats();
           setTimeout(() => setMessage({ type: '', text: '' }), 3000);
         } catch (error) {
-          console.error('Erreur suppression:', error);
           setMessage({ type: 'error', text: 'Erreur lors de la suppression' });
         }
       }

@@ -88,7 +88,6 @@ router.get('/', async (req, res) => {
       data: talentDays,
     });
   } catch (error) {
-    console.error('Erreur récupération TalentDays:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des événements',
@@ -121,7 +120,6 @@ router.get('/upcoming', async (req, res) => {
       data: talentDays,
     });
   } catch (error) {
-    console.error('Erreur récupération prochains TalentDays:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des événements',
@@ -154,7 +152,6 @@ router.get('/past', async (req, res) => {
       data: talentDays,
     });
   } catch (error) {
-    console.error('Erreur récupération TalentDays passés:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des événements',
@@ -325,9 +322,7 @@ router.post('/:id/register', async (req, res) => {
         subject: ` Inscription confirmée - ${updatedTalentDay.titre}`,
         html: emailHtml,
       });
-      console.log(' Email de confirmation envoyé à:', inscriptionData.email);
     } catch (emailError) {
-      console.error(' Erreur envoi email:', emailError);
       // Ne pas bloquer l'inscription si l'email échoue
     }
     
@@ -336,7 +331,6 @@ router.post('/:id/register', async (req, res) => {
       message: 'Inscription enregistrée avec succès ! Vous recevrez une confirmation par email.',
     });
   } catch (error) {
-    console.error('Erreur inscription TalentDay:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de l\'inscription',
@@ -379,7 +373,6 @@ router.get('/stats/general', async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Erreur récupération stats:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des statistiques',
@@ -406,7 +399,6 @@ router.get('/admin/all', protect, adminOnly, async (req, res) => {
       data: talentDays,
     });
   } catch (error) {
-    console.error('Erreur récupération TalentDays admin:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des événements',
@@ -450,14 +442,12 @@ router.post('/', protect, adminOnly, uploadTalentDayImage.single('image'), async
       try {
         talentDayData.infoEntreprises = JSON.parse(talentDayData.infoEntreprises);
       } catch (e) {
-        console.error('Erreur parsing infoEntreprises:', e);
       }
     }
     if (typeof talentDayData.organisateur === 'string') {
       try {
         talentDayData.organisateur = JSON.parse(talentDayData.organisateur);
       } catch (e) {
-        console.error('Erreur parsing organisateur:', e);
       }
     }
     
@@ -469,7 +459,6 @@ router.post('/', protect, adminOnly, uploadTalentDayImage.single('image'), async
       data: talentDay,
     });
   } catch (error) {
-    console.error('Erreur création TalentDay:', error);
     res.status(400).json({
       success: false,
       message: error.message || 'Erreur lors de la création',
@@ -527,14 +516,12 @@ router.put('/:id', protect, adminOnly, uploadTalentDayImage.single('image'), asy
       try {
         updateData.infoEntreprises = JSON.parse(updateData.infoEntreprises);
       } catch (e) {
-        console.error('Erreur parsing infoEntreprises:', e);
       }
     }
     if (typeof updateData.organisateur === 'string') {
       try {
         updateData.organisateur = JSON.parse(updateData.organisateur);
       } catch (e) {
-        console.error('Erreur parsing organisateur:', e);
       }
     }
     
@@ -550,7 +537,6 @@ router.put('/:id', protect, adminOnly, uploadTalentDayImage.single('image'), asy
       data: talentDay,
     });
   } catch (error) {
-    console.error('Erreur modification TalentDay:', error);
     res.status(400).json({
       success: false,
       message: error.message || 'Erreur lors de la modification',
@@ -579,7 +565,6 @@ router.delete('/:id', protect, adminOnly, async (req, res) => {
       message: 'TalentDay supprimé avec succès',
     });
   } catch (error) {
-    console.error('Erreur suppression TalentDay:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la suppression',
@@ -609,7 +594,6 @@ router.get('/:id/inscriptions', protect, adminOnly, async (req, res) => {
       data: talentDay.inscriptions,
     });
   } catch (error) {
-    console.error('Erreur récupération inscriptions:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des inscriptions',
@@ -725,10 +709,8 @@ router.put('/:id/inscriptions/:inscriptionIndex', protect, adminOnly, async (req
           html: emailHtml,
         });
         
-        console.log(` Email de ${statut} envoyé à:`, inscription.email);
         emailEnvoye = true;
       } catch (emailError) {
-        console.error(' Erreur envoi email:', emailError);
         // Ne pas bloquer la mise à jour si l'email échoue
       }
     }
@@ -762,7 +744,6 @@ router.put('/:id/inscriptions/:inscriptionIndex', protect, adminOnly, async (req
       emailEnvoye: emailEnvoye,
     });
   } catch (error) {
-    console.error('Erreur mise à jour statut inscription:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la mise à jour du statut',
@@ -800,7 +781,6 @@ router.get('/:id', async (req, res) => {
       data: talentDay,
     });
   } catch (error) {
-    console.error('Erreur récupération TalentDay:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération de l\'événement',

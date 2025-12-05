@@ -1,7 +1,6 @@
 import { sendEmail } from './utils/emailService.js';
 import 'dotenv/config';
 
-console.log('\n TEST EMAIL INFOMANIAK\n');
 
 const testEmail = {
   to: 'info@princeaman.dev',
@@ -15,15 +14,8 @@ const testEmail = {
   text: 'Test de connexion SMTP'
 };
 
-console.log(` Envoi email de test vers ${testEmail.to}...`);
-console.log(`  Port configuré : ${process.env.EMAIL_PORT}`);
 
 try {
   const result = await sendEmail(testEmail);
-  console.log('\n EMAIL ENVOYÉ AVEC SUCCÈS !');
-  console.log('Message ID:', result.messageId);
 } catch (error) {
-  console.log('\n ÉCHEC ENVOI EMAIL');
-  console.error('Erreur:', error.message);
-  console.error('Code:', error.code);
 }

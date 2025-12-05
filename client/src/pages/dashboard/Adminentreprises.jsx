@@ -50,7 +50,6 @@ const AdminEntreprises = () => {
       setEntreprises(response.data.entreprises);
       setPagination(response.data.pagination);
     } catch (error) {
-      console.error('Erreur récupération entreprises:', error);
     } finally {
       setLoading(false);
     }
@@ -77,7 +76,6 @@ const AdminEntreprises = () => {
       setSelectedEntreprise(null);
       fetchEntreprises();
     } catch (error) {
-      console.error('Erreur suspension:', error);
       toast.error('Erreur lors de la suspension');
     }
   };
@@ -91,7 +89,6 @@ const AdminEntreprises = () => {
           toast.success('Entreprise réactivée avec succès');
           fetchEntreprises();
         } catch (error) {
-          console.error('Erreur activation:', error);
           toast.error('Erreur lors de la réactivation');
         }
       }

@@ -4,17 +4,14 @@ import Talentday from '../models/Talentday.js';
 const addInfoEntreprises = async () => {
   try {
     await mongoose.connect('mongodb://localhost:27017/talentproof');
-    console.log(' Connecté à MongoDB');
 
     // Trouver le TalentDay "Test Dev"
     const talentDay = await Talentday.findOne({ titre: /Test Dev/i });
     
     if (!talentDay) {
-      console.log(' TalentDay "Test Dev" non trouvé');
       process.exit(1);
     }
 
-    console.log(' TalentDay trouvé:', talentDay.titre);
 
     // Ajouter les informations entreprises
     talentDay.infoEntreprises = {
@@ -61,18 +58,9 @@ const addInfoEntreprises = async () => {
     };
 
     await talentDay.save();
-    console.log(' Informations entreprises ajoutées avec succès !');
-    console.log('\n Détails:');
-    console.log('- Titre:', talentDay.infoEntreprises.titre);
-    console.log('- Avantages:', talentDay.infoEntreprises.avantages.length);
-    console.log('- Profils:', talentDay.infoEntreprises.profils.length);
-    console.log('- Formats:', talentDay.infoEntreprises.formats.length);
-    console.log('- Tarif:', talentDay.infoEntreprises.tarif);
-    console.log('- Places:', talentDay.infoEntreprises.placesEntreprises);
 
     process.exit(0);
   } catch (error) {
-    console.error(' Erreur:', error);
     process.exit(1);
   }
 };

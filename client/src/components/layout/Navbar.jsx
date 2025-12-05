@@ -28,7 +28,6 @@ const Navbar = () => {
       setUnreadCount(response.data.unreadCount);
     } catch (error) {
       // Silencieux - pas grave si ça échoue
-      console.error('Erreur récupération notifications:', error);
     }
   };
 

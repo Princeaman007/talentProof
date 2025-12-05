@@ -128,9 +128,6 @@ const mockTalentDayHybrid = {
 // ═══════════════════════════════════════════════════════════════════════
 
 const runTests = async () => {
-  console.log('\n' + '═'.repeat(70));
-  console.log(' TESTS DU NOUVEAU SYSTÈME D\'EMAILS AVEC VRAIES DONNÉES');
-  console.log('═'.repeat(70) + '\n');
   
   const results = {
     success: 0,
@@ -140,12 +137,9 @@ const runTests = async () => {
   
   // Test 1: Bienvenue Talent
   try {
-    console.log(' Test 1/7: Email de bienvenue TALENT...');
     await sendWelcomeTalentEmail(mockTalent);
-    console.log(' Test 1 - Bienvenue Talent - Email envoyé avec succès\n');
     results.success++;
   } catch (error) {
-    console.error(' Test 1 échoué:', error.message);
     results.failed++;
     results.errors.push({ test: 'Bienvenue Talent', error: error.message });
   }
@@ -154,12 +148,9 @@ const runTests = async () => {
   
   // Test 2: Bienvenue Entreprise
   try {
-    console.log(' Test 2/7: Email de bienvenue ENTREPRISE...');
     await sendWelcomeCompanyEmail(mockCompany);
-    console.log(' Test 2 - Bienvenue Entreprise - Email envoyé avec succès\n');
     results.success++;
   } catch (error) {
-    console.error(' Test 2 échoué:', error.message);
     results.failed++;
     results.errors.push({ test: 'Bienvenue Entreprise', error: error.message });
   }
@@ -168,16 +159,10 @@ const runTests = async () => {
   
   // Test 3: Confirmation TalentDay (lieu physique)
   try {
-    console.log(' Test 3/7: Confirmation TalentDay (LIEU PHYSIQUE)...');
-    console.log(`    Lieu: ${mockTalentDay.lieu.adresse}, ${mockTalentDay.lieu.ville}`);
-    console.log(`    Date: ${mockTalentDay.date.toLocaleDateString('fr-FR')}`);
-    console.log(`    Places: ${mockTalentDay.placesDisponibles - mockTalentDay.inscriptions.length}/${mockTalentDay.placesDisponibles}`);
     
     await sendTalentDayConfirmationEmail(mockTalent, mockTalentDay, mockInscription);
-    console.log(' Test 3 - Confirmation TalentDay Physique - Email envoyé avec succès\n');
     results.success++;
   } catch (error) {
-    console.error(' Test 3 échoué:', error.message);
     results.failed++;
     results.errors.push({ test: 'Confirmation TalentDay Physique', error: error.message });
   }
@@ -186,15 +171,10 @@ const runTests = async () => {
   
   // Test 4: Confirmation TalentDay (en ligne)
   try {
-    console.log(' Test 4/7: Confirmation TalentDay (EN LIGNE)...');
-    console.log(`    Type: ${mockTalentDayOnline.lieu.type}`);
-    console.log(`    Date: ${mockTalentDayOnline.date.toLocaleDateString('fr-FR')}`);
     
     await sendTalentDayConfirmationEmail(mockTalent, mockTalentDayOnline, mockInscription);
-    console.log(' Test 4 - Confirmation TalentDay Online - Email envoyé avec succès\n');
     results.success++;
   } catch (error) {
-    console.error(' Test 4 échoué:', error.message);
     results.failed++;
     results.errors.push({ test: 'Confirmation TalentDay Online', error: error.message });
   }
@@ -203,16 +183,10 @@ const runTests = async () => {
   
   // Test 5: Notification Entreprise (nouvelle candidature)
   try {
-    console.log(' Test 5/7: Notification ENTREPRISE (nouvelle candidature)...');
-    console.log(`    Talent: ${mockTalent.prenom} ${mockTalent.nom}`);
-    console.log(`    Technologies: ${mockTalent.technologies.join(', ')}`);
-    console.log(`    Envoi à: ${mockTalentDay.organisateur.email}`);
     
     await sendCompanyNewApplicationEmail(mockTalent, mockTalentDay, mockInscription);
-    console.log(' Test 5 - Notification Entreprise - Email envoyé avec succès\n');
     results.success++;
   } catch (error) {
-    console.error(' Test 5 échoué:', error.message);
     results.failed++;
     results.errors.push({ test: 'Notification Entreprise', error: error.message });
   }
@@ -221,13 +195,10 @@ const runTests = async () => {
   
   // Test 6: Reset Password
   try {
-    console.log(' Test 6/7: Email de RÉINITIALISATION MOT DE PASSE...');
     const resetToken = 'test-reset-token-123456';
     await sendResetPasswordEmail(mockTalent, resetToken);
-    console.log(' Test 6 - Reset Password - Email envoyé avec succès\n');
     results.success++;
   } catch (error) {
-    console.error(' Test 6 échoué:', error.message);
     results.failed++;
     results.errors.push({ test: 'Reset Password', error: error.message });
   }
@@ -236,14 +207,11 @@ const runTests = async () => {
   
   // Test 7: Contact Talent (Entreprise → Admin)
   try {
-    console.log(' Test 7/7: Notification CONTACT TALENT (Entreprise → Admin)...');
     const message = 'Bonjour, je souhaite entrer en contact avec ce talent pour discuter d\'une opportunité au sein de notre équipe. Quand pouvons-nous organiser un premier échange ?';
     
     await sendContactTalentNotificationEmail(mockTalent, mockCompany, message);
-    console.log(' Test 7 - Contact Talent - Email envoyé avec succès\n');
     results.success++;
   } catch (error) {
-    console.error(' Test 7 échoué:', error.message);
     results.failed++;
     results.errors.push({ test: 'Contact Talent', error: error.message });
   }
@@ -252,45 +220,16 @@ const runTests = async () => {
   // RÉSULTATS FINAUX
   // ═══════════════════════════════════════════════════════════════════════
   
-  console.log('\n' + '═'.repeat(70));
-  console.log(' RÉSULTATS DES TESTS');
-  console.log('═'.repeat(70));
-  console.log(` Tests réussis: ${results.success}/7`);
-  console.log(` Tests échoués: ${results.failed}/7`);
-  console.log('═'.repeat(70) + '\n');
   
   if (results.failed > 0) {
-    console.log(' ERREURS DÉTECTÉES:\n');
     results.errors.forEach((err, index) => {
-      console.log(`${index + 1}. ${err.test}:`);
-      console.log(`   ${err.error}\n`);
     });
   } else {
-    console.log(' TOUS LES TESTS SONT PASSÉS !\n');
-    console.log(' Le système d\'emails utilise maintenant les VRAIES DONNÉES MongoDB:');
-    console.log('  - Lieux complets (adresse, ville, code postal)');
-    console.log('  - Dates formatées en français lisible');
-    console.log('  - Places disponibles calculées dynamiquement');
-    console.log('  - Descriptions complètes des événements');
-    console.log('  - Profils talents complets (technologies, scores, etc.)');
-    console.log('  - Gestion des 3 types de lieux (physique, en ligne, hybride)');
   }
   
-  console.log('\n VÉRIFICATIONS À FAIRE:');
-  console.log('  1.  Vérifiez votre boîte email: info@princeaman.dev');
-  console.log('  2.  Vérifiez le dossier SPAM si nécessaire');
-  console.log('  3.  Confirmez que les VRAIES DONNÉES apparaissent:');
-  console.log('     - Adresses complètes (pas "À confirmer")');
-  console.log('     - Dates formatées (pas de timestamp ISO)');
-  console.log('     - Places dynamiques (17/20, pas statique)');
-  console.log('     - Descriptions complètes des événements');
-  console.log('  4.  Vérifiez que le logo TalentProof s\'affiche');
-  console.log('  5.  Testez les liens (boutons CTA)');
-  console.log('\n Tests terminés\n');
 };
 
 // Lancer les tests
 runTests().catch(error => {
-  console.error('\n ERREUR CRITIQUE:', error);
   process.exit(1);
 });

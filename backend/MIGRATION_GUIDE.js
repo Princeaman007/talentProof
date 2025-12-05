@@ -55,7 +55,6 @@ export const login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
     res.status(500).json({ success: false, message: 'Server error' });
   }
 };
@@ -169,7 +168,6 @@ export const getAllTalents = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ success: false, message: 'Error' });
   }
 };

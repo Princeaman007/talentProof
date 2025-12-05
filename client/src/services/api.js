@@ -33,7 +33,6 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // LOG REQUEST CONFIG
-    console.log('[API REQUEST]', {
       method: config.method?.toUpperCase(),
       url: config.url,
       baseURL: config.baseURL,
@@ -48,13 +47,11 @@ api.interceptors.request.use(
     const token = localStorage.getItem('token');
     if (token && !config.headers.Authorization) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log(' [TOKEN ADDED]', token.substring(0, 20) + '...');
     }
     
     return config;
   },
   (error) => {
-    console.error('[API REQUEST ERROR]', error);
     return Promise.reject(error);
   }
 );
@@ -66,7 +63,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     // LOG RAW RESPONSE
-    console.log('[API RESPONSE SUCCESS]', {
       url: response.config?.url,
       status: response.status,
       statusText: response.statusText,
@@ -78,7 +74,6 @@ api.interceptors.response.use(
     
     // CORRECTION: Retourner response complet (pas response.data)
     // Les composants accèdent à response.data eux-mêmes
-    console.log('[RETURNING]', 'Full response object');
     return response;
   },
   async (error) => {
@@ -163,7 +158,6 @@ api.interceptors.response.use(
       },
     };
 
-    console.error('[API RESPONSE ERROR]', {
       url: originalRequest?.url,
       method: originalRequest?.method,
       status,
@@ -171,7 +165,6 @@ api.interceptors.response.use(
       formattedError,
       fullError: error
     });
-    console.error('[REJECTING WITH]', formattedError);
     return Promise.reject(formattedError);
   }
 );

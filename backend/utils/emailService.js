@@ -37,14 +37,6 @@ import {
 const createTransporter = () => {
   const emailPort = parseInt(process.env.EMAIL_PORT);
   const isSSL = emailPort === 465;
-  
-  console.log('Configuration Email:', {
-    host: process.env.EMAIL_HOST,
-    port: emailPort,
-    secure: isSSL,
-    user: process.env.EMAIL_USER,
-    passLength: process.env.EMAIL_PASS?.length || 0,
-  });
 
   return createTransport({
     host: process.env.EMAIL_HOST,
@@ -72,9 +64,6 @@ const createTransporter = () => {
  */
 export const sendEmail = async ({ to, subject, html, text }) => {
   if (process.env.SKIP_EMAILS === 'true') {
-    console.log('Mode dev: Email non envoyé');
-    console.log('Destinataire:', to);
-    console.log('Sujet:', subject);
     return { success: true, messageId: 'dev-mode-skipped' };
   }
 
@@ -83,9 +72,7 @@ export const sendEmail = async ({ to, subject, html, text }) => {
 
     try {
       await transporter.verify();
-      console.log('Serveur email prêt');
     } catch (verifyError) {
-      console.warn('Vérification du serveur email échouée, tentative d\'envoi quand même...');
     }
 
     const mailOptions = {
@@ -98,16 +85,8 @@ export const sendEmail = async ({ to, subject, html, text }) => {
 
     const info = await transporter.sendMail(mailOptions);
     
-    console.log('Email envoyé avec succès:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Erreur envoi email:', error);
-    console.error('Détails:', {
-      code: error.code,
-      command: error.command,
-      response: error.response,
-      responseCode: error.responseCode,
-    });
     throw new Error('Erreur lors de l\'envoi de l\'email');
   }
 };
@@ -127,7 +106,6 @@ const formatDateFR = (date) => {
   try {
     const dateObj = new Date(date);
     if (isNaN(dateObj.getTime())) {
-      console.error('Date invalide:', date);
       return 'Date à confirmer';
     }
     
@@ -140,7 +118,6 @@ const formatDateFR = (date) => {
       minute: '2-digit'
     });
   } catch (error) {
-    console.error('Erreur formatage date:', error);
     return 'Date à confirmer';
   }
 };
@@ -161,7 +138,6 @@ const formatLocation = (location) => {
   };
   
   if (!location || !location.type) {
-    console.warn('Lieu manquant, utilisation valeur par défaut');
     return defaultLocation;
   }
   
@@ -206,7 +182,6 @@ const formatLocation = (location) => {
  */
 const calculateAvailableSpots = (talentDay) => {
   if (!talentDay) {
-    console.error('TalentDay manquant pour calcul des places');
     return { availableSpots: 0, totalSpots: 0, percentage: 0 };
   }
   
@@ -237,11 +212,9 @@ const validateTalentDayData = (talentDay) => {
   }
   
   if (!talentDay.location && !talentDay.lieu) {
-    console.warn(`Lieu manquant pour TalentDay ${talentDay._id}`);
   }
   
   if (!talentDay.maxParticipants && !talentDay.placesDisponibles) {
-    console.warn(`Places disponibles manquantes pour TalentDay ${talentDay._id}`);
   }
 };
 
@@ -279,8 +252,6 @@ export const sendWelcomeCompanyEmail = async (company, confirmationToken) => {
   
   const html = confirmationEmailTemplate(companyName, confirmationLink);
   
-  console.log(`Email de bienvenue envoyé à ${company.email} (${companyName})`);
-  
   return sendEmail({
     to: company.email,
     subject: `Bienvenue sur TalentProof, ${companyName} !`,
@@ -311,8 +282,6 @@ export const sendResetPasswordEmail = async (user, resetToken) => {
   const userName = user.companyName || user.nomEntreprise || user.prenom || user.nom || 'Utilisateur';
   
   const html = resetPasswordTemplate(userName, resetLink);
-  
-  console.log(`Email reset password envoyé à ${user.email} (${userName})`);
   
   return sendEmail({
     to: user.email,
@@ -378,16 +347,6 @@ export const sendTalentDayConfirmationEmail = async (talent, talentDay, inscript
   
   // GÉNÉRATION DU HTML AVEC LE TEMPLATE PROFESSIONNEL
   const html = talentDayConfirmationTemplate(inscriptionFormatted, talentDayFormatted);
-  
-  // LOG DÉTAILLÉ POUR VÉRIFICATION
-  console.log(`Confirmation TalentDay envoyée à ${talent.email}:`, {
-    talent: talentName,
-    event: talentDay.titre,
-    lieu: locationData.formatted,
-    date: eventDate,
-    horaires: horaires,
-    spots: `${availableSpots}/${totalSpots}`
-  });
   
   return sendEmail({
     to: talent.email,
@@ -467,16 +426,6 @@ export const sendNewApplicationEmail = async (talent, talentDay, inscription) =>
   // GÉNÉRATION DU HTML
   const html = companyNewCandidatureTemplate(talentInfo, talentDayFormatted);
   
-  // LOG DÉTAILLÉ
-  console.log(`Notification entreprise envoyée à ${companyEmail}:`, {
-    talent: `${talentInfo.prenom} ${talentInfo.nom}`,
-    technologies: talentInfo.technologies.join(', '),
-    event: talentDay.titre,
-    lieu: locationData.formatted,
-    inscriptions: `${talentDay.inscriptions?.length || 0}/${totalSpots}`,
-    availableSpots: availableSpots
-  });
-  
   return sendEmail({
     to: companyEmail,
     subject: `Nouvelle candidature - ${talentInfo.prenom} ${talentInfo.nom} pour ${talentDay.titre}`,
@@ -528,18 +477,6 @@ export const sendCompanyTalentDayRegistrationEmail = async (companyInfo, talentD
   // GÉNÉRATION DU HTML
   const html = companyTalentDayRegistrationTemplate(companyInfo, formattedTalentDays);
   
-  // LOG DÉTAILLÉ
-  console.log(`Confirmation inscription entreprise envoyée à ${companyInfo.email}:`, {
-    entreprise: companyInfo.companyName || companyInfo.nomEntreprise,
-    contact: companyInfo.contactPerson || companyInfo.nomContact,
-    talentDays: formattedTalentDays.map(td => ({
-      titre: td.titre,
-      date: td.dateFormatted,
-      lieu: td.lieu.formatted,
-      spots: `${td.availableSpots}/${td.totalSpots}`
-    }))
-  });
-  
   const talentDaysTitles = formattedTalentDays.map(td => td.titre).join(', ');
   
   return sendEmail({
@@ -572,13 +509,6 @@ export const sendContactTalentNotificationEmail = async (talentInfo, recruteurIn
   
   const html = contactNotificationTemplate(talentInfo, recruteurInfo);
   
-  console.log(`Notification contact talent envoyée à admin:`, {
-    talent: `${talentInfo.prenom} ${talentInfo.nom || ''}`,
-    technologies: talentInfo.technologies?.join(', '),
-    entreprise: recruteurInfo.entreprise,
-    recruteur: recruteurInfo.nom
-  });
-  
   return sendEmail({
     to: adminEmail,
     subject: `Demande de contact - ${recruteurInfo.entreprise} → ${talentInfo.prenom}`,
@@ -603,8 +533,6 @@ export const sendContactConfirmationToRecruiterEmail = async (recruteurNom, recr
   }
   
   const html = contactConfirmationTemplate(recruteurNom, entreprise, talentPrenom);
-  
-  console.log(`Confirmation contact envoyée à ${recruteurEmail} (${recruteurNom} - ${entreprise})`);
   
   return sendEmail({
     to: recruteurEmail,
@@ -631,12 +559,6 @@ export const sendGeneralContactNotificationEmail = async (contactInfo) => {
   
   const html = generalContactNotificationTemplate(contactInfo);
   
-  console.log(`Notification contact général envoyée à admin:`, {
-    nom: contactInfo.nom,
-    email: contactInfo.email,
-    sujet: contactInfo.sujet
-  });
-  
   return sendEmail({
     to: adminEmail,
     subject: `Nouveau message de contact - ${contactInfo.sujet}`,
@@ -660,8 +582,6 @@ export const sendGeneralContactConfirmationEmail = async (nom, email) => {
   }
   
   const html = generalContactConfirmationTemplate(nom);
-  
-  console.log(`Confirmation contact général envoyée à ${email} (${nom})`);
   
   return sendEmail({
     to: email,
@@ -705,13 +625,6 @@ export const sendTalentDayAcceptationEmail = async (inscription, talentDay) => {
   
   const html = talentDayAcceptationTemplate(inscription, talentDayFormatted);
   
-  console.log(`Acceptation TalentDay envoyée à ${inscription.email}:`, {
-    talent: `${inscription.prenom} ${inscription.nom || ''}`,
-    event: talentDay.titre,
-    lieu: locationData.formatted,
-    date: eventDate
-  });
-  
   return sendEmail({
     to: inscription.email,
     subject: `Candidature acceptée - ${talentDay.titre}`,
@@ -743,12 +656,6 @@ export const sendTalentDayRefusEmail = async (inscription, talentDay, raison = n
   };
   
   const html = talentDayRefusTemplate(inscription, talentDayFormatted, raison);
-  
-  console.log(`Refus TalentDay envoyé à ${inscription.email}:`, {
-    talent: `${inscription.prenom} ${inscription.nom || ''}`,
-    event: talentDay.titre,
-    raison: raison || 'Non spécifiée'
-  });
   
   return sendEmail({
     to: inscription.email,

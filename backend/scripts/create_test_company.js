@@ -15,7 +15,6 @@ async function run() {
 
   const existing = await Company.findOne({ email });
   if (existing) {
-    console.log('User already exists:', existing._id.toString());
     await mongoose.disconnect();
     return;
   }
@@ -27,11 +26,9 @@ async function run() {
     isConfirmed: true,
   });
 
-  console.log(JSON.stringify({ email, password: passwordPlain, id: company._id }));
   await mongoose.disconnect();
 }
 
 run().catch(err => {
-  console.error(err);
   process.exit(1);
 });

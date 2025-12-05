@@ -23,7 +23,6 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     // LOG REQUEST CONFIG
-    console.log('[UTILS/API REQUEST]', {
       method: config.method?.toUpperCase(),
       url: config.url,
       baseURL: config.baseURL,
@@ -37,36 +36,29 @@ api.interceptors.request.use(
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log('[JWT TOKEN ADDED]', token.substring(0, 20) + '...');
     }
 
     // 2.  CSRF Token - Récupérer si manquant (pour mutations uniquement)
     if (config.method !== 'get' && !api.defaults.headers.common['X-CSRF-Token']) {
       try {
-        console.log('[FETCHING CSRF TOKEN]...');
         const res = await axios.get(`${API_URL}/csrf-token`, {
           withCredentials: true
         });
-        console.log('[CSRF RESPONSE]', res?.data);
         const csrfToken = res?.data?.csrfToken;
         if (csrfToken) {
           api.defaults.headers.common['X-CSRF-Token'] = csrfToken;
           config.headers['X-CSRF-Token'] = csrfToken;
-          console.log('[CSRF TOKEN SET]', csrfToken.substring(0, 20) + '...');
         }
       } catch (err) {
-        console.warn('[CSRF FETCH ERROR]', err?.message || err);
       }
     } else if (config.method !== 'get') {
       // Ajouter le token existant à la requête
       config.headers['X-CSRF-Token'] = api.defaults.headers.common['X-CSRF-Token'];
-      console.log('[CSRF TOKEN REUSED]', config.headers['X-CSRF-Token']?.substring(0, 20) + '...');
     }
 
     return config;
   },
   (error) => {
-    console.error('[UTILS/API REQUEST ERROR]', error);
     return Promise.reject(error);
   }
 );
@@ -75,7 +67,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     // LOG RAW RESPONSE
-    console.log('[UTILS/API RESPONSE SUCCESS]', {
       url: response.config?.url,
       status: response.status,
       statusText: response.statusText,
@@ -84,12 +75,10 @@ api.interceptors.response.use(
       dataKeys: response.data ? Object.keys(response.data) : [],
       dataType: typeof response.data
     });
-    console.log('[RETURNING]', 'Full response object');
     return response;
   },
   async (error) => {
     // LOG ERROR COMPLETE
-    console.error('[UTILS/API RESPONSE ERROR]', {
       message: error.message,
       url: error.config?.url,
       method: error.config?.method,
@@ -102,7 +91,6 @@ api.interceptors.response.use(
 
     // Gestion du rate limiting (429)
     if (error.response?.status === 429) {
-      console.warn('[RATE LIMIT HIT]', 'Too many requests');
       const formatted429Error = new Error('Trop de tentatives. Veuillez patienter quelques minutes avant de réessayer');
       formatted429Error.response = {
         data: {
@@ -114,13 +102,11 @@ api.interceptors.response.use(
           }
         }
       };
-      console.error('[REJECTING WITH]', formatted429Error);
       return Promise.reject(formatted429Error);
     }
 
     //  Si erreur CSRF (403), récupérer un nouveau token et réessayer
     if (error.response?.status === 403 && error.response?.data?.code === 'EBADCSRFTOKEN' && !originalRequest._retryCSRF) {
-      console.warn('[CSRF ERROR]', 'Retrying with new token...');
       originalRequest._retryCSRF = true;
       
       try {
@@ -131,26 +117,21 @@ api.interceptors.response.use(
         if (csrfToken) {
           api.defaults.headers.common['X-CSRF-Token'] = csrfToken;
           originalRequest.headers['X-CSRF-Token'] = csrfToken;
-          console.log('[CSRF TOKEN REFRESHED]', 'Retrying request...');
         }
         return api(originalRequest);
       } catch (csrfErr) {
-        console.error('[CSRF REFRESH FAILED]', csrfErr);
         return Promise.reject(error);
       }
     }
 
     // Si 401, tenter de refresh le token JWT SAUF pour /auth/login (credentials incorrects)
     if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/auth/login')) {
-      console.warn('[AUTH ERROR]', 'Attempting token refresh...');
       originalRequest._retry = true;
       return api.post('/auth/refresh')
         .then((refreshResponse) => {
-          console.log('[TOKEN REFRESHED]', 'Retrying original request...');
           return api(originalRequest);
         })
         .catch((refreshErr) => {
-          console.error('[TOKEN REFRESH FAILED]', 'Logging out...', refreshErr);
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           window.location.href = '/login';
@@ -158,7 +139,6 @@ api.interceptors.response.use(
         });
     }
 
-    console.error('[FINAL REJECTION]', error);
     return Promise.reject(error);
   }
 );
@@ -172,7 +152,6 @@ async function initCsrf() {
       api.defaults.headers.common['X-CSRF-Token'] = token;
     }
   } catch (err) {
-    console.warn('Unable to fetch CSRF token on startup', err?.message || err);
   }
 }
 

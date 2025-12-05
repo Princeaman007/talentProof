@@ -16,7 +16,6 @@ const About = () => {
       const response = await api.get('/team');
       setTeam(response.data.data);
     } catch (error) {
-      console.error('Erreur chargement équipe:', error);
     } finally {
       setLoading(false);
     }

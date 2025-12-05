@@ -52,7 +52,6 @@ const ContactForm = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } catch (err) {
-      console.error('Erreur lors de l\'envoi:', err);
       setError(
         err.response?.data?.message || 
         'Une erreur est survenue lors de l\'envoi du message. Veuillez réessayer.'

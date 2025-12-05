@@ -48,7 +48,6 @@ const AdminContactRequests = () => {
       setStats(response.data.stats);
       setPagination(response.data.pagination);
     } catch (error) {
-      console.error('Erreur récupération demandes:', error);
     } finally {
       setLoading(false);
     }
@@ -61,7 +60,6 @@ const AdminContactRequests = () => {
       });
       fetchDemandes();
     } catch (error) {
-      console.error('Erreur changement statut:', error);
       toast.error('Erreur lors du changement de statut');
     }
   };
@@ -75,7 +73,6 @@ const AdminContactRequests = () => {
           toast.success('Demande supprimée avec succès');
           fetchDemandes();
         } catch (error) {
-          console.error('Erreur suppression:', error);
           toast.error('Erreur lors de la suppression');
         }
       }

@@ -30,7 +30,6 @@ export const adminOnly = (req, res, next) => {
     ];
     
     if (adminEmails.includes(req.company.email)) {
-      console.warn(' Admin détecté via email (ancienne méthode). Pensez à mettre à jour le champ "role" en BDD !');
       return next();
     }
 
@@ -41,7 +40,6 @@ export const adminOnly = (req, res, next) => {
     });
 
   } catch (error) {
-    console.error('Erreur middleware adminOnly:', error);
     return res.status(500).json({
       success: false,
       message: 'Erreur serveur',
@@ -75,7 +73,6 @@ export const adminAuth = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('Erreur middleware admin:', error);
     return res.status(500).json({
       success: false,
       message: 'Erreur d\'authentification admin.',

@@ -19,7 +19,6 @@ export const isAdmin = (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error('Erreur middleware isAdmin:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur serveur',

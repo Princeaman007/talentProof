@@ -20,9 +20,7 @@ const AdminCompanies = () => {
     try {
       setLoading(true);
       const statusParam = filter !== 'all' ? `?status=${filter}` : '';
-      console.log(' [ADMIN COMPANIES] Fetching with filter:', filter, 'Param:', statusParam);
       const response = await api.get(`/companies${statusParam}`);
-      console.log(' [ADMIN COMPANIES] Response:', {
         status: response.status,
         data: response.data,
         success: response.data.success,
@@ -31,10 +29,8 @@ const AdminCompanies = () => {
       
       if (response.data.success) {
         setCompanies(response.data.data);
-        console.log(' [ADMIN COMPANIES] Loaded', response.data.data.length, 'companies');
       }
     } catch (error) {
-      console.error(' [ADMIN COMPANIES] Error:', error);
       toast.error('Erreur lors du chargement des entreprises');
     } finally {
       setLoading(false);
@@ -47,18 +43,14 @@ const AdminCompanies = () => {
       async () => {
         try {
           setActionLoading(true);
-          console.log(' [ADMIN COMPANIES] Updating status:', companyId, 'to', newStatus);
           const response = await api.patch(`/companies/${companyId}/status`, { status: newStatus });
-          console.log(' [ADMIN COMPANIES] Status update response:', response.data);
           
           if (response.data.success) {
-            console.log(' [ADMIN COMPANIES] Status updated successfully');
             toast.success(`Statut mis à jour : ${newStatus}`);
             fetchCompanies();
             setSelectedCompany(null);
           }
         } catch (error) {
-          console.error('[ADMIN COMPANIES] Error updating status:', error);
           toast.error('Erreur lors de la mise à jour');
         } finally {
           setActionLoading(false);
@@ -69,15 +61,11 @@ const AdminCompanies = () => {
 
   const viewDetails = async (companyId) => {
     try {
-      console.log(' [ADMIN COMPANIES] Fetching details for:', companyId);
       const response = await api.get(`/companies/${companyId}`);
-      console.log(' [ADMIN COMPANIES] Details response:', response.data);
       if (response.data.success) {
         setSelectedCompany(response.data.data);
-        console.log(' [ADMIN COMPANIES] Details loaded');
       }
     } catch (error) {
-      console.error('[ADMIN COMPANIES] Error loading details:', error);
       toast.error('Erreur lors du chargement des détails');
     }
   };

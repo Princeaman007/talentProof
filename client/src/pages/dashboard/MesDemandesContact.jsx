@@ -40,7 +40,6 @@ const MesDemandesContact = () => {
       setDemandes(response.data.contactRequests);
       setPagination(response.data.pagination);
     } catch (error) {
-      console.error('Erreur récupération demandes:', error);
     } finally {
       setLoading(false);
     }
