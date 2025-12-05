@@ -76,11 +76,6 @@ const TalentsDashboard = () => {
 
       
       const response = await api.get('/talents/filter', { params });
-        status: response.status,
-        data: response.data,
-        success: response.data.success,
-        talentsCount: response.data.data?.length
-      });
 
       if (response.data.success && Array.isArray(response.data.data)) {
         setTalents(response.data.data);

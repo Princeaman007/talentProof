@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- Page d'accueil -->
+  <url>
+    <loc>https://talentproof.be/</loc>
+    <lastmod>2025-12-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://talentproof.be/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://talentproof.be/" />
+  </url>
+  
+  <!-- Page Talents -->
+  <url>
+    <loc>https://talentproof.be/talents</loc>
+    <lastmod>2025-12-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://talentproof.be/talents" />
+  </url>
+  
+  <!-- Page TalentDays -->
+  <url>
+    <loc>https://talentproof.be/talent-days</loc>
+    <lastmod>2025-12-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://talentproof.be/talent-days" />
+  </url>
+  
+  <!-- Page Services -->
+  <url>
+    <loc>https://talentproof.be/services</loc>
+    <lastmod>2025-12-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://talentproof.be/services" />
+  </url>
+  
+  <!-- Page À propos -->
+  <url>
+    <loc>https://talentproof.be/about</loc>
+    <lastmod>2025-12-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://talentproof.be/about" />
+  </url>
+  
+  <!-- Page Contact -->
+  <url>
+    <loc>https://talentproof.be/contact</loc>
+    <lastmod>2025-12-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://talentproof.be/contact" />
+  </url>
+  
+  <!-- Page Inscription Entreprise -->
+  <url>
+    <loc>https://talentproof.be/company-registration</loc>
+    <lastmod>2025-12-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Page Inscription Talent -->
+  <url>
+    <loc>https://talentproof.be/register</loc>
+    <lastmod>2025-12-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Page Login -->
+  <url>
+    <loc>https://talentproof.be/login</loc>
+    <lastmod>2025-12-05</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- Page Devis Services -->
+  <url>
+    <loc>https://talentproof.be/services/devis</loc>
+    <lastmod>2025-12-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+</urlset>

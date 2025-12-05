@@ -27,12 +27,7 @@ const MesFavoris = () => {
   const fetchFavoris = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/entreprise/favoris');
-        status: response.status,
-        data: response.data,
-        dataKeys: Object.keys(response.data || {}),
-        favorisCount: response.data.favoris?.length
-      });
+      const response = await api.get('/entreprise/favoris');
       setFavoris(response.data.favoris);
     } catch (error) {
     } finally {

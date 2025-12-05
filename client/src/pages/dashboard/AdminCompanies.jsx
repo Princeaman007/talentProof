@@ -21,11 +21,6 @@ const AdminCompanies = () => {
       setLoading(true);
       const statusParam = filter !== 'all' ? `?status=${filter}` : '';
       const response = await api.get(`/companies${statusParam}`);
-        status: response.status,
-        data: response.data,
-        success: response.data.success,
-        companiesCount: response.data.data?.length
-      });
       
       if (response.data.success) {
         setCompanies(response.data.data);

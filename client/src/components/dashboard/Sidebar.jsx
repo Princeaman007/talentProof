@@ -43,11 +43,6 @@ const Sidebar = () => {
 
   // Ajuster isOpen selon la taille de l'écran
   useEffect(() => {
-      isOpen,
-      width: window.innerWidth,
-      user: user?.email,
-      isAdmin
-    });
     
     // Si on vient de se connecter, ouvrir la sidebar et nettoyer le flag
     if (localStorage.getItem('justLoggedIn') === 'true') {

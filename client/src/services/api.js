@@ -32,15 +32,6 @@ const api = axios.create({
  */
 api.interceptors.request.use(
   (config) => {
-    // LOG REQUEST CONFIG
-      method: config.method?.toUpperCase(),
-      url: config.url,
-      baseURL: config.baseURL,
-      fullURL: `${config.baseURL}${config.url}`,
-      headers: config.headers,
-      data: config.data,
-      params: config.params
-    });
     
     // Le token est géré par les cookies (httpOnly)
     // Mais on peut ajouter un token localStorage en fallback
@@ -62,15 +53,6 @@ api.interceptors.request.use(
  */
 api.interceptors.response.use(
   (response) => {
-    // LOG RAW RESPONSE
-      url: response.config?.url,
-      status: response.status,
-      statusText: response.statusText,
-      headers: response.headers,
-      data: response.data,
-      dataKeys: response.data ? Object.keys(response.data) : [],
-      dataType: typeof response.data
-    });
     
     // CORRECTION: Retourner response complet (pas response.data)
     // Les composants accèdent à response.data eux-mêmes
@@ -158,13 +140,6 @@ api.interceptors.response.use(
       },
     };
 
-      url: originalRequest?.url,
-      method: originalRequest?.method,
-      status,
-      errorData: data,
-      formattedError,
-      fullError: error
-    });
     return Promise.reject(formattedError);
   }
 );

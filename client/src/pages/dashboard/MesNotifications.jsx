@@ -32,11 +32,6 @@ const MesNotifications = () => {
         limit: 20,
       };
       const response = await api.get('/entreprise/notifications', { params });
-        status: response.status,
-        data: response.data,
-        notificationsCount: response.data.notifications?.length,
-        unreadCount: response.data.unreadCount
-      });
 
       setNotifications(response.data.notifications);
       setUnreadCount(response.data.unreadCount);

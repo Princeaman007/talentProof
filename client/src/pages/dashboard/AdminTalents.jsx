@@ -24,10 +24,6 @@ const AdminTalents = () => {
     try {
       setLoading(true);
       const response = await api.get('/admin/talents');
-        status: response.status,
-        data: response.data,
-        talentsCount: response.data.data?.length
-      });
       setTalents(response.data.data || []);
     } catch (error) {
       showMessage('error', 'Erreur lors du chargement des talents');

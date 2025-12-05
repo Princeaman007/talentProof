@@ -43,10 +43,6 @@ const AdminStats = () => {
   const fetchStats = async () => {
     try {
       const response = await api.get('/admin/stats/global');
-        status: response.status,
-        data: response.data,
-        statsKeys: Object.keys(response.data.stats || {})
-      });
       setStats(response.data.stats);
     } catch (error) {
     }
@@ -56,10 +52,6 @@ const AdminStats = () => {
     try {
       setLoading(true);
       const response = await api.get(`/admin/stats/timeline?period=${period}`);
-        status: response.status,
-        data: response.data,
-        timelineLength: response.data.timeline?.length
-      });
       setTimeline(response.data.timeline);
     } catch (error) {
     } finally {

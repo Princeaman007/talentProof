@@ -52,12 +52,6 @@ const DashboardEntreprise = () => {
     };
   }, []);
 
-    isAdmin,
-    userEmail: user?.email,
-    userRole: user?.role,
-    sidebarCollapsed
-  });
-
   return (
     <div className="pt-20 min-h-screen bg-gray-50">
       <div className="flex">

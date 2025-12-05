@@ -37,11 +37,6 @@ const Talents = () => {
     try {
       setLoading(true);
       const response = await api.get('/talents');
-        status: response.status,
-        data: response.data,
-        dataKeys: Object.keys(response.data),
-        talentsCount: response.data.data?.length
-      });
       
       setTalents(response.data.data);
       setFilteredTalents(response.data.data);
@@ -91,31 +86,48 @@ const Talents = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center pt-24">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-neutral">Chargement des talents...</p>
+      <>
+        <SEOHead
+          title="Développeurs Certifiés Belgique - Portfolio Validé | TalentProof"
+          description="Découvrez notre base de talents tech certifiés en Belgique : développeurs React, Node.js, Python. Portfolios validés, tests techniques réussis. Recrutez en Wallonie et Bruxelles."
+          keywords="développeurs certifiés Belgique, talents tech Wallonie, portfolio développeur validé, développeur React Belgique, développeur Node.js Belgique, tests techniques développeurs, recrutement tech Bruxelles"
+          canonical="/talents"
+          schema={talentsSchema}
+        />
+        <div className="min-h-screen flex items-center justify-center pt-24">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-neutral">Chargement des talents...</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 pb-16">
-      <div className="container-custom">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <FaUsers className="text-4xl text-primary" />
-            <h1 className="text-4xl font-bold text-primary">Catalogue de Talents</h1>
-          </div>
-          <p className="text-lg text-neutral max-w-2xl mx-auto">
-            Découvrez nos talents tech validés en conditions réelles. Tous ont réussi des tests
-            pratiques sans IA.
-          </p>
-          
-          {/*  AJOUT - Message pour les non-connectés */}
-          {!isAuthenticated() && (
+    <>
+      <SEOHead
+        title="Développeurs Certifiés Belgique - Portfolio Validé | TalentProof"
+        description="Découvrez notre base de talents tech certifiés en Belgique : développeurs React, Node.js, Python. Portfolios validés, tests techniques réussis. Recrutez en Wallonie et Bruxelles."
+        keywords="développeurs certifiés Belgique, talents tech Wallonie, portfolio développeur validé, développeur React Belgique, développeur Node.js Belgique, tests techniques développeurs, recrutement tech Bruxelles"
+        canonical="/talents"
+        schema={talentsSchema}
+      />
+      <div className="min-h-screen bg-gray-50 pt-24 pb-16">
+        <div className="container-custom">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center space-x-3 mb-4">
+              <FaUsers className="text-4xl text-primary" />
+              <h1 className="text-4xl font-bold text-primary">Catalogue de Talents</h1>
+            </div>
+            <p className="text-lg text-neutral max-w-2xl mx-auto">
+              Découvrez nos talents tech validés en conditions réelles. Tous ont réussi des tests
+              pratiques sans IA.
+            </p>
+            
+            {/*  AJOUT - Message pour les non-connectés */}
+            {!isAuthenticated() && (
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg max-w-2xl mx-auto">
               <p className="text-sm text-blue-800">
                  <strong>Entreprise ?</strong> Connectez-vous pour contacter nos talents et accéder à leurs profils complets.
@@ -234,6 +246,7 @@ const Talents = () => {
         <ContactTalentModal talent={selectedTalent} onClose={() => setSelectedTalent(null)} />
       )}
     </div>
+    </>
   );
 };
 

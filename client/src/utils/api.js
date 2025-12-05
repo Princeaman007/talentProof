@@ -22,15 +22,6 @@ const api = axios.create({
 // Intercepteur pour ajouter le token JWT et CSRF automatiquement
 api.interceptors.request.use(
   async (config) => {
-    // LOG REQUEST CONFIG
-      method: config.method?.toUpperCase(),
-      url: config.url,
-      baseURL: config.baseURL,
-      fullURL: `${config.baseURL}${config.url}`,
-      headers: { ...config.headers },
-      data: config.data,
-      params: config.params
-    });
     
     // 1. Token JWT depuis localStorage - toujours l'ajouter si disponible
     const token = localStorage.getItem('token');
@@ -66,26 +57,9 @@ api.interceptors.request.use(
 // Intercepteur pour gérer les erreurs (token expiré, etc.)
 api.interceptors.response.use(
   (response) => {
-    // LOG RAW RESPONSE
-      url: response.config?.url,
-      status: response.status,
-      statusText: response.statusText,
-      headers: response.headers,
-      data: response.data,
-      dataKeys: response.data ? Object.keys(response.data) : [],
-      dataType: typeof response.data
-    });
     return response;
   },
   async (error) => {
-    // LOG ERROR COMPLETE
-      message: error.message,
-      url: error.config?.url,
-      method: error.config?.method,
-      status: error.response?.status,
-      responseData: error.response?.data,
-      fullError: error
-    });
     
     const originalRequest = error.config;
 

@@ -1,0 +1,70 @@
+# Robots.txt pour TalentProof
+# Optimisé pour le SEO en Belgique
+
+# User-agent: * (tous les bots)
+User-agent: *
+
+# Pages autorisées (Allow)
+Allow: /
+Allow: /talents
+Allow: /talent-days
+Allow: /services
+Allow: /about
+Allow: /contact
+Allow: /company-registration
+Allow: /register
+Allow: /login
+
+# Pages interdites (Disallow) - Dashboard privé
+Disallow: /dashboard/
+Disallow: /dashboard/*
+Disallow: /admin/
+Disallow: /api/
+Disallow: /reset-password/
+Disallow: /confirm-email/
+
+# Fichiers statiques autorisés pour les moteurs de recherche
+Allow: /assets/*.css
+Allow: /assets/*.js
+Allow: /assets/*.jpg
+Allow: /assets/*.png
+Allow: /assets/*.svg
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.svg$
+Allow: /*.webp$
+
+# Empêcher l'indexation des fichiers sensibles
+Disallow: /*.json$
+Disallow: /src/
+Disallow: /node_modules/
+
+# Sitemap
+Sitemap: https://talentproof.be/sitemap.xml
+
+# Crawl-delay pour être respectueux des serveurs
+Crawl-delay: 1
+
+# Googlebot spécifique
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Bingbot spécifique
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Empêcher les mauvais bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /

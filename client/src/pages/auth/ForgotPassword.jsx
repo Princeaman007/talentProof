@@ -35,9 +35,6 @@ const ForgotPassword = () => {
 
     try {
       const response = await apiService.auth.forgotPassword(email);
-        status: response.status,
-        data: response.data
-      });
       
       //  CORRECTION: L'interceptor retourne maintenant response complet
       if (response.data.success) {
@@ -46,11 +43,6 @@ const ForgotPassword = () => {
         setError(response.data.message || 'Erreur lors de l\'envoi de l\'email');
       }
     } catch (err) {
-        message: err.message,
-        response: err.response,
-        responseData: err.response?.data,
-        stack: err.stack
-      });
       
       // L'interceptor formate déjà l'erreur
       const message = extractErrorMessage(err, 'Une erreur inattendue est survenue. Veuillez réessayer');

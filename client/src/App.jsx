@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -45,12 +46,13 @@ const ConditionalFooter = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-grow">
-            <Routes>
+    <HelmetProvider>
+      <AuthProvider>
+        <Router>
+          <div className="flex flex-col min-h-screen">
+            <Navbar />
+            <main className="flex-grow">
+              <Routes>
               {/* Routes publiques */}
               <Route path="/" element={<Home />} />
               <Route path="/talents" element={<Talents />} />
@@ -101,6 +103,7 @@ function App() {
         />
       </Router>
     </AuthProvider>
+    </HelmetProvider>
   );
 }
 

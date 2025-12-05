@@ -4,16 +4,6 @@ import { useAuth } from '../../context/AuthContext';
 export default function ProtectedRoute({ children, adminOnly = false }) {
   const { isAuthenticated, isAdmin, loading, user, token } = useAuth();
 
-    isAuthenticated,
-    isAdmin,
-    loading,
-    hasUser: !!user,
-    hasToken: !!token,
-    userRole: user?.role,
-    tokenInLS: localStorage.getItem('token') ? 'EXISTS' : 'MISSING',
-    userInLS: localStorage.getItem('user') ? 'EXISTS' : 'MISSING'
-  });
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">

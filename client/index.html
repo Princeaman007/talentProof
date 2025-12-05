@@ -1,16 +1,111 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr-BE">
   <head>
     <meta charset="UTF-8" />
-    <!-- Favicons multiples tailles pour meilleure visibilité -->
+    
+    <!-- Viewport & Responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags (SEO OPTIMISÉ) -->
+    <title>TalentProof - Plateforme de Recrutement Tech en Belgique | Développeurs Certifiés</title>
+    <meta name="title" content="TalentProof - Plateforme de Recrutement Tech en Belgique | Développeurs Certifiés" />
+    <meta name="description" content="Recrutez les meilleurs développeurs certifiés en Belgique (Wallonie & Bruxelles). TalentDays, tests techniques validés, portfolios vérifiés. Plateforme #1 pour le recrutement tech." />
+    <meta name="keywords" content="recrutement développeur Belgique, talents tech Wallonie, plateforme recrutement tech Bruxelles, développeur certifié Belgique, TalentDays Belgique, tests techniques développeurs, portfolio développeur validé, recrutement IT Belgique, développeur React Belgique, développeur Node.js Belgique" />
+    <meta name="author" content="TalentProof" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://talentproof.be/" />
+    
+    <!-- Geo Targeting -->
+    <meta name="geo.region" content="BE-WAL" />
+    <meta name="geo.region" content="BE-BRU" />
+    <meta name="geo.placename" content="Belgique" />
+    <meta name="geo.position" content="50.8503;4.3517" />
+    <meta name="ICBM" content="50.8503, 4.3517" />
+    
+    <!-- Language & Localization -->
+    <link rel="alternate" hreflang="fr-BE" href="https://talentproof.be/" />
+    <link rel="alternate" hreflang="fr" href="https://talentproof.be/" />
+    <link rel="alternate" hreflang="x-default" href="https://talentproof.be/" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://talentproof.be/" />
+    <meta property="og:title" content="TalentProof - Plateforme de Recrutement Tech en Belgique" />
+    <meta property="og:description" content="Recrutez les meilleurs développeurs certifiés en Belgique. TalentDays, tests techniques validés, portfolios vérifiés." />
+    <meta property="og:image" content="https://talentproof.be/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="TalentProof" />
+    <meta property="og:locale" content="fr_BE" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://talentproof.be/" />
+    <meta name="twitter:title" content="TalentProof - Recrutement Tech en Belgique" />
+    <meta name="twitter:description" content="Recrutez les meilleurs développeurs certifiés en Belgique (Wallonie & Bruxelles)" />
+    <meta name="twitter:image" content="https://talentproof.be/twitter-image.jpg" />
+    <meta name="twitter:creator" content="@TalentProof" />
+    
+    <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg" />
     <link rel="icon" type="image/svg+xml" sizes="32x32" href="/favicon-32x32.svg" />
     <link rel="icon" type="image/svg+xml" sizes="16x16" href="/favicon-16x16.svg" />
     <link rel="shortcut icon" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="TalentProof - Plateforme de mise en relation entre talents et entreprises" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    
+    <!-- Theme & PWA -->
     <meta name="theme-color" content="#2E4A9E" />
-    <title>TalentProof - Trouvez les meilleurs talents</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=no" />
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Schema.org JSON-LD (Organization) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "TalentProof",
+      "url": "https://talentproof.be",
+      "logo": "https://talentproof.be/logo.png",
+      "description": "Plateforme de recrutement tech en Belgique - TalentDays, développeurs certifiés",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "BE",
+        "addressRegion": "Wallonie"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": "contact@talentproof.be"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/company/talentproof",
+        "https://twitter.com/talentproof"
+      ]
+    }
+    </script>
+    
+    <!-- Schema.org JSON-LD (WebSite) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "TalentProof",
+      "url": "https://talentproof.be",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://talentproof.be/talents?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

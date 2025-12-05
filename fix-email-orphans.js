@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const filePath = 'c:\\Users\\princ\\talentproof\\backend\\utils\\Email.js';
+const filePath = 'c:\\Users\\princ\\talentproof\\client\\src\\pages\\DashboardEntreprise.jsx';
 
 // Lire le fichier
 let content = fs.readFileSync(filePath, 'utf8');
