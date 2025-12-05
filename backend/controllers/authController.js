@@ -92,11 +92,7 @@ L'équipe TalentProof
       text: simpleText,
     });
   } catch (emailError) {
-      error: emailError.message,
-      code: emailError.code,
-      stack: emailError.stack,
-      recipient: email,
-    });
+    // Continue even if email fails
   }
 
   res.status(201).json({
@@ -220,14 +216,6 @@ export const login = asyncHandler(async (req, res) => {
     data: companyData,
   };
 
-    hasToken: !!token,
-    tokenLength: token?.length,
-    success: responsePayload.success,
-    userId: companyData._id,
-    email: companyData.email,
-    role: companyData.role
-  });
-
   res.status(200).json(responsePayload);
 });
 
@@ -255,10 +243,6 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   // Générer un token de reset
   const resetToken = generateRandomToken();
   const hashedToken = hashToken(resetToken);
-
-    tokenLength: resetToken.length,
-    hashedLength: hashedToken.length 
-  });
 
   // Sauvegarder le token et la date d'expiration (1 heure)
   company.resetPasswordToken = hashedToken;
@@ -296,10 +280,6 @@ export const forgotPassword = asyncHandler(async (req, res) => {
       html: simpleHtml,
     });
   } catch (emailError) {
-      message: emailError.message,
-      code: emailError.code,
-      stack: emailError.stack
-    });
     company.resetPasswordToken = null;
     company.resetPasswordExpires = null;
     await company.save();

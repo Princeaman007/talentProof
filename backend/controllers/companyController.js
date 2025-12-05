@@ -194,10 +194,6 @@ export const createCompanyRegistration = asyncHandler(async (req, res) => {
       html: companyTalentDayRegistrationTemplate(companyInfo, company.interestedTalentDays),
     });
   } catch (emailError) {
-      error: emailError.message,
-      stack: emailError.stack,
-      recipient: email
-    });
     // Continue even if email fails
   }
 
@@ -234,9 +230,6 @@ export const createCompanyRegistration = asyncHandler(async (req, res) => {
       `,
     });
   } catch (emailError) {
-      error: emailError.message,
-      stack: emailError.stack
-    });
     // Continue even if email fails
   }
 

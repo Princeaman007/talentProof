@@ -336,10 +336,6 @@ mongoose.connect(process.env.MONGODB_URI, {
     });
   })
   .catch((err) => {
-      message: err.message,
-      code: err.code,
-      name: err.name
-    });
     logger.error('MongoDB connection error', { 
       error: err.message,
       code: err.code,
