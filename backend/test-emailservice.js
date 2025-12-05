@@ -11,13 +11,13 @@ import {
   formatHoraires
 } from './utils/emailService.js';
 
-console.log('🧪 TEST EMAILSERVICE - Fonctions Utilitaires\n');
+console.log(' TEST EMAILSERVICE - Fonctions Utilitaires\n');
 console.log('═'.repeat(60));
 
 // ═══════════════════════════════════════════════════════════════════════
 // TEST 1: formatDateFR
 // ═══════════════════════════════════════════════════════════════════════
-console.log('\n✅ TEST 1: formatDateFR');
+console.log('\n TEST 1: formatDateFR');
 console.log('─'.repeat(60));
 
 const testDate = new Date('2025-01-15T09:00:00Z');
@@ -33,7 +33,7 @@ console.log(`\nDate null → "${invalidDate}"`);
 // ═══════════════════════════════════════════════════════════════════════
 // TEST 2: formatLocation
 // ═══════════════════════════════════════════════════════════════════════
-console.log('\n✅ TEST 2: formatLocation');
+console.log('\n TEST 2: formatLocation');
 console.log('─'.repeat(60));
 
 // Type physique
@@ -74,7 +74,7 @@ console.log(`Attendu: "Lieu à confirmer"`);
 // ═══════════════════════════════════════════════════════════════════════
 // TEST 3: calculateAvailableSpots
 // ═══════════════════════════════════════════════════════════════════════
-console.log('\n✅ TEST 3: calculateAvailableSpots');
+console.log('\n TEST 3: calculateAvailableSpots');
 console.log('─'.repeat(60));
 
 const talentDay = {
@@ -100,7 +100,7 @@ console.log(`Attendu: { availableSpots: 0, totalSpots: 10, percentage: 100 }`);
 // ═══════════════════════════════════════════════════════════════════════
 // TEST 4: formatHoraires
 // ═══════════════════════════════════════════════════════════════════════
-console.log('\n✅ TEST 4: formatHoraires');
+console.log('\n TEST 4: formatHoraires');
 console.log('─'.repeat(60));
 
 const horaires1 = formatHoraires('09:30', '17:00');
@@ -116,7 +116,7 @@ console.log(`Attendu: "Horaires à confirmer"`);
 // ═══════════════════════════════════════════════════════════════════════
 // TEST 5: validateTalentDayData
 // ═══════════════════════════════════════════════════════════════════════
-console.log('\n✅ TEST 5: validateTalentDayData');
+console.log('\n TEST 5: validateTalentDayData');
 console.log('─'.repeat(60));
 
 // TalentDay valide
@@ -130,9 +130,9 @@ const validTalentDay = {
 
 try {
   validateTalentDayData(validTalentDay);
-  console.log('✅ TalentDay valide accepté');
+  console.log(' TalentDay valide accepté');
 } catch (error) {
-  console.error('❌ Erreur inattendue:', error.message);
+  console.error(' Erreur inattendue:', error.message);
 }
 
 // TalentDay sans titre (doit échouer)
@@ -143,9 +143,9 @@ const invalidTalentDay = {
 
 try {
   validateTalentDayData(invalidTalentDay);
-  console.error('❌ TalentDay invalide accepté (ne devrait pas arriver)');
+  console.error(' TalentDay invalide accepté (ne devrait pas arriver)');
 } catch (error) {
-  console.log(`✅ TalentDay invalide rejeté: "${error.message}"`);
+  console.log(` TalentDay invalide rejeté: "${error.message}"`);
 }
 
 // TalentDay sans date (doit échouer)
@@ -156,9 +156,9 @@ const invalidTalentDay2 = {
 
 try {
   validateTalentDayData(invalidTalentDay2);
-  console.error('❌ TalentDay sans date accepté (ne devrait pas arriver)');
+  console.error(' TalentDay sans date accepté (ne devrait pas arriver)');
 } catch (error) {
-  console.log(`✅ TalentDay sans date rejeté: "${error.message}"`);
+  console.log(` TalentDay sans date rejeté: "${error.message}"`);
 }
 
 // TalentDay avec warnings (lieu manquant)
@@ -171,26 +171,26 @@ const talentDayWarning = {
 
 try {
   validateTalentDayData(talentDayWarning);
-  console.log('✅ TalentDay avec warning accepté (lieu manquant → utilise défaut)');
+  console.log(' TalentDay avec warning accepté (lieu manquant → utilise défaut)');
 } catch (error) {
-  console.error('❌ Erreur inattendue:', error.message);
+  console.error(' Erreur inattendue:', error.message);
 }
 
 // ═══════════════════════════════════════════════════════════════════════
 // RÉSUMÉ
 // ═══════════════════════════════════════════════════════════════════════
 console.log('\n' + '═'.repeat(60));
-console.log('🎯 RÉSUMÉ DES TESTS');
+console.log(' RÉSUMÉ DES TESTS');
 console.log('═'.repeat(60));
 console.log(`
-✅ formatDateFR       → Formate dates MongoDB en français
-✅ formatLocation     → Gère physique/en-ligne/hybride
-✅ calculateSpots     → Calcule dynamiquement places restantes
-✅ formatHoraires     → Formate HH:MM - HH:MM
-✅ validateTalentDay  → Valide données critiques
+ formatDateFR       → Formate dates MongoDB en français
+ formatLocation     → Gère physique/en-ligne/hybride
+ calculateSpots     → Calcule dynamiquement places restantes
+ formatHoraires     → Formate HH:MM - HH:MM
+ validateTalentDay  → Valide données critiques
 
-📧 Toutes les fonctions fonctionnent correctement !
-🎉 emailService.js prêt pour production !
+ Toutes les fonctions fonctionnent correctement !
+ emailService.js prêt pour production !
 `);
 
 console.log('═'.repeat(60));

@@ -3,6 +3,8 @@ import api from '../../utils/api';
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaLinkedin, FaEnvelope } from 'react-icons/fa';
 import AddTeamMemberModal from '../../components/modals/AddTeamMemberModal';
 import EditTeamMemberModal from '../../components/modals/EditTeamMemberModal';
+import { toast } from 'react-toastify';
+import { toastConfirm } from '../../utils/toastConfirm.jsx';
 
 const AdminTeam = () => {
   const [members, setMembers] = useState([]);
@@ -54,19 +56,20 @@ const AdminTeam = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce membre ?')) {
-      return;
-    }
-
-    try {
-      //  CORRECTION : '/team' au lieu de '/admin/team'
-      await api.delete(`/team/${id}`);
-      showMessage('success', 'Membre supprimé avec succès');
-      fetchMembers();
-    } catch (error) {
-      console.error('Erreur suppression:', error);
-      showMessage('error', 'Erreur lors de la suppression');
-    }
+    toastConfirm(
+      'Êtes-vous sûr de vouloir supprimer ce membre ?',
+      async () => {
+        try {
+          //  CORRECTION : '/team' au lieu de '/admin/team'
+          await api.delete(`/team/${id}`);
+          showMessage('success', 'Membre supprimé avec succès');
+          fetchMembers();
+        } catch (error) {
+          console.error('Erreur suppression:', error);
+          showMessage('error', 'Erreur lors de la suppression');
+        }
+      }
+    );
   };
 
   const filteredMembers = members.filter(member =>

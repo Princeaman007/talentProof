@@ -28,15 +28,15 @@ const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // ✅ État pour mobile (ouvert/fermé)
+  //  État pour mobile (ouvert/fermé)
   const [isOpen, setIsOpen] = useState(() => {
     const width = window.innerWidth;
     const shouldOpen = width >= 1024 || localStorage.getItem('justLoggedIn') === 'true';
-    console.log('🎨 [SIDEBAR] Initial state:', { width, shouldOpen, justLoggedIn: localStorage.getItem('justLoggedIn') });
+    console.log(' [SIDEBAR] Initial state:', { width, shouldOpen, justLoggedIn: localStorage.getItem('justLoggedIn') });
     return shouldOpen;
   });
   
-  // ✅ NOUVEAU: État pour desktop (étendu/réduit)
+  //  NOUVEAU: État pour desktop (étendu/réduit)
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const saved = localStorage.getItem('sidebarCollapsed');
     return saved === 'true';
@@ -44,7 +44,7 @@ const Sidebar = () => {
 
   // Ajuster isOpen selon la taille de l'écran
   useEffect(() => {
-    console.log('🎨 [SIDEBAR] Component mounted', {
+    console.log(' [SIDEBAR] Component mounted', {
       isOpen,
       width: window.innerWidth,
       user: user?.email,
@@ -53,7 +53,7 @@ const Sidebar = () => {
     
     // Si on vient de se connecter, ouvrir la sidebar et nettoyer le flag
     if (localStorage.getItem('justLoggedIn') === 'true') {
-      console.log('🎨 [SIDEBAR] Just logged in, opening sidebar');
+      console.log(' [SIDEBAR] Just logged in, opening sidebar');
       setIsOpen(true);
       localStorage.removeItem('justLoggedIn');
     }
@@ -61,7 +61,7 @@ const Sidebar = () => {
     const handleResize = () => {
       const width = window.innerWidth;
       if (width >= 1024 && !isOpen) {
-        console.log('🎨 [SIDEBAR] Auto-opening on large screen:', width);
+        console.log(' [SIDEBAR] Auto-opening on large screen:', width);
         setIsOpen(true);
       }
     };
@@ -71,22 +71,22 @@ const Sidebar = () => {
   }, [isOpen, user, isAdmin]);
 
   const handleLogout = () => {
-    console.log('🚪 [SIDEBAR] Logging out...');
+    console.log(' [SIDEBAR] Logging out...');
     logout();
     navigate('/login');
   };
 
   const toggleSidebar = () => {
-    console.log('🎨 [SIDEBAR] Toggling sidebar:', !isOpen);
+    console.log(' [SIDEBAR] Toggling sidebar:', !isOpen);
     setIsOpen(!isOpen);
   };
   
-  // ✅ NOUVEAU: Toggle collapsed state (pour desktop)
+  //  NOUVEAU: Toggle collapsed state (pour desktop)
   const toggleCollapse = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
     localStorage.setItem('sidebarCollapsed', newState.toString());
-    console.log('🎨 [SIDEBAR] Toggling collapsed:', newState);
+    console.log(' [SIDEBAR] Toggling collapsed:', newState);
   };
 
   const menuItems = [

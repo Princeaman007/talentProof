@@ -11,6 +11,8 @@ import {
   FaBuilding,
   FaUser,
 } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import { toastConfirm } from '../../utils/toastConfirm.jsx';
 
 const AdminContactRequests = () => {
   const [demandes, setDemandes] = useState([]);
@@ -60,21 +62,24 @@ const AdminContactRequests = () => {
       fetchDemandes();
     } catch (error) {
       console.error('Erreur changement statut:', error);
-      alert('Erreur lors du changement de statut');
+      toast.error('Erreur lors du changement de statut');
     }
   };
 
   const handleDelete = async (demandeId) => {
-    if (!confirm('Voulez-vous vraiment supprimer cette demande ?')) return;
-
-    try {
-      await api.delete(`/admin/contact-requests/${demandeId}`);
-      alert('Demande supprimée avec succès');
-      fetchDemandes();
-    } catch (error) {
-      console.error('Erreur suppression:', error);
-      alert('Erreur lors de la suppression');
-    }
+    toastConfirm(
+      'Voulez-vous vraiment supprimer cette demande ?',
+      async () => {
+        try {
+          await api.delete(`/admin/contact-requests/${demandeId}`);
+          toast.success('Demande supprimée avec succès');
+          fetchDemandes();
+        } catch (error) {
+          console.error('Erreur suppression:', error);
+          toast.error('Erreur lors de la suppression');
+        }
+      }
+    );
   };
 
   const formatDate = (date) => {

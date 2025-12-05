@@ -46,32 +46,32 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
-      console.log('🔐 [RESET PASSWORD] Sending request with token:', token?.substring(0, 20) + '...');
+      console.log(' [RESET PASSWORD] Sending request with token:', token?.substring(0, 20) + '...');
       
       const response = await api.post(`/auth/reset-password/${token}`, {
         password: formData.password,
       });
       
-      console.log('✅ [RESET PASSWORD] Response received:', response);
-      console.log('✅ [RESET PASSWORD] Response.data:', response.data);
+      console.log(' [RESET PASSWORD] Response received:', response);
+      console.log(' [RESET PASSWORD] Response.data:', response.data);
       
       // L'interceptor retourne response, donc on accède à response.data
       if (response.data && response.data.success) {
-        console.log('✅ [RESET PASSWORD] Success! Redirecting to login...');
+        console.log(' [RESET PASSWORD] Success! Redirecting to login...');
         setSuccess(true);
         setTimeout(() => {
           navigate('/login');
         }, 3000);
       } else {
-        console.error('⚠️ [RESET PASSWORD] Success flag is false');
+        console.error(' [RESET PASSWORD] Success flag is false');
         setError(response.data?.message || 'Erreur lors de la réinitialisation du mot de passe');
       }
     } catch (err) {
-      console.error('❌ [RESET PASSWORD] Error caught:', err);
+      console.error(' [RESET PASSWORD] Error caught:', err);
       // L'interceptor formate déjà l'erreur
       const message = extractErrorMessage(err, 
         'Le lien est invalide ou a expiré. Veuillez faire une nouvelle demande.');
-      console.error('❌ [RESET PASSWORD] Error message:', message);
+      console.error(' [RESET PASSWORD] Error message:', message);
       setError(message);
     } finally {
       setLoading(false);

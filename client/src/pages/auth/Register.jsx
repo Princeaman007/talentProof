@@ -228,19 +228,19 @@ const Register = () => {
                 <p className="text-xs font-semibold text-neutral-dark">Le mot de passe doit contenir :</p>
                 <ul className="text-xs space-y-0.5">
                   <li className={formData.password.length >= 8 ? 'text-green-600' : 'text-gray-500'}>
-                    {formData.password.length >= 8 ? '✓' : '○'} Au moins 8 caractères
+                    {formData.password.length >= 8 ? '' : '○'} Au moins 8 caractères
                   </li>
                   <li className={/[A-Z]/.test(formData.password) ? 'text-green-600' : 'text-gray-500'}>
-                    {/[A-Z]/.test(formData.password) ? '✓' : '○'} Au moins une majuscule
+                    {/[A-Z]/.test(formData.password) ? '' : '○'} Au moins une majuscule
                   </li>
                   <li className={/[a-z]/.test(formData.password) ? 'text-green-600' : 'text-gray-500'}>
-                    {/[a-z]/.test(formData.password) ? '✓' : '○'} Au moins une minuscule
+                    {/[a-z]/.test(formData.password) ? '' : '○'} Au moins une minuscule
                   </li>
                   <li className={/[0-9]/.test(formData.password) ? 'text-green-600' : 'text-gray-500'}>
-                    {/[0-9]/.test(formData.password) ? '✓' : '○'} Au moins un chiffre
+                    {/[0-9]/.test(formData.password) ? '' : '○'} Au moins un chiffre
                   </li>
                   <li className={/[!@#$%^&*(),.?":{}|<>]/.test(formData.password) ? 'text-green-600' : 'text-gray-500'}>
-                    {/[!@#$%^&*(),.?":{}|<>]/.test(formData.password) ? '✓' : '○'} Au moins un caractère spécial (!@#$%...)
+                    {/[!@#$%^&*(),.?":{}|<>]/.test(formData.password) ? '' : '○'} Au moins un caractère spécial (!@#$%...)
                   </li>
                 </ul>
               </div>

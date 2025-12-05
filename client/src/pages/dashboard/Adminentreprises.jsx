@@ -16,6 +16,8 @@ import {
   FaUsers,
   FaTimes,
 } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import { toastConfirm } from '../../utils/toastConfirm.jsx';
 
 const AdminEntreprises = () => {
   const [entreprises, setEntreprises] = useState([]);
@@ -61,7 +63,7 @@ const AdminEntreprises = () => {
 
   const handleSuspend = async () => {
     if (!suspensionReason.trim()) {
-      alert('Veuillez indiquer une raison de suspension');
+      toast.warning('Veuillez indiquer une raison de suspension');
       return;
     }
 
@@ -69,28 +71,31 @@ const AdminEntreprises = () => {
       await api.put(`/admin/entreprises/${selectedEntreprise._id}/suspend`, {
         reason: suspensionReason,
       });
-      alert('Entreprise suspendue avec succès');
+      toast.success('Entreprise suspendue avec succès');
       setShowSuspendModal(false);
       setSuspensionReason('');
       setSelectedEntreprise(null);
       fetchEntreprises();
     } catch (error) {
       console.error('Erreur suspension:', error);
-      alert('Erreur lors de la suspension');
+      toast.error('Erreur lors de la suspension');
     }
   };
 
   const handleActivate = async (entrepriseId) => {
-    if (!confirm('Voulez-vous réactiver cette entreprise ?')) return;
-
-    try {
-      await api.put(`/admin/entreprises/${entrepriseId}/activate`);
-      alert('Entreprise réactivée avec succès');
-      fetchEntreprises();
-    } catch (error) {
-      console.error('Erreur activation:', error);
-      alert('Erreur lors de la réactivation');
-    }
+    toastConfirm(
+      'Voulez-vous réactiver cette entreprise ?',
+      async () => {
+        try {
+          await api.put(`/admin/entreprises/${entrepriseId}/activate`);
+          toast.success('Entreprise réactivée avec succès');
+          fetchEntreprises();
+        } catch (error) {
+          console.error('Erreur activation:', error);
+          toast.error('Erreur lors de la réactivation');
+        }
+      }
+    );
   };
 
   const formatDate = (date) => {

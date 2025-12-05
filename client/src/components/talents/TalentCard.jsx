@@ -9,6 +9,7 @@ import {
   safeValue, 
   formatLocation 
 } from '../../utils/formatters';
+import { toast } from 'react-toastify';
 
 const TalentCard = ({ talent, onContact }) => {
   const { isAuthenticated } = useAuth();
@@ -34,7 +35,7 @@ const TalentCard = ({ talent, onContact }) => {
     e.stopPropagation();
     
     if (!isAuthenticated) {
-      alert('Veuillez vous connecter pour ajouter des favoris');
+      toast.warning('Veuillez vous connecter pour ajouter des favoris');
       return;
     }
 
@@ -50,7 +51,7 @@ const TalentCard = ({ talent, onContact }) => {
       }
     } catch (error) {
       console.error('Erreur toggle favori:', error);
-      alert('Erreur lors de la mise à jour des favoris');
+      toast.error('Erreur lors de la mise à jour des favoris');
     } finally {
       setLoadingFavorite(false);
     }

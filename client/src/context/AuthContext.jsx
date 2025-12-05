@@ -68,33 +68,33 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     //  Protection: Si déjà en train de se connecter, ignorer
     if (isLoggingIn) {
-      console.warn('⚠️ Login already in progress, ignoring duplicate request');
+      console.warn(' Login already in progress, ignoring duplicate request');
       return { success: false, message: 'Connexion en cours...' };
     }
     
-    console.log('🔵 AuthContext.login - Début:', { email }); // DEBUG
+    console.log(' AuthContext.login - Début:', { email }); // DEBUG
     
     setIsLoggingIn(true);
     setError(null); 
     
     try {
-      console.log('🔵 Appel API login...'); // DEBUG
+      console.log(' Appel API login...'); // DEBUG
       const response = await api.post('/auth/login', { email, password });
       // L'API retourne l'objet response complet, donc accéder à response.data
       
-      console.log('✅ Réponse API complète:', response); // DEBUG
-      console.log('✅ response.data:', response.data); // DEBUG
-      console.log('✅ Clés de response.data:', Object.keys(response.data)); // DEBUG
+      console.log(' Réponse API complète:', response); // DEBUG
+      console.log(' response.data:', response.data); // DEBUG
+      console.log(' Clés de response.data:', Object.keys(response.data)); // DEBUG
       
       const { token, data } = response.data;
 
       if (!token) {
-        console.error('❌ Pas de token dans la réponse!'); // DEBUG
-        console.error('❌ Response.data complète:', JSON.stringify(response.data, null, 2)); // DEBUG
+        console.error(' Pas de token dans la réponse!'); // DEBUG
+        console.error(' Response.data complète:', JSON.stringify(response.data, null, 2)); // DEBUG
         return { success: false, message: 'Token manquant dans la réponse' };
       }
 
-      console.log('✅ Token reçu, sauvegarde...'); // DEBUG
+      console.log(' Token reçu, sauvegarde...'); // DEBUG
 
       //  Sauvegarder le token ET les données utilisateur
       // Note: Cookies HttpOnly ne fonctionnent pas avec des domaines séparés sur Render
@@ -102,14 +102,14 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(data));
 
-      console.log('✅ Token et user sauvegardés dans localStorage'); // DEBUG
+      console.log(' Token et user sauvegardés dans localStorage'); // DEBUG
 
       // Mettre à jour l'état
       setToken(token);
       setUser(data);
       checkIsAdmin(data);
 
-      console.log('✅ État mis à jour, utilisateur connecté:', data); // DEBUG
+      console.log(' État mis à jour, utilisateur connecté:', data); // DEBUG
 
       // Refresh CSRF token after successful auth (server may rotate cookie)
       try {
@@ -119,30 +119,30 @@ export const AuthProvider = ({ children }) => {
       } catch (csrfErr) {
         // Non-fatal
         // eslint-disable-next-line no-console
-        console.warn('⚠️ Unable to refresh CSRF token after login', csrfErr?.message || csrfErr);
+        console.warn(' Unable to refresh CSRF token after login', csrfErr?.message || csrfErr);
       }
 
       return { success: true, data };
     } catch (error) {
-      console.error('❌ AuthContext.login - Erreur complète:', error);
+      console.error(' AuthContext.login - Erreur complète:', error);
       const message = extractErrorMessage(error, 'Erreur de connexion');
-      console.error('❌ Message d\'erreur extrait:', message);
+      console.error(' Message d\'erreur extrait:', message);
       setError(message);
       return { success: false, message };
     } finally {
       setIsLoggingIn(false);
-      console.log('🔵 AuthContext.login - Fin'); // DEBUG
+      console.log(' AuthContext.login - Fin'); // DEBUG
     }
   };
 
   // Inscription
   const register = async (formData) => {
     try {
-      console.log('📤 [REGISTER] Starting registration...', formData);
+      console.log(' [REGISTER] Starting registration...', formData);
       const response = await api.post('/auth/register', formData);
-      console.log('✅ [REGISTER] Full response:', response);
-      console.log('✅ [REGISTER] response.data:', response.data);
-      console.log('✅ [REGISTER] response.data.success:', response.data?.success);
+      console.log(' [REGISTER] Full response:', response);
+      console.log(' [REGISTER] response.data:', response.data);
+      console.log(' [REGISTER] response.data.success:', response.data?.success);
       
       // After register, attempt to fetch CSRF token (if backend set cookies)
       try {
@@ -153,12 +153,12 @@ export const AuthProvider = ({ children }) => {
         // ignore
       }
       
-      // ✅ Retourner response.data qui contient { success, message, data }
+      //  Retourner response.data qui contient { success, message, data }
       return response.data;
     } catch (error) {
-      console.error('❌ [REGISTER] Error:', error);
-      console.error('❌ [REGISTER] Error response:', error.response?.data);
-      console.error('❌ [REGISTER] Error message:', error.message);
+      console.error(' [REGISTER] Error:', error);
+      console.error(' [REGISTER] Error response:', error.response?.data);
+      console.error(' [REGISTER] Error message:', error.message);
       // L'interceptor axios formate déjà l'erreur
       const message = extractErrorMessage(error, 'Erreur lors de l\'inscription');
       return { success: false, message };
@@ -205,13 +205,13 @@ export const AuthProvider = ({ children }) => {
   // Changer le mot de passe
   const changePassword = async (currentPassword, newPassword) => {
     try {
-      console.log('🔐 [CHANGE PASSWORD] Starting password change...');
+      console.log(' [CHANGE PASSWORD] Starting password change...');
       const response = await api.put('/auth/change-password', { currentPassword, newPassword });
-      console.log('✅ [CHANGE PASSWORD] Success:', response.data);
+      console.log(' [CHANGE PASSWORD] Success:', response.data);
       return { success: true, message: 'Mot de passe modifié avec succès' };
     } catch (error) {
-      console.error('❌ [CHANGE PASSWORD] Error:', error);
-      console.error('❌ [CHANGE PASSWORD] Error response:', error.response?.data);
+      console.error(' [CHANGE PASSWORD] Error:', error);
+      console.error(' [CHANGE PASSWORD] Error response:', error.response?.data);
       
       // Extraire le message d'erreur du backend
       let message = 'Erreur lors du changement de mot de passe';
@@ -224,7 +224,7 @@ export const AuthProvider = ({ children }) => {
         message = error.message;
       }
       
-      console.error('❌ [CHANGE PASSWORD] Final error message:', message);
+      console.error(' [CHANGE PASSWORD] Final error message:', message);
       return { success: false, message };
     }
   };
@@ -234,7 +234,7 @@ export const AuthProvider = ({ children }) => {
     token,
     loading,
     isAdmin, 
-    // ✅ CORRECTION: Vérifier token dans state ET localStorage pour éviter les problèmes de timing
+    //  CORRECTION: Vérifier token dans state ET localStorage pour éviter les problèmes de timing
     isAuthenticated: !!token || !!localStorage.getItem('token'),
     error,
     setError,

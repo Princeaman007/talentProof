@@ -129,7 +129,7 @@ const CompanyRegistration = () => {
     try {
       setLoading(true);
       const response = await apiService.companies.register(formData);
-      // ✅ CORRECTION: L'interceptor retourne maintenant response complet
+      // CORRECTION: L'interceptor retourne maintenant response complet
       if (response.data.success) {
         setSuccess(true);
         setTimeout(() => {
@@ -348,7 +348,7 @@ const CompanyRegistration = () => {
                   
                   return (
                     <option key={td._id} value={td._id}>
-                      📅 {dateStr} | ⏰ {horaires} | 📍 {lieuText} - {td.titre}
+                      {dateStr} | {horaires} | {lieuText} - {td.titre}
                     </option>
                   );
                 })}

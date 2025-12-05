@@ -1,7 +1,7 @@
 import Talent from '../models/Talent.js';
 import ContactRequest from '../models/ContactRequest.js';
 import { sendEmail } from '../utils/emailService.js';
-import { contactNotificationTemplate, contactConfirmationTemplate } from '../utils/emailTemplates.js';
+import { contactNotificationTemplate, contactConfirmationTemplate, companyContactTalentEmail } from '../utils/emailTemplates.professional.js';
 import AppError, { 
   validationError, 
   emailAlreadyExists,
@@ -46,29 +46,29 @@ export const filterTalents = asyncHandler(async (req, res) => {
     experienceMax,
     localisation,
     langue,
-    techFilterMode, // ✅ NOUVEAU: 'OR' ou 'AND'
+    techFilterMode, //  NOUVEAU: 'OR' ou 'AND'
   } = req.query;
 
   let query = { statut: 'actif' };
 
-  // ✅ CORRIGÉ - Filtrer par technologies avec logique OR/AND configurable
+  //  CORRIGÉ - Filtrer par technologies avec logique OR/AND configurable
   if (technologies) {
     const techArray = Array.isArray(technologies) 
       ? technologies 
       : technologies.split(',').map(tech => tech.trim());
     
-    console.log('🔍 [TALENT FILTER] Technologies recherchées:', techArray);
-    console.log('🔍 [TALENT FILTER] Mode de filtre:', techFilterMode || 'OR (défaut)');
+    console.log(' [TALENT FILTER] Technologies recherchées:', techArray);
+    console.log(' [TALENT FILTER] Mode de filtre:', techFilterMode || 'OR (défaut)');
     
     // Mode AND : le talent doit avoir TOUTES les technologies
     // Mode OR (défaut) : le talent doit avoir AU MOINS UNE technologie
     if (techFilterMode === 'AND' && techArray.length > 1) {
       query.technologies = { $all: techArray };
-      console.log('🔍 [TALENT FILTER] Utilisation de $all (AND) - Toutes les technologies requises');
+      console.log(' [TALENT FILTER] Utilisation de $all (AND) - Toutes les technologies requises');
     } else {
       // Par défaut, utiliser $in (OR logic)
       query.technologies = { $in: techArray };
-      console.log('🔍 [TALENT FILTER] Utilisation de $in (OR) - Au moins une technologie requise');
+      console.log(' [TALENT FILTER] Utilisation de $in (OR) - Au moins une technologie requise');
     }
   }
 
@@ -116,13 +116,13 @@ export const filterTalents = asyncHandler(async (req, res) => {
     query.langues = { $in: [langue] };
   }
 
-  console.log('🔍 [TALENT FILTER] Query MongoDB finale:', JSON.stringify(query, null, 2));
+  console.log(' [TALENT FILTER] Query MongoDB finale:', JSON.stringify(query, null, 2));
 
   const talents = await Talent.find(query).sort({ scoreTest: -1, createdAt: -1 });
   
-  console.log('✅ [TALENT FILTER] Résultats trouvés:', talents.length, 'talents');
+  console.log(' [TALENT FILTER] Résultats trouvés:', talents.length, 'talents');
   if (talents.length > 0 && technologies) {
-    console.log('📋 [TALENT FILTER] Exemple - Technologies du 1er talent:', talents[0].technologies);
+    console.log(' [TALENT FILTER] Exemple - Technologies du 1er talent:', talents[0].technologies);
   }
 
   res.status(200).json({
@@ -206,7 +206,7 @@ export const contactTalent = asyncHandler(async (req, res) => {
     message,
   };
 
-  // Envoyer l'email de notification à Prince
+  // 1. Envoyer l'email de notification à Prince (admin)
   try {
     await sendEmail({
       to: process.env.ADMIN_EMAIL || 'info@princeaman.dev',
@@ -217,15 +217,34 @@ export const contactTalent = asyncHandler(async (req, res) => {
     console.error('Erreur envoi email à Prince:', emailError);
   }
 
-  // Envoyer un email de confirmation au recruteur
+  // 2. Envoyer un email AU TALENT pour l'informer de l'intérêt de l'entreprise
+  try {
+    await sendEmail({
+      to: talent.email,
+      subject: `Nouvelle opportunité de ${entreprise} - TalentProof`,
+      html: companyContactTalentEmail({
+        talentName: talent.prenom,
+        talentEmail: talent.email,
+        companyName: entreprise,
+        companyContact: recruteurNom,
+        companyEmail: recruteurEmail,
+        companyPhone: recruteurTel,
+        message: message,
+      }),
+    });
+  } catch (emailError) {
+    console.error('Erreur envoi email au talent:', emailError);
+  }
+
+  // 3. Envoyer un email de CONFIRMATION à l'entreprise (recruteur)
   try {
     await sendEmail({
       to: recruteurEmail,
       subject: 'Votre demande a été reçue - TalentProof',
-      html: contactConfirmationTemplate(recruteurNom, talent.prenom),
+      html: contactConfirmationTemplate(recruteurNom, entreprise, talent.prenom),
     });
   } catch (emailError) {
-    console.error('Erreur envoi email au recruteur:', emailError);
+    console.error('Erreur envoi email de confirmation au recruteur:', emailError);
   }
 
   res.status(201).json({

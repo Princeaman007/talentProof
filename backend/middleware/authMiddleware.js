@@ -9,7 +9,7 @@ export const protect = async (req, res, next) => {
   try {
     let token;
 
-    // ✅ CORRECTION: Vérifier le header Authorization EN PREMIER (token le plus récent)
+    //  CORRECTION: Vérifier le header Authorization EN PREMIER (token le plus récent)
     // Le frontend stocke le token rafraîchi dans localStorage et l'envoie via Authorization header
     if (
       req.headers.authorization &&

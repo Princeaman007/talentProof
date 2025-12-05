@@ -34,24 +34,24 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      console.log('📧 [FORGOT PASSWORD] Sending request for:', email);
+      console.log(' [FORGOT PASSWORD] Sending request for:', email);
       const response = await apiService.auth.forgotPassword(email);
-      console.log('📥 [FORGOT PASSWORD] Response received:', {
+      console.log(' [FORGOT PASSWORD] Response received:', {
         status: response.status,
         data: response.data
       });
       
-      // ✅ CORRECTION: L'interceptor retourne maintenant response complet
+      //  CORRECTION: L'interceptor retourne maintenant response complet
       if (response.data.success) {
-        console.log('✅ [FORGOT PASSWORD] Success');
+        console.log(' [FORGOT PASSWORD] Success');
         setSuccess(true);
       } else {
-        console.warn('⚠️ [FORGOT PASSWORD] Response not successful:', response.data);
+        console.warn(' [FORGOT PASSWORD] Response not successful:', response.data);
         setError(response.data.message || 'Erreur lors de l\'envoi de l\'email');
       }
     } catch (err) {
-      console.error('❌ [FORGOT PASSWORD] Error caught:', err);
-      console.error('❌ [FORGOT PASSWORD] Error details:', {
+      console.error(' [FORGOT PASSWORD] Error caught:', err);
+      console.error(' [FORGOT PASSWORD] Error details:', {
         message: err.message,
         response: err.response,
         responseData: err.response?.data,
@@ -60,7 +60,7 @@ const ForgotPassword = () => {
       
       // L'interceptor formate déjà l'erreur
       const message = extractErrorMessage(err, 'Une erreur inattendue est survenue. Veuillez réessayer');
-      console.error('❌ [FORGOT PASSWORD] Extracted error message:', message);
+      console.error(' [FORGOT PASSWORD] Extracted error message:', message);
       setError(message);
     } finally {
       setLoading(false);

@@ -19,13 +19,13 @@ const ConfirmEmail = () => {
       }
 
       try {
-        console.log('📤 [CONFIRM EMAIL] Confirming token:', token);
+        console.log(' [CONFIRM EMAIL] Confirming token:', token);
         const response = await api.get(`/auth/confirm/${token}`);
-        console.log('✅ [CONFIRM EMAIL] Full response:', response);
-        console.log('✅ [CONFIRM EMAIL] response.data:', response.data);
-        console.log('✅ [CONFIRM EMAIL] response.data.success:', response.data?.success);
+        console.log(' [CONFIRM EMAIL] Full response:', response);
+        console.log(' [CONFIRM EMAIL] response.data:', response.data);
+        console.log(' [CONFIRM EMAIL] response.data.success:', response.data?.success);
         
-        // ✅ CORRECTION: Utiliser response.data au lieu de response
+        //  CORRECTION: Utiliser response.data au lieu de response
         if (response.data.success) {
           setStatus('success');
           setMessage(response.data.message || 'Email confirmé avec succès !');
@@ -34,7 +34,7 @@ const ConfirmEmail = () => {
           setMessage(response.data.message || 'Erreur lors de la confirmation.');
         }
       } catch (error) {
-        console.error('❌ [CONFIRM EMAIL] Error:', error);
+        console.error(' [CONFIRM EMAIL] Error:', error);
         setStatus('error');
         setMessage(
           extractErrorMessage(error, 

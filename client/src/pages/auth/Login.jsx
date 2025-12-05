@@ -58,37 +58,37 @@ const Login = () => {
     setError(null);
     setLoading(true);
 
-    console.log('🔵 Début de la connexion...'); // DEBUG
+    console.log(' Début de la connexion...'); // DEBUG
 
     try {
       const result = await login(formData.email, formData.password);
       
-      console.log('✅ Réponse login:', result); // DEBUG
+      console.log(' Réponse login:', result); // DEBUG
 
       if (result.success) {
-        console.log('✅ Connexion réussie, données:', result.data); // DEBUG
+        console.log(' Connexion réussie, données:', result.data); // DEBUG
         
         // Récupérer le rôle depuis result.data
         const userRole = result.data?.role || 'entreprise';
-        console.log('✅ Rôle utilisateur:', userRole); // DEBUG
+        console.log(' Rôle utilisateur:', userRole); // DEBUG
         
-        // ✅ SOLUTION: Marquer que l'utilisateur vient de se connecter (pour ouvrir la sidebar)
+        //  SOLUTION: Marquer que l'utilisateur vient de se connecter (pour ouvrir la sidebar)
         localStorage.setItem('justLoggedIn', 'true');
         
-        // ✅ SOLUTION: Attendre 2 cycles de rendu pour que React mette à jour AuthContext
+        //  SOLUTION: Attendre 2 cycles de rendu pour que React mette à jour AuthContext
         await new Promise(resolve => setTimeout(resolve, 50));
         
-        // ✅ CORRECTION: Tout le monde va sur /dashboard (page d'accueil)
-        console.log('✅ Redirection vers dashboard'); // DEBUG
+        //  CORRECTION: Tout le monde va sur /dashboard (page d'accueil)
+        console.log(' Redirection vers dashboard'); // DEBUG
         navigate('/dashboard', { replace: true });
       } else {
         // Afficher l'erreur retournée par le backend
-        console.error('❌ Échec connexion:', result.message); // DEBUG
+        console.error(' Échec connexion:', result.message); // DEBUG
         setError(result.message || 'Erreur de connexion');
       }
     } catch (err) {
       // Erreur réseau ou autre problème inattendu
-      console.error('❌ Erreur inattendue:', err); // DEBUG
+      console.error(' Erreur inattendue:', err); // DEBUG
       const message = extractErrorMessage(err, 'Erreur de connexion. Veuillez réessayer.');
       setError(message);
     } finally {

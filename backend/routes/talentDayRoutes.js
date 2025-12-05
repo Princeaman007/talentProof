@@ -322,12 +322,12 @@ router.post('/:id/register', async (req, res) => {
       const emailHtml = talentDayConfirmationTemplate(inscriptionFormatted, talentDayFormatted);
       await sendEmail({
         to: inscriptionData.email,
-        subject: `🎯 Inscription confirmée - ${updatedTalentDay.titre}`,
+        subject: ` Inscription confirmée - ${updatedTalentDay.titre}`,
         html: emailHtml,
       });
-      console.log('✅ Email de confirmation envoyé à:', inscriptionData.email);
+      console.log(' Email de confirmation envoyé à:', inscriptionData.email);
     } catch (emailError) {
-      console.error('❌ Erreur envoi email:', emailError);
+      console.error(' Erreur envoi email:', emailError);
       // Ne pas bloquer l'inscription si l'email échoue
     }
     
@@ -712,10 +712,10 @@ router.put('/:id/inscriptions/:inscriptionIndex', protect, adminOnly, async (req
         let emailHtml = '';
         
         if (statut === 'accepte') {
-          emailSubject = `🎉 Félicitations ! Vous êtes accepté(e) - ${talentDay.titre}`;
+          emailSubject = ` Félicitations ! Vous êtes accepté(e) - ${talentDay.titre}`;
           emailHtml = talentDayAcceptationTemplate(inscriptionFormatted, talentDayFormatted);
         } else if (statut === 'refuse') {
-          emailSubject = `📋 Réponse à votre candidature - ${talentDay.titre}`;
+          emailSubject = ` Réponse à votre candidature - ${talentDay.titre}`;
           emailHtml = talentDayRefusTemplate(inscriptionFormatted, talentDayFormatted);
         }
         
@@ -725,10 +725,10 @@ router.put('/:id/inscriptions/:inscriptionIndex', protect, adminOnly, async (req
           html: emailHtml,
         });
         
-        console.log(`✅ Email de ${statut} envoyé à:`, inscription.email);
+        console.log(` Email de ${statut} envoyé à:`, inscription.email);
         emailEnvoye = true;
       } catch (emailError) {
-        console.error('❌ Erreur envoi email:', emailError);
+        console.error(' Erreur envoi email:', emailError);
         // Ne pas bloquer la mise à jour si l'email échoue
       }
     }

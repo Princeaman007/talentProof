@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import { FaSpinner, FaEnvelope, FaPhone, FaCalendar, FaCheckCircle, FaTimesCircle, FaClock } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const TalentDayInscriptions = ({ talentDayId, onClose }) => {
   const [inscriptions, setInscriptions] = useState([]);
@@ -52,25 +53,18 @@ const TalentDayInscriptions = ({ talentDayId, onClose }) => {
       // Rafraîchir la liste
       await fetchInscriptions();
       
-      // Message personnalisé avec emoji
-      const statutEmoji = {
-        'accepte': '',
-        'refuse': '',
-        'en-attente': '',
-        'liste-attente': ''
-      };
+      // Message personnalisé
+      const message = response.data.message || `${inscription.nom} - ${newStatut.replace('-', ' ')}`;
       
-      const message = response.data.message || `${statutEmoji[newStatut]} ${inscription.nom} - ${newStatut.replace('-', ' ')}`;
-      
-      // Afficher une notification plus visible
+      // Afficher une notification
       if (response.data.emailEnvoye) {
-        alert(`${message}\n\n Un email de notification a été envoyé à ${inscription.email}`);
+        toast.success(`${message} - Un email de notification a été envoyé à ${inscription.email}`);
       } else {
-        alert(message);
+        toast.success(message);
       }
     } catch (err) {
       console.error(' Erreur mise à jour statut:', err.response?.data || err.message);
-      alert('Erreur lors de la mise à jour du statut: ' + (err.response?.data?.message || err.message));
+      toast.error('Erreur lors de la mise à jour du statut: ' + (err.response?.data?.message || err.message));
     }
   };
 

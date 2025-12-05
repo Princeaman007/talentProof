@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FaTimes, FaSpinner } from 'react-icons/fa';
 import talentDayService from '../../services/talentDayService';
 import { getImageUrl } from '../../utils/api';
+import { toast } from 'react-toastify';
 
 const CreateTalentDay = ({ talentDay, isEditing, onClose, onSuccess }) => {
   const [loading, setLoading] = useState(false);
@@ -238,7 +239,7 @@ const CreateTalentDay = ({ talentDay, isEditing, onClose, onSuccess }) => {
       }
 
       if (response.data?.success) {
-        alert(isEditing ? 'Événement modifié avec succès' : 'Événement créé avec succès');
+        toast.success(isEditing ? 'Événement modifié avec succès' : 'Événement créé avec succès');
         
         // Réinitialiser le formulaire après succès
         if (!isEditing) {
@@ -269,7 +270,7 @@ const CreateTalentDay = ({ talentDay, isEditing, onClose, onSuccess }) => {
       }
     } catch (err) {
       const errorMsg = err.response?.data?.message || err.message || 'Erreur lors de la sauvegarde';
-      alert('Erreur: ' + errorMsg);
+      toast.error('Erreur: ' + errorMsg);
       console.error(err);
     } finally {
       setLoading(false);

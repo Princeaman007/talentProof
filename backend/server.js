@@ -246,9 +246,9 @@ app.use(express.urlencoded({ extended: true, limit: process.env.REQUEST_BODY_LIM
 //  SÉCURITÉ: Parser les cookies
 app.use(cookieParser());
 
-// 🔍 DEBUG: Log ALL incoming requests
+//  DEBUG: Log ALL incoming requests
 app.use((req, res, next) => {
-  console.log(`🌐 [${req.method}] ${req.path} - Origin: ${req.get('origin') || 'none'}`);
+  console.log(` [${req.method}] ${req.path} - Origin: ${req.get('origin') || 'none'}`);
   next();
 });
 
@@ -273,8 +273,8 @@ app.use((req, res, next) => {
     req.path.startsWith('/uploads') ||
     req.path === '/api/contact' ||
     req.path.startsWith('/api/talent-days') ||
-    req.path === '/api/auth/forgot-password' || // ✅ Allow forgot password without CSRF
-    req.path.startsWith('/api/auth/reset-password') || // ✅ Allow reset password without CSRF
+    req.path === '/api/auth/forgot-password' || //  Allow forgot password without CSRF
+    req.path.startsWith('/api/auth/reset-password') || //  Allow reset password without CSRF
     (req.path === '/api/companies' && req.method === 'POST') // Public company registration
     
   ) {

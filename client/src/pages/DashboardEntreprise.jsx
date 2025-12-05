@@ -30,7 +30,7 @@ import MesNotifications from './dashboard/MesNotifications';
 const DashboardEntreprise = () => {
   const { isAdmin, user } = useAuth();
   
-  // ✅ Écouter les changements de largeur de la sidebar
+  //  Écouter les changements de largeur de la sidebar
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     return localStorage.getItem('sidebarCollapsed') === 'true';
   });
@@ -52,7 +52,7 @@ const DashboardEntreprise = () => {
     };
   }, []);
 
-  console.log('🏢 [DASHBOARD ENTREPRISE] Rendering:', {
+  console.log('[DASHBOARD ENTREPRISE] Rendering:', {
     isAdmin,
     userEmail: user?.email,
     userRole: user?.role,

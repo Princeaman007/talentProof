@@ -3,11 +3,11 @@
  * TALENTPROOF - SERVICE D'ENVOI D'EMAILS AVEC VRAIES DONNÉES MONGODB
  * ═══════════════════════════════════════════════════════════════════════
  * 
- * ✅ CORRIGÉ - Toutes les fonctions utilisent maintenant les vraies données
- * ✅ Dates formatées en français lisible
- * ✅ Lieux formatés selon le type (physique/en-ligne/hybride)
- * ✅ Places disponibles calculées dynamiquement
- * ✅ Validation des données avant envoi
+ * CORRIGÉ - Toutes les fonctions utilisent maintenant les vraies données
+ * Dates formatées en français lisible
+ * Lieux formatés selon le type (physique/en-ligne/hybride)
+ * Places disponibles calculées dynamiquement
+ * Validation des données avant envoi
  */
 
 import { createTransport } from 'nodemailer';
@@ -38,7 +38,7 @@ const createTransporter = () => {
   const emailPort = parseInt(process.env.EMAIL_PORT);
   const isSSL = emailPort === 465;
   
-  console.log('📧 Configuration Email:', {
+  console.log('Configuration Email:', {
     host: process.env.EMAIL_HOST,
     port: emailPort,
     secure: isSSL,
@@ -72,9 +72,9 @@ const createTransporter = () => {
  */
 export const sendEmail = async ({ to, subject, html, text }) => {
   if (process.env.SKIP_EMAILS === 'true') {
-    console.log('🚫 Mode dev: Email non envoyé');
-    console.log('📧 Destinataire:', to);
-    console.log('📝 Sujet:', subject);
+    console.log('Mode dev: Email non envoyé');
+    console.log('Destinataire:', to);
+    console.log('Sujet:', subject);
     return { success: true, messageId: 'dev-mode-skipped' };
   }
 
@@ -83,9 +83,9 @@ export const sendEmail = async ({ to, subject, html, text }) => {
 
     try {
       await transporter.verify();
-      console.log('✅ Serveur email prêt');
+      console.log('Serveur email prêt');
     } catch (verifyError) {
-      console.warn('⚠️ Vérification du serveur email échouée, tentative d\'envoi quand même...');
+      console.warn('Vérification du serveur email échouée, tentative d\'envoi quand même...');
     }
 
     const mailOptions = {
@@ -98,10 +98,10 @@ export const sendEmail = async ({ to, subject, html, text }) => {
 
     const info = await transporter.sendMail(mailOptions);
     
-    console.log('✅ Email envoyé avec succès:', info.messageId);
+    console.log('Email envoyé avec succès:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('❌ Erreur envoi email:', error);
+    console.error('Erreur envoi email:', error);
     console.error('Détails:', {
       code: error.code,
       command: error.command,
@@ -127,7 +127,7 @@ const formatDateFR = (date) => {
   try {
     const dateObj = new Date(date);
     if (isNaN(dateObj.getTime())) {
-      console.error('❌ Date invalide:', date);
+      console.error('Date invalide:', date);
       return 'Date à confirmer';
     }
     
@@ -140,7 +140,7 @@ const formatDateFR = (date) => {
       minute: '2-digit'
     });
   } catch (error) {
-    console.error('❌ Erreur formatage date:', error);
+    console.error('Erreur formatage date:', error);
     return 'Date à confirmer';
   }
 };
@@ -161,7 +161,7 @@ const formatLocation = (location) => {
   };
   
   if (!location || !location.type) {
-    console.warn('⚠️ Lieu manquant, utilisation valeur par défaut');
+    console.warn('Lieu manquant, utilisation valeur par défaut');
     return defaultLocation;
   }
   
@@ -206,7 +206,7 @@ const formatLocation = (location) => {
  */
 const calculateAvailableSpots = (talentDay) => {
   if (!talentDay) {
-    console.error('❌ TalentDay manquant pour calcul des places');
+    console.error('TalentDay manquant pour calcul des places');
     return { availableSpots: 0, totalSpots: 0, percentage: 0 };
   }
   
@@ -225,23 +225,23 @@ const calculateAvailableSpots = (talentDay) => {
  */
 const validateTalentDayData = (talentDay) => {
   if (!talentDay) {
-    throw new Error('❌ TalentDay manquant');
+    throw new Error('TalentDay manquant');
   }
   
   if (!talentDay.titre) {
-    throw new Error(`❌ Titre manquant pour TalentDay ${talentDay._id}`);
+    throw new Error(`Titre manquant pour TalentDay ${talentDay._id}`);
   }
   
   if (!talentDay.date) {
-    throw new Error(`❌ Date manquante pour TalentDay ${talentDay._id}`);
+    throw new Error(`Date manquante pour TalentDay ${talentDay._id}`);
   }
   
   if (!talentDay.location && !talentDay.lieu) {
-    console.warn(`⚠️ Lieu manquant pour TalentDay ${talentDay._id}`);
+    console.warn(`Lieu manquant pour TalentDay ${talentDay._id}`);
   }
   
   if (!talentDay.maxParticipants && !talentDay.placesDisponibles) {
-    console.warn(`⚠️ Places disponibles manquantes pour TalentDay ${talentDay._id}`);
+    console.warn(`Places disponibles manquantes pour TalentDay ${talentDay._id}`);
   }
 };
 
@@ -267,11 +267,11 @@ const formatHoraires = (heureDebut, heureFin) => {
  */
 export const sendWelcomeCompanyEmail = async (company, confirmationToken) => {
   if (!company || !company.email) {
-    throw new Error('❌ Email entreprise manquant pour email de bienvenue');
+    throw new Error('Email entreprise manquant pour email de bienvenue');
   }
   
   if (!confirmationToken) {
-    throw new Error('❌ Token de confirmation manquant');
+    throw new Error('Token de confirmation manquant');
   }
   
   const companyName = company.companyName || company.nomEntreprise || company.nom || 'Entreprise';
@@ -279,11 +279,11 @@ export const sendWelcomeCompanyEmail = async (company, confirmationToken) => {
   
   const html = confirmationEmailTemplate(companyName, confirmationLink);
   
-  console.log(`✅ Email de bienvenue envoyé à ${company.email} (${companyName})`);
+  console.log(`Email de bienvenue envoyé à ${company.email} (${companyName})`);
   
   return sendEmail({
     to: company.email,
-    subject: `🎉 Bienvenue sur TalentProof, ${companyName} !`,
+    subject: `Bienvenue sur TalentProof, ${companyName} !`,
     html,
     text: `Bienvenue ${companyName} ! Confirmez votre email en cliquant sur ce lien: ${confirmationLink}`
   });
@@ -300,11 +300,11 @@ export const sendWelcomeCompanyEmail = async (company, confirmationToken) => {
  */
 export const sendResetPasswordEmail = async (user, resetToken) => {
   if (!user || !user.email) {
-    throw new Error('❌ Email utilisateur manquant pour reset password');
+    throw new Error('Email utilisateur manquant pour reset password');
   }
   
   if (!resetToken) {
-    throw new Error('❌ Token de réinitialisation manquant');
+    throw new Error('Token de réinitialisation manquant');
   }
   
   const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5174'}/reset-password/${resetToken}`;
@@ -312,11 +312,11 @@ export const sendResetPasswordEmail = async (user, resetToken) => {
   
   const html = resetPasswordTemplate(userName, resetLink);
   
-  console.log(`🔐 Email reset password envoyé à ${user.email} (${userName})`);
+  console.log(`Email reset password envoyé à ${user.email} (${userName})`);
   
   return sendEmail({
     to: user.email,
-    subject: `🔐 Réinitialisation de votre mot de passe - TalentProof`,
+    subject: `Réinitialisation de votre mot de passe - TalentProof`,
     html,
     text: `Bonjour ${userName}, cliquez sur ce lien pour réinitialiser votre mot de passe: ${resetLink}. Ce lien expire dans 1 heure.`
   });
@@ -327,35 +327,35 @@ export const sendResetPasswordEmail = async (user, resetToken) => {
 // ═══════════════════════════════════════════════════════════════════════
 
 /**
- * ✅ FONCTION CORRIGÉE - Envoie toutes les vraies données MongoDB
+ * FONCTION CORRIGÉE - Envoie toutes les vraies données MongoDB
  * @param {Object} talent - Objet talent de MongoDB
  * @param {Object} talentDay - Objet TalentDay complet de MongoDB
  * @param {Object} inscription - Données de l'inscription
  */
 export const sendTalentDayConfirmationEmail = async (talent, talentDay, inscription) => {
-  // ✅ VALIDATION STRICTE
+  // VALIDATION STRICTE
   if (!talent || !talent.email) {
-    throw new Error('❌ Email talent manquant pour confirmation inscription');
+    throw new Error('Email talent manquant pour confirmation inscription');
   }
   
   validateTalentDayData(talentDay);
   
-  // ✅ EXTRACTION DES VRAIES DONNÉES MONGODB
+  // EXTRACTION DES VRAIES DONNÉES MONGODB
   const talentName = `${talent.prenom || talent.firstName || ''} ${talent.nom || talent.lastName || ''}`.trim();
   
-  // ✅ FORMATAGE DU LIEU SELON LE TYPE
+  // FORMATAGE DU LIEU SELON LE TYPE
   const locationData = formatLocation(talentDay.location || talentDay.lieu);
   
-  // ✅ CALCUL DYNAMIQUE DES PLACES DISPONIBLES
+  // CALCUL DYNAMIQUE DES PLACES DISPONIBLES
   const { availableSpots, totalSpots } = calculateAvailableSpots(talentDay);
   
-  // ✅ FORMATAGE DE LA DATE EN FRANÇAIS
+  // FORMATAGE DE LA DATE EN FRANÇAIS
   const eventDate = formatDateFR(talentDay.date);
   
-  // ✅ FORMATAGE DES HORAIRES
+  // FORMATAGE DES HORAIRES
   const horaires = formatHoraires(talentDay.heureDebut, talentDay.heureFin);
   
-  // ✅ CONSTRUCTION DE L'OBJET INSCRIPTION FORMATÉ
+  // CONSTRUCTION DE L'OBJET INSCRIPTION FORMATÉ
   const inscriptionFormatted = {
     prenom: talent.prenom || talent.firstName || 'Talent',
     nom: talent.nom || talent.lastName || '',
@@ -364,7 +364,7 @@ export const sendTalentDayConfirmationEmail = async (talent, talentDay, inscript
     technologies: talent.technologies || inscription?.technologies || []
   };
   
-  // ✅ CONSTRUCTION DE L'OBJET TALENTDAY COMPLET AVEC TOUTES LES DONNÉES
+  // CONSTRUCTION DE L'OBJET TALENTDAY COMPLET AVEC TOUTES LES DONNÉES
   const talentDayFormatted = {
     _id: talentDay._id,
     titre: talentDay.titre || talentDay.title || 'TalentDay',
@@ -376,11 +376,11 @@ export const sendTalentDayConfirmationEmail = async (talent, talentDay, inscript
     inscriptions: talentDay.inscriptions || []
   };
   
-  // ✅ GÉNÉRATION DU HTML AVEC LE TEMPLATE PROFESSIONNEL
+  // GÉNÉRATION DU HTML AVEC LE TEMPLATE PROFESSIONNEL
   const html = talentDayConfirmationTemplate(inscriptionFormatted, talentDayFormatted);
   
-  // ✅ LOG DÉTAILLÉ POUR VÉRIFICATION
-  console.log(`✅ Confirmation TalentDay envoyée à ${talent.email}:`, {
+  // LOG DÉTAILLÉ POUR VÉRIFICATION
+  console.log(`Confirmation TalentDay envoyée à ${talent.email}:`, {
     talent: talentName,
     event: talentDay.titre,
     lieu: locationData.formatted,
@@ -391,7 +391,7 @@ export const sendTalentDayConfirmationEmail = async (talent, talentDay, inscript
   
   return sendEmail({
     to: talent.email,
-    subject: `✅ Inscription confirmée - ${talentDay.titre}`,
+    subject: `Inscription confirmée - ${talentDay.titre}`,
     html,
     text: `Bonjour ${talentName}, votre inscription au TalentDay "${talentDay.titre}" le ${eventDate} est confirmée. Places restantes: ${availableSpots}/${totalSpots}. Lieu: ${locationData.formatted}. Horaires: ${horaires}`
   });
@@ -402,20 +402,20 @@ export const sendTalentDayConfirmationEmail = async (talent, talentDay, inscript
 // ═══════════════════════════════════════════════════════════════════════
 
 /**
- * ✅ FONCTION CORRIGÉE - Notifie l'entreprise avec toutes les données du talent
+ * FONCTION CORRIGÉE - Notifie l'entreprise avec toutes les données du talent
  * @param {Object} talent - Objet talent complet de MongoDB
  * @param {Object} talentDay - Objet TalentDay complet de MongoDB
  * @param {Object} inscription - Données de l'inscription
  */
 export const sendNewApplicationEmail = async (talent, talentDay, inscription) => {
-  // ✅ VALIDATION
+  // VALIDATION
   if (!talent || !talent.email) {
-    throw new Error('❌ Email talent manquant pour notification entreprise');
+    throw new Error('Email talent manquant pour notification entreprise');
   }
   
   validateTalentDayData(talentDay);
   
-  // ✅ EMAIL DE DESTINATION (organisateur ou admin)
+  // EMAIL DE DESTINATION (organisateur ou admin)
   const companyEmail = talentDay.organisateur?.email || 
                        talentDay.infoEntreprises?.contact?.email || 
                        talentDay.createdBy?.email ||
@@ -426,19 +426,19 @@ export const sendNewApplicationEmail = async (talent, talentDay, inscription) =>
                      talentDay.infoEntreprises?.nom || 
                      'Organisateur';
   
-  // ✅ CALCUL DYNAMIQUE DES PLACES
+  // CALCUL DYNAMIQUE DES PLACES
   const { availableSpots, totalSpots } = calculateAvailableSpots(talentDay);
   
-  // ✅ FORMATAGE DU LIEU
+  // FORMATAGE DU LIEU
   const locationData = formatLocation(talentDay.location || talentDay.lieu);
   
-  // ✅ FORMATAGE DE LA DATE
+  // FORMATAGE DE LA DATE
   const eventDate = formatDateFR(talentDay.date);
   
-  // ✅ FORMATAGE DES HORAIRES
+  // FORMATAGE DES HORAIRES
   const horaires = formatHoraires(talentDay.heureDebut, talentDay.heureFin);
   
-  // ✅ CONSTRUCTION DE L'OBJET TALENT COMPLET
+  // CONSTRUCTION DE L'OBJET TALENT COMPLET
   const talentInfo = {
     prenom: talent.prenom || talent.firstName || 'Talent',
     nom: talent.nom || talent.lastName || '',
@@ -453,7 +453,7 @@ export const sendNewApplicationEmail = async (talent, talentDay, inscription) =>
     portfolio: talent.portfolio || talent.portfolioUrl || null
   };
   
-  // ✅ CONSTRUCTION DE L'OBJET TALENTDAY COMPLET
+  // CONSTRUCTION DE L'OBJET TALENTDAY COMPLET
   const talentDayFormatted = {
     _id: talentDay._id,
     titre: talentDay.titre || talentDay.title || 'TalentDay',
@@ -464,11 +464,11 @@ export const sendNewApplicationEmail = async (talent, talentDay, inscription) =>
     maxParticipants: totalSpots
   };
   
-  // ✅ GÉNÉRATION DU HTML
+  // GÉNÉRATION DU HTML
   const html = companyNewCandidatureTemplate(talentInfo, talentDayFormatted);
   
-  // ✅ LOG DÉTAILLÉ
-  console.log(`📧 Notification entreprise envoyée à ${companyEmail}:`, {
+  // LOG DÉTAILLÉ
+  console.log(`Notification entreprise envoyée à ${companyEmail}:`, {
     talent: `${talentInfo.prenom} ${talentInfo.nom}`,
     technologies: talentInfo.technologies.join(', '),
     event: talentDay.titre,
@@ -479,7 +479,7 @@ export const sendNewApplicationEmail = async (talent, talentDay, inscription) =>
   
   return sendEmail({
     to: companyEmail,
-    subject: `📋 Nouvelle candidature - ${talentInfo.prenom} ${talentInfo.nom} pour ${talentDay.titre}`,
+    subject: `Nouvelle candidature - ${talentInfo.prenom} ${talentInfo.nom} pour ${talentDay.titre}`,
     html,
     text: `Nouvelle candidature de ${talentInfo.prenom} ${talentInfo.nom} (${talentInfo.email}, tel: ${talentInfo.telephone}) pour votre TalentDay "${talentDay.titre}" le ${eventDate}. Technologies: ${talentInfo.technologies.join(', ')}. Score: ${talentInfo.scoreTest || 'N/A'}. Inscriptions: ${talentDay.inscriptions?.length || 0}/${totalSpots}. Lieu: ${locationData.formatted}`
   });
@@ -490,20 +490,20 @@ export const sendNewApplicationEmail = async (talent, talentDay, inscription) =>
 // ═══════════════════════════════════════════════════════════════════════
 
 /**
- * ✅ FONCTION CORRIGÉE - Confirme l'inscription d'une entreprise à un/des TalentDay(s)
+ * FONCTION CORRIGÉE - Confirme l'inscription d'une entreprise à un/des TalentDay(s)
  * @param {Object} companyInfo - Informations de l'entreprise
  * @param {Array} talentDays - Array d'objets TalentDay complets de MongoDB
  */
 export const sendCompanyTalentDayRegistrationEmail = async (companyInfo, talentDays) => {
   if (!companyInfo || !companyInfo.email) {
-    throw new Error('❌ Email entreprise manquant pour confirmation inscription');
+    throw new Error('Email entreprise manquant pour confirmation inscription');
   }
   
   if (!talentDays || talentDays.length === 0) {
-    throw new Error('❌ Aucun TalentDay fourni pour confirmation');
+    throw new Error('Aucun TalentDay fourni pour confirmation');
   }
   
-  // ✅ FORMATAGE DES TALENTDAYS AVEC TOUTES LES DONNÉES
+  // FORMATAGE DES TALENTDAYS AVEC TOUTES LES DONNÉES
   const formattedTalentDays = talentDays.map(td => {
     validateTalentDayData(td);
     
@@ -525,11 +525,11 @@ export const sendCompanyTalentDayRegistrationEmail = async (companyInfo, talentD
     };
   });
   
-  // ✅ GÉNÉRATION DU HTML
+  // GÉNÉRATION DU HTML
   const html = companyTalentDayRegistrationTemplate(companyInfo, formattedTalentDays);
   
-  // ✅ LOG DÉTAILLÉ
-  console.log(`✅ Confirmation inscription entreprise envoyée à ${companyInfo.email}:`, {
+  // LOG DÉTAILLÉ
+  console.log(`Confirmation inscription entreprise envoyée à ${companyInfo.email}:`, {
     entreprise: companyInfo.companyName || companyInfo.nomEntreprise,
     contact: companyInfo.contactPerson || companyInfo.nomContact,
     talentDays: formattedTalentDays.map(td => ({
@@ -544,7 +544,7 @@ export const sendCompanyTalentDayRegistrationEmail = async (companyInfo, talentD
   
   return sendEmail({
     to: companyInfo.email,
-    subject: `🎉 Inscription TalentDay(s) bien reçue - ${companyInfo.companyName || companyInfo.nomEntreprise}`,
+    subject: `Inscription TalentDay(s) bien reçue - ${companyInfo.companyName || companyInfo.nomEntreprise}`,
     html,
     text: `Bonjour ${companyInfo.contactPerson || 'Responsable'}, votre inscription aux TalentDays (${talentDaysTitles}) a bien été reçue. Notre équipe va la valider sous 24-48h.`
   });
@@ -555,24 +555,24 @@ export const sendCompanyTalentDayRegistrationEmail = async (companyInfo, talentD
 // ═══════════════════════════════════════════════════════════════════════
 
 /**
- * ✅ FONCTION CORRIGÉE - Notifie l'admin qu'une entreprise souhaite contacter un talent
+ * FONCTION CORRIGÉE - Notifie l'admin qu'une entreprise souhaite contacter un talent
  * @param {Object} talentInfo - Informations complètes du talent
  * @param {Object} recruteurInfo - Informations complètes du recruteur
  */
 export const sendContactTalentNotificationEmail = async (talentInfo, recruteurInfo) => {
   if (!talentInfo || !talentInfo.prenom) {
-    throw new Error('❌ Données talent manquantes pour notification contact');
+    throw new Error('Données talent manquantes pour notification contact');
   }
   
   if (!recruteurInfo || !recruteurInfo.email) {
-    throw new Error('❌ Données recruteur manquantes pour notification contact');
+    throw new Error('Données recruteur manquantes pour notification contact');
   }
   
   const adminEmail = process.env.ADMIN_EMAIL || 'info@princeaman.dev';
   
   const html = contactNotificationTemplate(talentInfo, recruteurInfo);
   
-  console.log(`📬 Notification contact talent envoyée à admin:`, {
+  console.log(`Notification contact talent envoyée à admin:`, {
     talent: `${talentInfo.prenom} ${talentInfo.nom || ''}`,
     technologies: talentInfo.technologies?.join(', '),
     entreprise: recruteurInfo.entreprise,
@@ -581,7 +581,7 @@ export const sendContactTalentNotificationEmail = async (talentInfo, recruteurIn
   
   return sendEmail({
     to: adminEmail,
-    subject: `📬 Demande de contact - ${recruteurInfo.entreprise} → ${talentInfo.prenom}`,
+    subject: `Demande de contact - ${recruteurInfo.entreprise} → ${talentInfo.prenom}`,
     html,
     text: `${recruteurInfo.entreprise} (${recruteurInfo.email}, ${recruteurInfo.tel}) souhaite contacter le talent ${talentInfo.prenom} (technologies: ${talentInfo.technologies?.join(', ')}). Message: ${recruteurInfo.message}`
   });
@@ -597,20 +597,20 @@ export const sendContactTalentNotificationEmail = async (talentInfo, recruteurIn
  * @param {string} recruteurEmail - Email du recruteur
  * @param {string} talentPrenom - Prénom du talent
  */
-export const sendContactConfirmationToRecruiterEmail = async (recruteurNom, recruteurEmail, talentPrenom) => {
+export const sendContactConfirmationToRecruiterEmail = async (recruteurNom, recruteurEmail, entreprise, talentPrenom) => {
   if (!recruteurEmail) {
-    throw new Error('❌ Email recruteur manquant pour confirmation contact');
+    throw new Error('Email recruteur manquant pour confirmation contact');
   }
   
-  const html = contactConfirmationTemplate(recruteurNom, talentPrenom);
+  const html = contactConfirmationTemplate(recruteurNom, entreprise, talentPrenom);
   
-  console.log(`✅ Confirmation contact envoyée à ${recruteurEmail} (${recruteurNom})`);
+  console.log(`Confirmation contact envoyée à ${recruteurEmail} (${recruteurNom} - ${entreprise})`);
   
   return sendEmail({
     to: recruteurEmail,
-    subject: `✅ Demande bien reçue - Contact avec ${talentPrenom}`,
+    subject: `Confirmation : Votre demande de contact pour ${talentPrenom} - TalentProof`,
     html,
-    text: `Bonjour ${recruteurNom}, votre demande de contact pour le talent ${talentPrenom} a bien été reçue. Nous vous recontacterons sous 24-48h avec les informations complètes.`
+    text: `Bonjour ${recruteurNom}, votre demande de contact de la part de ${entreprise} pour le talent ${talentPrenom} a bien été reçue. Nous vous recontacterons sous 48h avec les informations complètes.`
   });
 };
 
@@ -624,14 +624,14 @@ export const sendContactConfirmationToRecruiterEmail = async (recruteurNom, recr
  */
 export const sendGeneralContactNotificationEmail = async (contactInfo) => {
   if (!contactInfo || !contactInfo.email) {
-    throw new Error('❌ Email contact manquant pour notification');
+    throw new Error('Email contact manquant pour notification');
   }
   
   const adminEmail = process.env.ADMIN_EMAIL || 'info@princeaman.dev';
   
   const html = generalContactNotificationTemplate(contactInfo);
   
-  console.log(`📬 Notification contact général envoyée à admin:`, {
+  console.log(`Notification contact général envoyée à admin:`, {
     nom: contactInfo.nom,
     email: contactInfo.email,
     sujet: contactInfo.sujet
@@ -639,7 +639,7 @@ export const sendGeneralContactNotificationEmail = async (contactInfo) => {
   
   return sendEmail({
     to: adminEmail,
-    subject: `📬 Nouveau message de contact - ${contactInfo.sujet}`,
+    subject: `Nouveau message de contact - ${contactInfo.sujet}`,
     html,
     text: `Nouveau message de ${contactInfo.nom} (${contactInfo.email}). Sujet: ${contactInfo.sujet}. Message: ${contactInfo.message}`
   });
@@ -656,16 +656,16 @@ export const sendGeneralContactNotificationEmail = async (contactInfo) => {
  */
 export const sendGeneralContactConfirmationEmail = async (nom, email) => {
   if (!email) {
-    throw new Error('❌ Email visiteur manquant pour confirmation contact');
+    throw new Error('Email visiteur manquant pour confirmation contact');
   }
   
   const html = generalContactConfirmationTemplate(nom);
   
-  console.log(`✅ Confirmation contact général envoyée à ${email} (${nom})`);
+  console.log(`Confirmation contact général envoyée à ${email} (${nom})`);
   
   return sendEmail({
     to: email,
-    subject: `✅ Message bien reçu - TalentProof`,
+    subject: `Message bien reçu - TalentProof`,
     html,
     text: `Bonjour ${nom}, merci pour votre message. Notre équipe vous répondra sous 24-48h.`
   });
@@ -676,13 +676,13 @@ export const sendGeneralContactConfirmationEmail = async (nom, email) => {
 // ═══════════════════════════════════════════════════════════════════════
 
 /**
- * ✅ FONCTION CORRIGÉE - Notifie le talent que sa candidature a été acceptée
+ * FONCTION CORRIGÉE - Notifie le talent que sa candidature a été acceptée
  * @param {Object} inscription - Objet inscription de MongoDB
  * @param {Object} talentDay - Objet TalentDay complet de MongoDB
  */
 export const sendTalentDayAcceptationEmail = async (inscription, talentDay) => {
   if (!inscription || !inscription.email) {
-    throw new Error('❌ Email inscription manquant pour acceptation');
+    throw new Error('Email inscription manquant pour acceptation');
   }
   
   validateTalentDayData(talentDay);
@@ -705,7 +705,7 @@ export const sendTalentDayAcceptationEmail = async (inscription, talentDay) => {
   
   const html = talentDayAcceptationTemplate(inscription, talentDayFormatted);
   
-  console.log(`✅ Acceptation TalentDay envoyée à ${inscription.email}:`, {
+  console.log(`Acceptation TalentDay envoyée à ${inscription.email}:`, {
     talent: `${inscription.prenom} ${inscription.nom || ''}`,
     event: talentDay.titre,
     lieu: locationData.formatted,
@@ -714,7 +714,7 @@ export const sendTalentDayAcceptationEmail = async (inscription, talentDay) => {
   
   return sendEmail({
     to: inscription.email,
-    subject: `✅ Candidature acceptée - ${talentDay.titre}`,
+    subject: `Candidature acceptée - ${talentDay.titre}`,
     html,
     text: `Félicitations ${inscription.prenom} ! Votre candidature au TalentDay "${talentDay.titre}" le ${eventDate} a été acceptée. Lieu: ${locationData.formatted}. Horaires: ${horaires}.`
   });
@@ -725,14 +725,14 @@ export const sendTalentDayAcceptationEmail = async (inscription, talentDay) => {
 // ═══════════════════════════════════════════════════════════════════════
 
 /**
- * ✅ FONCTION CORRIGÉE - Notifie le talent que sa candidature n'a pas été retenue
+ * FONCTION CORRIGÉE - Notifie le talent que sa candidature n'a pas été retenue
  * @param {Object} inscription - Objet inscription de MongoDB
  * @param {Object} talentDay - Objet TalentDay complet de MongoDB
  * @param {string} raison - Raison du refus (optionnel)
  */
 export const sendTalentDayRefusEmail = async (inscription, talentDay, raison = null) => {
   if (!inscription || !inscription.email) {
-    throw new Error('❌ Email inscription manquant pour refus');
+    throw new Error('Email inscription manquant pour refus');
   }
   
   validateTalentDayData(talentDay);
@@ -744,7 +744,7 @@ export const sendTalentDayRefusEmail = async (inscription, talentDay, raison = n
   
   const html = talentDayRefusTemplate(inscription, talentDayFormatted, raison);
   
-  console.log(`📧 Refus TalentDay envoyé à ${inscription.email}:`, {
+  console.log(`Refus TalentDay envoyé à ${inscription.email}:`, {
     talent: `${inscription.prenom} ${inscription.nom || ''}`,
     event: talentDay.titre,
     raison: raison || 'Non spécifiée'
@@ -771,5 +771,5 @@ export {
 };
 
 // ═══════════════════════════════════════════════════════════════════════
-// FIN DU FICHIER - TOUTES LES FONCTIONS SONT CORRIGÉES ✅
+// FIN DU FICHIER - TOUTES LES FONCTIONS SONT CORRIGÉES
 // ═══════════════════════════════════════════════════════════════════════

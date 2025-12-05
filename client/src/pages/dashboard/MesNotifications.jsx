@@ -11,6 +11,8 @@ import {
   FaFileInvoice,
   FaCog,
 } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import { toastConfirm } from '../../utils/toastConfirm.jsx';
 
 const MesNotifications = () => {
   const [notifications, setNotifications] = useState([]);
@@ -29,9 +31,9 @@ const MesNotifications = () => {
         unreadOnly: unreadOnly.toString(),
         limit: 20,
       };
-      console.log('📤 [NOTIFICATIONS] Fetching with params:', params);
+      console.log(' [NOTIFICATIONS] Fetching with params:', params);
       const response = await api.get('/entreprise/notifications', { params });
-      console.log('📥 [NOTIFICATIONS] Response:', {
+      console.log(' [NOTIFICATIONS] Response:', {
         status: response.status,
         data: response.data,
         notificationsCount: response.data.notifications?.length,
@@ -40,9 +42,9 @@ const MesNotifications = () => {
 
       setNotifications(response.data.notifications);
       setUnreadCount(response.data.unreadCount);
-      console.log('✅ [NOTIFICATIONS] Loaded', response.data.notifications?.length, 'notifications');
+      console.log('[NOTIFICATIONS] Loaded', response.data.notifications?.length, 'notifications');
     } catch (error) {
-      console.error('❌ [NOTIFICATIONS] Error:', error);
+      console.error('[NOTIFICATIONS] Error:', error);
     } finally {
       setLoading(false);
     }
@@ -75,26 +77,29 @@ const MesNotifications = () => {
       setUnreadCount(0);
     } catch (error) {
       console.error('Erreur marquage toutes notifications:', error);
-      alert('Erreur lors du marquage');
+      toast.error('Erreur lors du marquage');
     }
   };
 
   const handleDelete = async (notificationId) => {
-    if (!confirm('Supprimer cette notification ?')) return;
-
-    try {
-      await api.delete(`/entreprise/notifications/${notificationId}`);
-      setNotifications(notifications.filter((n) => n._id !== notificationId));
-      
-      // Décrémenter unreadCount si c'était non lu
-      const notification = notifications.find((n) => n._id === notificationId);
-      if (!notification.isRead) {
-        setUnreadCount((prev) => Math.max(0, prev - 1));
+    toastConfirm(
+      'Supprimer cette notification ?',
+      async () => {
+        try {
+          await api.delete(`/entreprise/notifications/${notificationId}`);
+          setNotifications(notifications.filter((n) => n._id !== notificationId));
+          
+          // Décrémenter unreadCount si c'était non lu
+          const notification = notifications.find((n) => n._id === notificationId);
+          if (!notification.isRead) {
+            setUnreadCount((prev) => Math.max(0, prev - 1));
+          }
+        } catch (error) {
+          console.error('Erreur suppression notification:', error);
+          toast.error('Erreur lors de la suppression');
+        }
       }
-    } catch (error) {
-      console.error('Erreur suppression notification:', error);
-      alert('Erreur lors de la suppression');
-    }
+    );
   };
 
   const getIcon = (type) => {

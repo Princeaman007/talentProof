@@ -14,7 +14,7 @@ const DashboardHome = () => {
   const { stats, loading } = isAdmin ? adminStatsHook : publicStatsHook;
 
   // Debug: Afficher les stats dans la console
-  console.log('🏠 [DASHBOARD HOME] Rendering:', { stats, loading, isAdmin, user: user?.email });
+  console.log('[DASHBOARD HOME] Rendering:', { stats, loading, isAdmin, user: user?.email });
 
   return (
     <div className="space-y-6">

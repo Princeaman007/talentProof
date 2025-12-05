@@ -42,34 +42,34 @@ const AdminStats = () => {
 
   const fetchStats = async () => {
     try {
-      console.log('📤 [ADMIN STATS] Fetching global stats...');
-      const response = await api.get('/admin/stats');
-      console.log('📥 [ADMIN STATS] Response:', {
+      console.log('[ADMIN STATS] Fetching global stats...');
+      const response = await api.get('/admin/stats/global');
+      console.log('[ADMIN STATS] Response:', {
         status: response.status,
         data: response.data,
         statsKeys: Object.keys(response.data.stats || {})
       });
       setStats(response.data.stats);
-      console.log('✅ [ADMIN STATS] Stats loaded successfully');
+      console.log('[ADMIN STATS] Stats loaded successfully');
     } catch (error) {
-      console.error('❌ [ADMIN STATS] Error fetching stats:', error);
+      console.error('[ADMIN STATS] Error fetching stats:', error);
     }
   };
 
   const fetchTimeline = async () => {
     try {
       setLoading(true);
-      console.log('📤 [ADMIN STATS] Fetching timeline with period:', period);
+      console.log(' [ADMIN STATS] Fetching timeline with period:', period);
       const response = await api.get(`/admin/stats/timeline?period=${period}`);
-      console.log('📥 [ADMIN STATS] Timeline response:', {
+      console.log(' [ADMIN STATS] Timeline response:', {
         status: response.status,
         data: response.data,
         timelineLength: response.data.timeline?.length
       });
       setTimeline(response.data.timeline);
-      console.log('✅ [ADMIN STATS] Timeline loaded successfully');
+      console.log('[ADMIN STATS] Timeline loaded successfully');
     } catch (error) {
-      console.error('❌ [ADMIN STATS] Error fetching timeline:', error);
+      console.error('[ADMIN STATS] Error fetching timeline:', error);
     } finally {
       setLoading(false);
     }

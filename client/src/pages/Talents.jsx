@@ -36,9 +36,9 @@ const Talents = () => {
   const fetchTalents = async () => {
     try {
       setLoading(true);
-      console.log('📤 [TALENTS] Fetching talents...');
+      console.log(' [TALENTS] Fetching talents...');
       const response = await api.get('/talents');
-      console.log('📥 [TALENTS] Response received:', {
+      console.log(' [TALENTS] Response received:', {
         status: response.status,
         data: response.data,
         dataKeys: Object.keys(response.data),
@@ -48,9 +48,9 @@ const Talents = () => {
       setTalents(response.data.data);
       setFilteredTalents(response.data.data);
       setError('');
-      console.log('✅ [TALENTS] Talents loaded successfully:', response.data.data?.length, 'talents');
+      console.log('[TALENTS] Talents loaded successfully:', response.data.data?.length, 'talents');
     } catch (err) {
-      console.error('❌ [TALENTS] Error fetching talents:', err);
+      console.error('[TALENTS] Error fetching talents:', err);
       setError('Erreur lors du chargement des talents');
     } finally {
       setLoading(false);

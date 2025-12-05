@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import { toast } from 'react-toastify';
+import { toastConfirm } from '../../utils/toastConfirm.jsx';
 
 const AdminDevis = () => {
   const [devis, setDevis] = useState([]);
@@ -74,18 +76,21 @@ const AdminDevis = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce devis ?')) return;
-    
-    try {
-      await api.delete(`/admin/devis/${id}`);
-      setMessage({ type: 'success', text: 'Devis supprimé' });
-      fetchDevis();
-      fetchStats();
-      setTimeout(() => setMessage({ type: '', text: '' }), 3000);
-    } catch (error) {
-      console.error('Erreur suppression:', error);
-      setMessage({ type: 'error', text: 'Erreur lors de la suppression' });
-    }
+    toastConfirm(
+      'Êtes-vous sûr de vouloir supprimer ce devis ?',
+      async () => {
+        try {
+          await api.delete(`/admin/devis/${id}`);
+          setMessage({ type: 'success', text: 'Devis supprimé' });
+          fetchDevis();
+          fetchStats();
+          setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+        } catch (error) {
+          console.error('Erreur suppression:', error);
+          setMessage({ type: 'error', text: 'Erreur lors de la suppression' });
+        }
+      }
+    );
   };
 
   const getStatutBadge = (statut) => {

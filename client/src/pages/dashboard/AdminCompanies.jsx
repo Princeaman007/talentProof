@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Building2, Mail, Phone, Globe, Calendar, CheckCircle, XCircle, Clock, Eye } from 'lucide-react';
 import api from '../../utils/api';
 import { getCompanyDisplayName, formatDate, formatEmail, formatPhone, safeValue } from '../../utils/formatters';
+import { toast } from 'react-toastify';
+import { toastConfirm } from '../../utils/toastConfirm.jsx';
 
 const AdminCompanies = () => {
   const [companies, setCompanies] = useState([]);
@@ -18,9 +20,9 @@ const AdminCompanies = () => {
     try {
       setLoading(true);
       const statusParam = filter !== 'all' ? `?status=${filter}` : '';
-      console.log('📤 [ADMIN COMPANIES] Fetching with filter:', filter, 'Param:', statusParam);
+      console.log(' [ADMIN COMPANIES] Fetching with filter:', filter, 'Param:', statusParam);
       const response = await api.get(`/companies${statusParam}`);
-      console.log('📥 [ADMIN COMPANIES] Response:', {
+      console.log(' [ADMIN COMPANIES] Response:', {
         status: response.status,
         data: response.data,
         success: response.data.success,
@@ -29,53 +31,54 @@ const AdminCompanies = () => {
       
       if (response.data.success) {
         setCompanies(response.data.data);
-        console.log('✅ [ADMIN COMPANIES] Loaded', response.data.data.length, 'companies');
+        console.log(' [ADMIN COMPANIES] Loaded', response.data.data.length, 'companies');
       }
     } catch (error) {
-      console.error('❌ [ADMIN COMPANIES] Error:', error);
-      alert('Erreur lors du chargement des entreprises');
+      console.error(' [ADMIN COMPANIES] Error:', error);
+      toast.error('Erreur lors du chargement des entreprises');
     } finally {
       setLoading(false);
     }
   };
 
   const handleStatusChange = async (companyId, newStatus) => {
-    if (!window.confirm(`Confirmer le changement de statut vers "${newStatus}" ?`)) {
-      return;
-    }
-
-    try {
-      setActionLoading(true);
-      console.log('📤 [ADMIN COMPANIES] Updating status:', companyId, 'to', newStatus);
-      const response = await api.patch(`/companies/${companyId}/status`, { status: newStatus });
-      console.log('📥 [ADMIN COMPANIES] Status update response:', response.data);
-      
-      if (response.data.success) {
-        console.log('✅ [ADMIN COMPANIES] Status updated successfully');
-        alert(`Statut mis à jour : ${newStatus}`);
-        fetchCompanies();
-        setSelectedCompany(null);
+    toastConfirm(
+      `Confirmer le changement de statut vers "${newStatus}" ?`,
+      async () => {
+        try {
+          setActionLoading(true);
+          console.log(' [ADMIN COMPANIES] Updating status:', companyId, 'to', newStatus);
+          const response = await api.patch(`/companies/${companyId}/status`, { status: newStatus });
+          console.log(' [ADMIN COMPANIES] Status update response:', response.data);
+          
+          if (response.data.success) {
+            console.log(' [ADMIN COMPANIES] Status updated successfully');
+            toast.success(`Statut mis à jour : ${newStatus}`);
+            fetchCompanies();
+            setSelectedCompany(null);
+          }
+        } catch (error) {
+          console.error('[ADMIN COMPANIES] Error updating status:', error);
+          toast.error('Erreur lors de la mise à jour');
+        } finally {
+          setActionLoading(false);
+        }
       }
-    } catch (error) {
-      console.error('❌ [ADMIN COMPANIES] Error updating status:', error);
-      alert('Erreur lors de la mise à jour du statut');
-    } finally {
-      setActionLoading(false);
-    }
+    );
   };
 
   const viewDetails = async (companyId) => {
     try {
-      console.log('📤 [ADMIN COMPANIES] Fetching details for:', companyId);
+      console.log(' [ADMIN COMPANIES] Fetching details for:', companyId);
       const response = await api.get(`/companies/${companyId}`);
-      console.log('📥 [ADMIN COMPANIES] Details response:', response.data);
+      console.log(' [ADMIN COMPANIES] Details response:', response.data);
       if (response.data.success) {
         setSelectedCompany(response.data.data);
-        console.log('✅ [ADMIN COMPANIES] Details loaded');
+        console.log(' [ADMIN COMPANIES] Details loaded');
       }
     } catch (error) {
-      console.error('❌ [ADMIN COMPANIES] Error loading details:', error);
-      alert('Erreur lors du chargement des détails');
+      console.error('[ADMIN COMPANIES] Error loading details:', error);
+      toast.error('Erreur lors du chargement des détails');
     }
   };
 

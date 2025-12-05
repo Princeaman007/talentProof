@@ -40,10 +40,10 @@ const TalentsDashboard = () => {
   const [selectedTalent, setSelectedTalent] = useState(null);
   const [showContactModal, setShowContactModal] = useState(false);
   
-  // ✅ NOUVEAU: État pour les technologies sélectionnées (array)
+  //  NOUVEAU: État pour les technologies sélectionnées (array)
   const [selectedTechnologies, setSelectedTechnologies] = useState([]);
   const [techSearchQuery, setTechSearchQuery] = useState('');
-  const [techFilterMode, setTechFilterMode] = useState('OR'); // ✅ NOUVEAU: 'OR' ou 'AND'
+  const [techFilterMode, setTechFilterMode] = useState('OR'); // NOUVEAU: 'OR' ou 'AND'
 
   const [filters, setFilters] = useState({
     typeProfil: '',
@@ -56,7 +56,7 @@ const TalentsDashboard = () => {
 
   useEffect(() => {
     fetchTalents();
-  }, [filters, selectedTechnologies, techFilterMode]); // ✅ Ajouter techFilterMode comme dépendance
+  }, [filters, selectedTechnologies, techFilterMode]); // Ajouter techFilterMode comme dépendance
 
   const fetchTalents = async () => {
     try {
@@ -68,18 +68,18 @@ const TalentsDashboard = () => {
         return acc;
       }, {});
       
-      // ✅ NOUVEAU: Ajouter les technologies sélectionnées (séparées par virgule)
+      //  NOUVEAU: Ajouter les technologies sélectionnées (séparées par virgule)
       if (selectedTechnologies.length > 0) {
         params.technologies = selectedTechnologies.join(',');
-        params.techFilterMode = techFilterMode; // ✅ Ajouter le mode de filtre
+        params.techFilterMode = techFilterMode; // Ajouter le mode de filtre
       }
 
-      console.log('📤 [TALENTS DASHBOARD] Fetching with params:', params);
-      console.log('🔍 [TALENTS DASHBOARD] Technologies sélectionnées:', selectedTechnologies);
-      console.log('🔍 [TALENTS DASHBOARD] Mode de filtre:', techFilterMode);
+      console.log('[TALENTS DASHBOARD] Fetching with params:', params);
+      console.log('[TALENTS DASHBOARD] Technologies sélectionnées:', selectedTechnologies);
+      console.log('[TALENTS DASHBOARD] Mode de filtre:', techFilterMode);
       
       const response = await api.get('/talents/filter', { params });
-      console.log('📥 [TALENTS DASHBOARD] Response:', {
+      console.log('[TALENTS DASHBOARD] Response:', {
         status: response.status,
         data: response.data,
         success: response.data.success,
@@ -88,13 +88,13 @@ const TalentsDashboard = () => {
 
       if (response.data.success && Array.isArray(response.data.data)) {
         setTalents(response.data.data);
-        console.log('✅ [TALENTS DASHBOARD] Loaded', response.data.data.length, 'talents');
+        console.log('[TALENTS DASHBOARD] Loaded', response.data.data.length, 'talents');
       } else {
         setTalents([]);
-        console.warn('⚠️ [TALENTS DASHBOARD] No talents or invalid response');
+        console.warn('[TALENTS DASHBOARD] No talents or invalid response');
       }
     } catch (error) {
-      console.error('❌ [TALENTS DASHBOARD] Error:', error);
+      console.error('[TALENTS DASHBOARD] Error:', error);
       setError(extractErrorMessage(error, 'Erreur lors du chargement des talents'));
       setTalents([]);
     } finally {
@@ -107,7 +107,7 @@ const TalentsDashboard = () => {
     setFilters(prev => ({ ...prev, [name]: value }));
   };
   
-  // ✅ NOUVEAU: Gestion des technologies sélectionnées
+  // NOUVEAU: Gestion des technologies sélectionnées
   const toggleTechnology = (tech) => {
     setSelectedTechnologies(prev => {
       if (prev.includes(tech)) {
@@ -133,9 +133,9 @@ const TalentsDashboard = () => {
       experienceMin: '',
       experienceMax: '',
     });
-    setSelectedTechnologies([]); // ✅ Réinitialiser aussi les technologies
+    setSelectedTechnologies([]); //  Réinitialiser aussi les technologies
     setTechSearchQuery('');
-    setTechFilterMode('OR'); // ✅ Réinitialiser le mode de filtre
+    setTechFilterMode('OR'); //  Réinitialiser le mode de filtre
   };
 
   const hasActiveFilters = Object.values(filters).some(value => value !== '') || selectedTechnologies.length > 0;
@@ -196,7 +196,7 @@ const TalentsDashboard = () => {
           )}
         </div>
         
-        {/* ✅ NOUVEAU: Section Technologies avec sélection multiple */}
+        {/*  NOUVEAU: Section Technologies avec sélection multiple */}
         <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
           <div className="flex items-center justify-between mb-3">
             <label className="block text-sm font-semibold text-gray-800">
@@ -209,7 +209,7 @@ const TalentsDashboard = () => {
                 </span>
               )}
               
-              {/* ✅ NOUVEAU: Toggle OR/AND */}
+              {/*  NOUVEAU: Toggle OR/AND */}
               {selectedTechnologies.length > 1 && (
                 <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-300">
                   <span className="text-xs font-medium text-gray-600">Mode:</span>
@@ -244,9 +244,9 @@ const TalentsDashboard = () => {
           {selectedTechnologies.length > 1 && (
             <div className="mb-3 text-xs text-gray-600 bg-white p-2 rounded border border-gray-200">
               {techFilterMode === 'OR' ? (
-                <span>📋 Affiche les talents ayant <strong>au moins une</strong> des technologies sélectionnées</span>
+                <span>Affiche les talents ayant <strong>au moins une</strong> des technologies sélectionnées</span>
               ) : (
-                <span>📋 Affiche les talents ayant <strong>toutes</strong> les technologies sélectionnées</span>
+                <span>Affiche les talents ayant <strong>toutes</strong> les technologies sélectionnées</span>
               )}
             </div>
           )}
@@ -445,7 +445,7 @@ const TalentsDashboard = () => {
             </div>
           </div>
           
-          {/* ✅ NOUVEAU: Affichage visuel des filtres actifs */}
+          {/*  NOUVEAU: Affichage visuel des filtres actifs */}
           {(selectedTechnologies.length > 0 || Object.values(filters).some(v => v !== '')) && (
             <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
               <span className="text-xs font-semibold text-gray-600 self-center">Filtres appliqués :</span>

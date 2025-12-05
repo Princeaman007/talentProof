@@ -3,6 +3,8 @@ import { FaPlus, FaEdit, FaTrash, FaUsers, FaSpinner } from 'react-icons/fa';
 import talentDayService from '../../services/talentDayService';
 import CreateTalentDay from '../../components/modals/CreateTalentDay';
 import TalentDayInscriptions from '../../components/admin/TalentDayInscriptions';
+import { toast } from 'react-toastify';
+import { toastConfirm } from '../../utils/toastConfirm.jsx';
 
 const AdminTalentDays = () => {
   const [talentDays, setTalentDays] = useState([]);
@@ -39,19 +41,20 @@ const AdminTalentDays = () => {
 
   // Handle delete
   const handleDelete = async (id) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) {
-      return;
-    }
-
-    try {
-      const response = await talentDayService.deleteTalentDay(id);
-      if (response.data?.success) {
-        setTalentDays(talentDays.filter(td => td._id !== id));
-        alert('Événement supprimé avec succès');
+    toastConfirm(
+      'Êtes-vous sûr de vouloir supprimer cet événement ?',
+      async () => {
+        try {
+          const response = await talentDayService.deleteTalentDay(id);
+          if (response.data?.success) {
+            setTalentDays(talentDays.filter(td => td._id !== id));
+            toast.success('Événement supprimé avec succès');
+          }
+        } catch (err) {
+          toast.error('Erreur lors de la suppression: ' + (err.response?.data?.message || err.message));
+        }
       }
-    } catch (err) {
-      alert('Erreur lors de la suppression: ' + (err.response?.data?.message || err.message));
-    }
+    );
   };
 
   // Handle create/update success

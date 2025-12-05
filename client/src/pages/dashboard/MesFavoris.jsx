@@ -11,6 +11,8 @@ import {
 } from 'react-icons/fa';
 import { getUserDisplayName, formatNumber, safeValue } from '../../utils/formatters';
 import { TECH_COLORS } from '../../utils/constants';
+import { toast } from 'react-toastify';
+import { toastConfirm } from '../../utils/toastConfirm.jsx';
 
 const MesFavoris = () => {
   const [favoris, setFavoris] = useState([]);
@@ -25,44 +27,47 @@ const MesFavoris = () => {
   const fetchFavoris = async () => {
     try {
       setLoading(true);
-      console.log('📤 [FAVORIS] Fetching favoris...');
+      console.log(' [FAVORIS] Fetching favoris...');
       const response = await api.get('/entreprise/favoris');
-      console.log('📥 [FAVORIS] Response:', {
+      console.log(' [FAVORIS] Response:', {
         status: response.status,
         data: response.data,
         dataKeys: Object.keys(response.data || {}),
         favorisCount: response.data.favoris?.length
       });
       setFavoris(response.data.favoris);
-      console.log('✅ [FAVORIS] Loaded', response.data.favoris?.length, 'favoris');
+      console.log('[FAVORIS] Loaded', response.data.favoris?.length, 'favoris');
     } catch (error) {
-      console.error('❌ [FAVORIS] Error:', error);
+      console.error('[FAVORIS] Error:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleRemoveFavori = async (talentId) => {
-    if (!confirm('Retirer ce talent de vos favoris ?')) return;
-
-    try {
-      console.log('📤 [FAVORIS] Removing favori:', talentId);
-      await api.delete(`/entreprise/favoris/${talentId}`);
-      console.log('✅ [FAVORIS] Favori removed successfully');
-      setFavoris(favoris.filter((f) => f.talent._id !== talentId));
-    } catch (error) {
-      console.error('❌ [FAVORIS] Error removing favori:', error);
-      alert('Erreur lors de la suppression');
-    }
+    toastConfirm(
+      'Retirer ce talent de vos favoris ?',
+      async () => {
+        try {
+          console.log('[FAVORIS] Removing favori:', talentId);
+          await api.delete(`/favoris/${talentId}`);
+          console.log('[FAVORIS] Favori removed successfully');
+          setFavoris(favoris.filter((f) => f.talent._id !== talentId));
+        } catch (error) {
+          console.error('[FAVORIS] Error removing favori:', error);
+          toast.error('Erreur lors de la suppression');
+        }
+      }
+    );
   };
 
   const handleUpdateNote = async (talentId) => {
     try {
-      console.log('📤 [FAVORIS] Updating note for:', talentId, 'Note:', noteText);
+      console.log('[FAVORIS] Updating note for:', talentId, 'Note:', noteText);
       await api.put(`/entreprise/favoris/${talentId}/note`, {
         note: noteText,
       });
-      console.log('✅ [FAVORIS] Note updated successfully');
+      console.log('[FAVORIS] Note updated successfully');
       
       // Mettre à jour localement
       setFavoris(
@@ -74,8 +79,8 @@ const MesFavoris = () => {
       setEditingNote(null);
       setNoteText('');
     } catch (error) {
-      console.error('❌ [FAVORIS] Error updating note:', error);
-      alert('Erreur lors de la mise à jour de la note');
+      console.error('[FAVORIS] Error updating note:', error);
+      toast.error('Erreur lors de la mise à jour de la note');
     }
   };
 

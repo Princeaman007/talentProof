@@ -258,7 +258,7 @@ const TalentDayDetail = () => {
                         <div key={index} className="bg-white/70 rounded-lg p-4">
                           <h4 className="font-semibold text-gray-900 mb-1">{format.nom}</h4>
                           <p className="text-sm text-gray-600 mb-1">{format.description}</p>
-                          <p className="text-xs text-gray-500">⏱️ Durée : {calculateDuration(talentDay.heureDebut, talentDay.heureFin)}</p>
+                          <p className="text-xs text-gray-500">⏱ Durée : {calculateDuration(talentDay.heureDebut, talentDay.heureFin)}</p>
                         </div>
                       ))}
                     </div>
