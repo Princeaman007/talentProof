@@ -94,7 +94,7 @@ app.use(
       defaultSrc: ["'self'"],
       scriptSrc,
       styleSrc,
-      imgSrc: ["'self'", 'data:', 'blob:', 'http://localhost:5000', 'http://localhost:5174'],
+      imgSrc: ["'self'", 'data:', 'blob:', 'http://localhost:5000', 'http://localhost:5174', ],
       connectSrc,
       fontSrc,
       objectSrc: ["'none'"],
@@ -122,7 +122,7 @@ if (isProd) {
 }
 
 //  SÉCURITÉ: CORS restrictif (au lieu de cors() ouvert)
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000').split(',');
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:3000,https://www.talentproof.be').split(',');
 
 // CORS configuration with dynamic origin validation
 app.use(cors({
