@@ -5,6 +5,7 @@ import api from '../utils/api';
 import TalentCard from '../components/talents/TalentCard';
 import FilterBar from '../components/talents/FilterBar';
 import ContactTalentModal from '../components/talents/ContactTalentModal';
+import SEOHead from '../components/SEO/SEOHead';
 
 const Talents = () => {
   const navigate = useNavigate();
