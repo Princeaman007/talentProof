@@ -5,7 +5,15 @@ import api from '../utils/api';
 import TalentCard from '../components/talents/TalentCard';
 import FilterBar from '../components/talents/FilterBar';
 import ContactTalentModal from '../components/talents/ContactTalentModal';
-import SEOHead from '../components/SEO/SEOHead';
+import SEOHead from '../components/SEOHead'; // ← AJOUTÉ
+
+// ← AJOUTÉ : Définition du schéma JSON-LD pour le SEO
+const talentsSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Développeurs Certifiés Belgique - TalentProof",
+  "description": "Découvrez notre base de talents tech certifiés en Belgique : développeurs React, Node.js, Python. Portfolios validés, tests techniques réussis."
+};
 
 const Talents = () => {
   const navigate = useNavigate();
