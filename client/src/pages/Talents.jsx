@@ -5,7 +5,7 @@ import api from '../utils/api';
 import TalentCard from '../components/talents/TalentCard';
 import FilterBar from '../components/talents/FilterBar';
 import ContactTalentModal from '../components/talents/ContactTalentModal';
-import SEOHead from '../components/SEOHead'; // ← AJOUTÉ
+import SEOHead from '../components/SEO/SEOHead';
 
 // ← AJOUTÉ : Définition du schéma JSON-LD pour le SEO
 const talentsSchema = {
