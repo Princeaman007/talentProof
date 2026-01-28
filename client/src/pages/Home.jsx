@@ -15,6 +15,8 @@ const Home = () => {
     "mainEntity": {
       "@type": "Organization",
       "name": "TalentProof",
+       "url": "https://talentproof.be",
+      "logo": "https://talentproof.be/talentproof.png",
       "description": "Plateforme de recrutement tech qui connecte entreprises et développeurs certifiés en Belgique",
       "address": {
         "@type": "PostalAddress",
